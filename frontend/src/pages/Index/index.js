@@ -44,11 +44,11 @@ const Home = (props) => {
 
   const onGoToApp = async () => {
     const resp = await fetch('/api/user', { credentials: 'include' })
-    const user = await resp.json()
-    if (!user.uid) {
-      router.push('/login')
+    if (resp.status === 200) {
+      const user = await resp.json()
+      router.push(user.uid ? '/bots' : '/login')
     } else {
-      router.push('/bots')
+      router.push('/login')
     }
   }
 
@@ -59,10 +59,10 @@ const Home = (props) => {
         <img className={classes.botImage} src="/hello-bot.svg" />
         <Typography variant="h3" className={classes.helloTitle}>
           Hello
-          </Typography>
+        </Typography>
         <Typography variant="subtitle2" className={classes.subtitle}>
           This is my pet project
-          </Typography>
+        </Typography>
         <Box m={3}>
           <Button
             variant="contained"

@@ -1,53 +1,32 @@
-import React, { useContext, useEffect } from 'react'
-import { mapValues } from 'lodash'
-import * as actions from '@mrblenny/react-flow-chart/src/container/actions'
-import { FlowChart } from '@mrblenny/react-flow-chart'
+import React, { useContext } from 'react'
+import ReactFlow, { Background } from 'react-flow-renderer'
+import { fromJS, Map } from 'immutable'
 
-import StateNode from './StateNode'
-import { Context } from '../bot/store'
+import { DiagramContext } from '../Context'
 
-const SelectedListener = (props) => {
-  const [, dispatch] = useContext(Context)
+const Diagram = () => {
+  const [state, dispatch] = useContext(DiagramContext)
 
-  useEffect(() => {
-    dispatch({ type: 'SELECT', data: props.selected })
-  }, [props.selected])
+  const handleSelect = (els) => {
+    dispatch({ type: 'SELECT_NODE', data: els?.[0] || Map() })
+  }
+  const handleMove = (e, node) => {
+    dispatch({ type: 'UPDATE_NODE', data: fromJS(node) })
+  }
 
   return (
-        <>
-            {props.children}
-        </>
+    <ReactFlow
+      elements={state.get('elements').toJS()}
+      multiSelectionKeyCode={-1}
+      onSelectionChange={handleSelect}
+      nodesConnectable={false}
+      onNodeDragStop={handleMove}
+      snapToGrid={true}
+      snapGrid={[10, 10]}
+    >
+      <Background color="#aaa" gap={10}/>
+    </ReactFlow>
   )
-}
-
-class Diagram extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = props.chart
-  }
-
-  componentDidUpdate (prevProps, prevState) {
-    if (prevProps.chart !== this.props.chart) {
-      this.setState(this.props.chart)
-    }
-  }
-
-  render () {
-    const stateActions = mapValues(actions, (func) => (...args) => this.setState(func(...args)))
-
-    return (
-            <SelectedListener selected={this.state.selected}>
-                <FlowChart
-                    style={{ height: '100%' }}
-                    chart={this.state}
-                    callbacks={stateActions}
-                    Components={{
-                      NodeInner: StateNode,
-                    }}
-                />
-            </SelectedListener>
-    )
-  }
 }
 
 export default Diagram

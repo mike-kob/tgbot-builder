@@ -1,12 +1,16 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import Drawer from '@material-ui/core/Drawer'
-import Button from '@material-ui/core/Button'
-import { Typography, Box, TextField } from '@material-ui/core'
+import {
+  Typography,
+  Box,
+  TextField,
+  Drawer,
+  Button,
+} from '@material-ui/core'
 import clsx from 'clsx'
 
 import Action from './actions/Action'
-import { Context } from '../bot/store'
+import { DiagramContext, actionFactory } from '../Context'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,80 +42,81 @@ const useStyles = makeStyles((theme) => ({
 
 const CustomDrawer = () => {
   const classes = useStyles()
-  const [state, dispatch] = useContext(Context)
-  const command = state.currentCommand
-  const setName = (e) => dispatch({
-    type: 'SET_CURRENT_COMMAND',
-    data: { name: e.target.value },
-  })
-  const addAction = () => dispatch({
-    type: 'SET_CURRENT_COMMAND',
-    data: { actions: [...command.actions, { type: null, options: {} }] },
-  })
-  const onDrawerClose = () => dispatch({
-    type: 'SET_DRAWER',
-    data: { open: false },
-  })
-  const onSave = () => {
+  const [state, dispatch] = useContext(DiagramContext)
+  const selectedId = state.getIn(['selected', 'id'])
+  const current = state.getIn(['elements', selectedId])
+  const command = state.get('currentCommand')
+
+  const handleNameChange = useCallback((e) => {
+    dispatch({ type: 'UPDATE_CUR_COMMAND', data: command.set('name', e.target.value) })
+  }, [command])
+
+  const handleAddAction = useCallback(() => {
     dispatch({
-      type: 'SET_NODE',
-      data: {
-        [state.selected.id]: {
-          ...state.nodeInfo[state.selected.id],
-          commands: {
-            ...state.nodeInfo[state.selected.id].commands,
-            [state.currentCommand.id]: state.currentCommand,
-          },
-        },
-      },
+      type: 'UPDATE_CUR_COMMAND',
+      data: command.update('actions', (els) => els.push(actionFactory().set('id', els.size))),
     })
-    onDrawerClose()
+  }, [command])
+
+  const handleCloseDrawer = useCallback(() => {
+    dispatch({ type: 'UPDATE_DRAWER', data: false })
+  }, [])
+
+  const handleSave = () => {
+    const commandId = command.get('id')
+    dispatch({
+      type: 'UPDATE_NODE',
+      data: current.updateIn(['data', 'commands'], (els) => els.has(commandId)
+        ? els.set(commandId, command)
+        : els.push(command.set('id', els.size))),
+    })
+    dispatch({ type: 'UPDATE_DRAWER', data: false })
   }
 
   return (
-        <Drawer anchor={'right'} open={state.drawer.open}>
-            <div className={classes.root}>
-                <Typography variant="h6" align="center">
-                    Add command
-                </Typography>
-                <Box p={1}>
-                    <TextField
-                        value={'/' + (command.name || '').replace('/', '')}
-                        fullWidth
-                        onChange={setName}
-                    />
-                </Box>
-                {command.actions.map((a, i) => (
-                    <Box m={2} key={i}>
-                        <Action action={a} index={i} />
-                    </Box>
-                ))}
-                <Button
-                  onClick={addAction}
-                  className={clsx(classes.outlinedButton, classes.addAction)}
-                  variant="outlined"
-                  color="primary"
-                  >
-                      + Add action
-                </Button>
-                <div className={classes.actionButtons}>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      onClick={onDrawerClose}
-                      className={classes.outlinedButton}
-                      >
-                          Cancel</Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={onSave}
-                      className={classes.saveButton}
-                      >
-                          Save</Button>
-                </div>
-            </div>
-        </Drawer>
+    <Drawer anchor={'right'} open={state.getIn(['drawer', 'open'])}>
+      <div className={classes.root}>
+        <Typography variant="h6" align="center">
+          Add command
+        </Typography>
+        <Box p={1}>
+          <TextField
+            value={'/' + command.get('name', '').replace('/', '')}
+            fullWidth
+            onChange={handleNameChange}
+          />
+        </Box>
+        {command.get('actions').map((a, i) => (
+          <Box m={2} key={i}>
+            <Action command={command} action={a} index={i} />
+          </Box>
+        ))}
+        <Button
+          onClick={handleAddAction}
+          className={clsx(classes.outlinedButton, classes.addAction)}
+          variant="outlined"
+          color="primary"
+        >
+          + Add action
+        </Button>
+        <div className={classes.actionButtons}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleCloseDrawer}
+            className={classes.outlinedButton}
+          >
+            Cancel</Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSave}
+            className={classes.saveButton}
+          >
+            Save</Button>
+        </div>
+      </div>
+    </Drawer>
   )
 }
 

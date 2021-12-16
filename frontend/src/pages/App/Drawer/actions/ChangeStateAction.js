@@ -7,7 +7,7 @@ import {
   MenuItem,
 } from '@material-ui/core'
 
-import { Context } from '../../bot/store'
+import { DiagramContext } from '../../Context'
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -15,38 +15,35 @@ const useStyles = makeStyles((theme) => ({
 
 const ChangeStateAction = (props) => {
   const classes = useStyles()
-  const [state] = useContext(Context)
+  const [state] = useContext(DiagramContext)
   const { action, changeAction } = props
-
-  const selectState = (e) => {
-    changeAction({
-      ...action,
-      options: { state: e.target.value },
-    })
-  }
+  const selectedId = state.getIn(['selected', 'id'])
+  const selectState = (e) => changeAction(action.setIn(['options', 'state'], e.target.value))
 
   return (
-        <div className={classes.root}>
-            <FormControl variant="outlined" fullWidth className={classes.margin}>
-                <InputLabel htmlFor="outlined-age-native-simple-2">State</InputLabel>
-                <Select
-                    value={action.options.state || ''}
-                    onChange={selectState}
-                    label="State"
-                    inputProps={{
-                      name: 'State',
-                      id: 'outlined-age-native-simple-2',
-                    }}
-                >
-                    <MenuItem value="">
-                        <em>None</em>
-                    </MenuItem>
-                    {Object.keys(state.nodeInfo).map(key => (
-                        <MenuItem key={key} value={key}>{state.nodeInfo[key].label}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-        </div>
+    <div className={classes.root}>
+      <FormControl variant="outlined" fullWidth className={classes.margin}>
+        <InputLabel htmlFor="outlined-age-native-simple-2">State</InputLabel>
+        <Select
+          value={action.getIn(['options', 'state'], '')}
+          onChange={selectState}
+          label="State"
+          inputProps={{
+            name: 'State',
+            id: 'outlined-age-native-simple-2',
+          }}
+        >
+          <MenuItem value="">
+            <em>-</em>
+          </MenuItem>
+          {state.get('elements').filter(el => el.get('id') !== selectedId).map(el => (
+            <MenuItem key={el.get('id')} value={el.getIn(['data', 'label'])}>
+              {el.getIn(['data', 'label'])}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </div>
   )
 }
 

@@ -6,9 +6,9 @@ import {
   Box,
 } from '@material-ui/core'
 
-import CommandSection from './commands/CommandSection'
+import { DiagramContext } from '../Context'
+import CommandSection from './CommandSection'
 import NameSection from './NameSection'
-import { Context } from '../bot/store'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,9 +30,11 @@ const useStyles = makeStyles((theme) => ({
 
 const Sidebar = (props) => {
   const classes = useStyles(props)
-  const [state] = useContext(Context)
+  const [state] = useContext(DiagramContext)
 
-  const current = state.nodeInfo[state.selected.id]
+  const selectedId = state.getIn(['selected', 'id'])
+  const current = state.getIn(['elements', selectedId])
+
   if (!current) {
     return (
       <div className={classes.noSelected}>
@@ -44,13 +46,13 @@ const Sidebar = (props) => {
   }
 
   return (
-        <div className={classes.root}>
-            <NameSection current={current}/>
-            <Box m={1}>
-              <Divider />
-            </Box>
-            <CommandSection commands={current.commands} />
-        </div>
+    <div className={classes.root}>
+      <NameSection current={current} />
+      <Box m={1}>
+        <Divider />
+      </Box>
+      <CommandSection current={current} />
+    </div>
   )
 }
 

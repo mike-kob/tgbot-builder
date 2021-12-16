@@ -1,28 +1,28 @@
+import { fromJS } from 'immutable'
 
-export const nodeFactory = () => ({
-  id: Date.now().toString(),
-  type: '',
+export const nodeFactory = () => fromJS({
+  type: 'default',
   position: {
     x: 300,
     y: 250,
   },
-  ports: {},
+  data: {
+    label: 'New state',
+    commands: {},
+  },
 })
 
-export const nodeInfoFactory = () => ({
-  id: Date.now(),
-  label: 'New state',
-  commands: {},
-})
-
-export const commandFactory = () => ({
-  id: Date.now(),
+export const commandFactory = () => fromJS({
   name: '',
   actions: [],
 })
 
+export const actionFactory = () => fromJS({
+  type: null,
+  options: {},
+})
+
 export const linkFactory = (node1, port1, node2, port2) => ({
-  id: Date.now(),
   from: {
     nodeId: node1,
     portId: port1,

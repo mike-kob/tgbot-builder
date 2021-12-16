@@ -1,53 +1,56 @@
-import React, { useContext } from 'react';
-import { makeStyles } from "@material-ui/core";
+import React, { useContext } from 'react'
+import { makeStyles } from '@material-ui/core'
+import { Map } from 'immutable'
 import {
-    Dialog,
-    DialogActions,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    Button,
-} from '@material-ui/core';
-import { openPopupAction, closePopupAction } from '../bot/actions';
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  Button,
+} from '@material-ui/core'
 
-import { Context } from '../bot/store';
+import { DiagramContext } from '@/pages/App/Context'
 
-const useStyles = makeStyles((theme) => ({}));
+const useStyles = makeStyles((theme) => ({}))
 
 const Popup = (props) => {
-    const classes = useStyles();
-    const [state, dispatch] = useContext(Context);
-    const closePopup = closePopupAction(state, dispatch);
+  const classes = useStyles()
+  const [state, dispatch] = useContext(DiagramContext)
 
-    return (
-        <Dialog
-            open={state.popup.open}
-            onClose={() => closePopup()}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-        >
-            <DialogTitle id="alert-dialog-title">{state.popup.question}</DialogTitle>
-            <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                    {state.popup.description}
-                </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={() => {
-                    state.popup.onReject && state.popup.onReject();
-                    closePopup();
-                }} color="primary">
-                    No
-                </Button>
-                <Button onClick={() => {
-                    state.popup.onApprove && state.popup.onApprove();
-                    closePopup();
-                }} color="primary" variant="contained" autoFocus>
-                    Yes
-                </Button>
-            </DialogActions>
-        </Dialog>
-    )
+  const handleClose = () => {
+    dispatch({ type: 'UPDATE_POPUP', data: Map({ open: false }) })
+  }
+
+  return (
+    <Dialog
+      open={state.getIn(['popup', 'open'])}
+      onClose={handleClose}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">{state.getIn(['popup', 'question'])}</DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          {state.getIn(['popup', 'description'])}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => {
+          state.hasIn(['popup', 'onReject']) && state.getIn(['popup', 'onReject'])()
+          handleClose()
+        }} color="primary">
+          No
+        </Button>
+        <Button onClick={() => {
+          state.hasIn(['popup', 'onApprove']) && state.getIn(['popup', 'onApprove'])()
+          handleClose()
+        }} color="primary" variant="contained" autoFocus>
+          Yes
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
 }
 
-export default Popup;
+export default Popup

@@ -1,14 +1,11 @@
 import React, { useContext } from 'react'
 import {
   makeStyles,
-  // Button,
-  // Box,
   Typography,
   TextField,
 } from '@material-ui/core'
 
-import { changeNodeInfoAction } from '../bot/actions'
-import { Context } from '../bot/store'
+import { DiagramContext } from '../Context'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,22 +21,23 @@ const useStyles = makeStyles((theme) => ({
 
 const NameSection = (props) => {
   const classes = useStyles(props)
-  const [state, dispatch] = useContext(Context)
-  const changeNodeInfo = changeNodeInfoAction(state, dispatch)
-
   const { current } = props
+  const [, dispatch] = useContext(DiagramContext)
+
+  const handleChange = (e) => {
+    dispatch({ type: 'UPDATE_NODE', data: current.setIn(['data', 'label'], e.target.value) })
+  }
+
   return (
     <div className={classes.root}>
       <Typography variant="h6" align="center">User state</Typography>
       <TextField
-        value={current.label}
-        onChange={(e) => changeNodeInfo(current.id, { label: e.target.value })}
+        value={current.getIn(['data', 'label'])}
+        onChange={handleChange}
         variant="outlined"
         size="small"
         className={classes.nameField}
-        inputProps={{
-          maxLength: 10,
-        }}
+        inputProps={{ maxLength: 10 }}
       />
     </div>
   )

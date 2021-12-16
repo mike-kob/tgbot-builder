@@ -4,11 +4,8 @@ import {
   Button,
 } from '@material-ui/core'
 
-import { Context } from '../bot/store'
-import { addNodeAction } from '../bot/actions'
-import { nodeFactory, nodeInfoFactory } from '../bot/models'
+import { DiagramContext, nodeFactory } from '../Context'
 import { useRouter } from 'next/router'
-import { saveBot, deployBot } from '../../../actions'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,55 +34,57 @@ const useStyles = makeStyles((theme) => ({
 const ToolPanel = (props) => {
   const classes = useStyles(props)
   const router = useRouter()
-  const [state, dispatch] = useContext(Context)
+  const [state, dispatch] = useContext(DiagramContext)
 
-  const addNode = addNodeAction(state, dispatch)
-  const onSave = async () => {
-    await saveBot(router.query.id, state, () => router.push('/bots'))
+  const handleAddNode = () => {
+    dispatch({ type: 'ADD_NODE', data: nodeFactory() })
   }
-  const onDeploy = async () => {
-    await saveBot(router.query.id, state, async () => {
-      await deployBot(router.query.id, () => console.log('Deployed'))
-    })
-  }
+
+  // const onSave = async () => {
+  //   await saveBot(router.query.id, state, () => router.push('/bots'))
+  // }
+  // const onDeploy = async () => {
+  //   await saveBot(router.query.id, state)
+  // }
 
   return (
-        <div className={classes.root}>
-            <div>
-                <Button
-                  className={classes.outlinedButton}
-                  variant="outlined"
-                  color="primary"
-                  onClick={() => addNode(nodeFactory(), nodeInfoFactory())}
-                  >
-                    + Add state
-                </Button>
-            </div>
-            <div className={classes.rightPanel}>
-                {/* TODO */}
-                <Button
-                  onClick={() => router.push('/bots')}
-                  className={classes.outlinedButton}
-                  variant="outlined"
-                  color="primary"
-                  >
-                    Discard All</Button>
-                <Button
-                  onClick={onDeploy}
-                  className={classes.outlinedButton}
-                  variant="outlined"
-                  color="primary"
-                  >
-                    Deploy</Button>
-                <Button
-                  variant="contained"
-                  className={classes.containedButton}
-                  color="primary"
-                  onClick={onSave}
-                  >
-                    Save</Button>
-            </div>
-        </div>
+    <div className={classes.root}>
+      <div>
+        <Button
+          className={classes.outlinedButton}
+          variant="outlined"
+          color="primary"
+          onClick={handleAddNode}
+        >
+          + Add state
+        </Button>
+      </div>
+      <div className={classes.rightPanel}>
+        <Button
+          onClick={() => router.push('/bots')}
+          className={classes.outlinedButton}
+          variant="outlined"
+          color="primary"
+        >
+          Discard All</Button>
+        <Button
+          onClick={() => {}}
+          className={classes.outlinedButton}
+          variant="outlined"
+          color="primary"
+        >
+          Deploy
+        </Button>
+        <Button
+          variant="contained"
+          className={classes.containedButton}
+          color="primary"
+          onClick={() => {}}
+        >
+          Save
+        </Button>
+      </div>
+    </div>
   )
 }
 

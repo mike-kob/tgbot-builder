@@ -11,14 +11,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 import TrendingFlatIcon from '@material-ui/icons/TrendingFlat'
 
-import { Context } from '../../bot/store'
-import {
-  openDrawerAction,
-  setPopupActionsAction,
-  updateCurCommandAction,
-  deleteCommandAction,
-  openPopupAction,
-} from '../../bot/actions'
+import { DiagramContext } from '../../Context'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,59 +35,63 @@ const ACTION_LABEL = {
   send_message: 'msg',
 }
 
-const ACITON_ICON = {
-  change_state: <TrendingFlatIcon/>,
-  send_message: <EmailIcon/>,
+const ACTION_ICON = {
+  change_state: <TrendingFlatIcon />,
+  send_message: <EmailIcon />,
 }
 
 const Command = (props) => {
   const classes = useStyles(props)
-  const [state, dispatch] = useContext(Context)
-  const updateCurCommand = updateCurCommandAction(state, dispatch)
-  const openDrawer = openDrawerAction(state, dispatch)
-  const setPopupActions = setPopupActionsAction(state, dispatch)
-  const openPopup = openPopupAction(state, dispatch)
-  const deleteCommand = deleteCommandAction(state, dispatch)
+  const [state, dispatch] = useContext(DiagramContext)
 
   const { command } = props
-  const node = state.nodeInfo[state.selected.id]
+  const selectedId = state.getIn(['selected', 'id'])
+  const node = state.getIn(['elements', selectedId])
 
   const onEdit = () => {
-    updateCurCommand(command)
-    openDrawer()
+    dispatch({ type: 'UPDATE_CUR_COMMAND', data: command })
+    dispatch({ type: 'UPDATE_DRAWER', data: true })
   }
   const onDelete = () => {
-    setPopupActions(
-            `Delete command ${command.name} ?`,
-            () => { },
-            () => deleteCommand(node.id, command.id),
-    )
-    openPopup()
+    const onApprove = () => dispatch({
+      type: 'UPDATE_NODE',
+      data: node.deleteIn(['data', 'commands', command.get('id')]),
+    })
+    const onReject = () => { }
+    dispatch({
+      type: 'UPDATE_POPUP',
+      data: state.get('popup').merge({
+        open: true,
+        question: 'Do you really want to delete this command?',
+        onApprove,
+        onReject,
+      }),
+    })
   }
 
   return (
-        <Paper className={classes.root}>
-            <Typography variant="caption">{command.name}</Typography>
-            <div className={classes.cmds}>
-                {command.actions.map((action, i) => (
-                    <Chip
-                        key={i}
-                        icon={ACITON_ICON[action.type]}
-                        variant="outlined"
-                        label={ACTION_LABEL[action.type]}
-                        className={classes.chip}
-                    />
-                ))}
-            </div>
-            <div className={classes.actions}>
-                <IconButton onClick={onEdit}>
-                    <EditIcon />
-                </IconButton>
-                <IconButton onClick={onDelete}>
-                    <DeleteIcon />
-                </IconButton>
-            </div>
-        </Paper>
+    <Paper className={classes.root}>
+      <Typography variant="caption">{command.get('name')}</Typography>
+      <div className={classes.cmds}>
+        {command.get('actions').map((action, i) => (
+          <Chip
+            key={i}
+            icon={ACTION_ICON[action.get('type')]}
+            variant="outlined"
+            label={ACTION_LABEL[action.get('type')]}
+            className={classes.chip}
+          />
+        ))}
+      </div>
+      <div className={classes.actions}>
+        <IconButton onClick={onEdit}>
+          <EditIcon />
+        </IconButton>
+        <IconButton onClick={onDelete}>
+          <DeleteIcon />
+        </IconButton>
+      </div>
+    </Paper>
   )
 }
 

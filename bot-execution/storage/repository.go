@@ -9,8 +9,7 @@ type BotRepository interface {
 
 type UserBotRepository interface {
 	Find(userID, botID string) (*BotUser, error)
-	UpdateDb(bUser *BotUser, db map[string]string) (*BotUser, error)
 	UpdateState(bUser *BotUser, state string) (*BotUser, error)
 	Insert(bUser *BotUser) error
-	Delete(id string) error
+	Delete(userID, botID string) error
 }

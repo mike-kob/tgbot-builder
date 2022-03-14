@@ -1,7 +1,7 @@
 package runtime
 
 import (
-	"bot-runtime/storage"
+	"bot-execution/storage"
 	"strings"
 
 	tg "github.com/go-telegram-bot-api/telegram-bot-api"

@@ -8,15 +8,13 @@ import (
 
 type DbBot struct {
 	ID     primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
-	Name   string             `bson:"name,omitempty" json:"name"`
-	Author primitive.ObjectID `bson:"author,omitempty" json:"author"`
 	Token  string             `bson:"token,omitempty" json:"token"`
-	States []State            `bson:"states,omitempty" json:"states"`
+	States map[string]State   `bson:"states,omitempty" json:"states"`
 }
 
 type State struct {
 	Name            string              `bson:"name,omitempty" json:"name"`
-	DefaultTriggers []Action            `bson:"default_trigger,omitempty" json:"default_triggers"`
+	DefaultTriggers []Action            `bson:"default_triggers,omitempty" json:"default_triggers"`
 	CmdTriggers     map[string][]Action `bson:"cmd_triggers,omitempty" json:"cmd_triggers"`
 	MsgTriggers     map[string][]Action `bson:"msg_triggers,omitempty" json:"msg_triggers"`
 }

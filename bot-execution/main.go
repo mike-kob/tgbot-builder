@@ -1,8 +1,7 @@
 package main
 
 import (
-	"bot-runtime/api"
-	"bot-runtime/runtime"
+	"bot-execution/runtime"
 	"context"
 	"fmt"
 	"log"
@@ -18,7 +17,6 @@ import (
 func NewRouter() http.Handler {
 	router := chi.NewRouter()
 
-	router.Mount("/api", api.ApiRouter())
 	router.Mount("/update", runtime.Router())
 
 	return router
@@ -27,14 +25,13 @@ func NewRouter() http.Handler {
 func main() {
 	// Setting up Sentry logging
 	err := sentry.Init(sentry.ClientOptions{
-		Dsn: os.Getenv("SENTRY_DSN"),
+		Dsn:         os.Getenv("SENTRY_DSN"),
 		Environment: os.Getenv("RUN_ENV"),
 	})
 	if err != nil {
 		log.Fatalf("sentry.Init: %s", err)
 	}
 	defer sentry.Flush(2 * time.Second)
-
 
 	port := os.Getenv("PORT")
 	if len(port) == 0 {

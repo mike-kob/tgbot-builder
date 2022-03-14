@@ -1,4 +1,4 @@
-FROM golang:1.15
+FROM golang:1.17
 
 WORKDIR /go/src/app
 COPY . .
@@ -6,4 +6,4 @@ COPY . .
 RUN go get -d -v ./...
 RUN go install -v ./...
 
-CMD ["bot-runtime"]
+CMD ["bot-execution"]

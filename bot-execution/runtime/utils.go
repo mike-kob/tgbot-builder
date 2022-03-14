@@ -1,7 +1,7 @@
 package runtime
 
 import (
-	"bot-runtime/storage"
+	"bot-execution/storage"
 	"errors"
 
 	"encoding/json"
@@ -63,7 +63,7 @@ func findOrCreateUser(
 			BotID:  parsedBotID,
 			UserID: userID,
 			// TODO constants
-			State:   "start",
+			State:   "init",
 			Profile: *user,
 			Db:      map[string]string{},
 		}

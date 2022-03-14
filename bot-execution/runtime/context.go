@@ -1,7 +1,7 @@
 package runtime
 
 import (
-	"bot-runtime/storage"
+	"bot-execution/storage"
 
 	"net/http"
 	"strconv"

@@ -1,7 +1,7 @@
 package runtime
 
 import (
-	"bot-runtime/storage"
+	"bot-execution/storage"
 	"github.com/getsentry/sentry-go"
 	"github.com/go-chi/chi"
 	"net/http"
@@ -17,8 +17,8 @@ type controller struct {
 }
 
 func newApiController() iController {
-	userRepo := storage.NewUserBotRepository()
-	botRepo := storage.NewBotRepository()
+	userRepo := storage.NewUserRedisRepository()
+	botRepo := storage.NewBotRedisRepository()
 
 	return controller{
 		UserBotRepo: userRepo,

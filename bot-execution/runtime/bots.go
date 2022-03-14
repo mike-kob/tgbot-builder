@@ -1,7 +1,7 @@
 package runtime
 
 import (
-	"bot-runtime/storage"
+	"bot-execution/storage"
 
 	"errors"
 	tg "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -30,8 +30,8 @@ func runUpdate(
 }
 
 func runCommand(updCtx *updateContext) error {
-	state := getState(updCtx)
-	if state == nil {
+	state, ok := updCtx.bot.States[updCtx.user.State]
+	if !ok {
 		return errors.New("failed to find state")
 	}
 

@@ -1,0 +1,16 @@
+POST http://localhost:5000
+Authorization: Bearer ${SECRET}
+Content-Type: application/json
+
+{
+  "_id": "Someid",
+  "token": "",
+  "status": true,
+  "initState": {
+    "data": {
+      "label": "Initial state",
+      "commands": []
+    }
+  },
+  "src": []
+}

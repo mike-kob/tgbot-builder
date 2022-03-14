@@ -1,0 +1,23 @@
+{
+  "name": "bot-management",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon server.js node",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@sentry/node": "^6.18.2",
+    "body-parser": "^1.19.2",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "ioredis": "^4.28.5",
+    "jsonschema": "^1.4.0",
+    "telegraf": "^4.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}

@@ -8,6 +8,7 @@ import {
 
 export default async (req, res, next) => {
   const bot = req.body;
+  bot._id = bot._id['$oid']
   const validationRes = validateBot(bot)
   if (!validationRes.valid) {
     res.status(400).send(validationRes.errors)
@@ -15,11 +16,16 @@ export default async (req, res, next) => {
   }
 
   const botExec = convertFromSrcToExec(bot)
-  await saveToRedis(botExec)
-  if (bot.status) {
-    await setWebhook(bot)
-  } else {
-    await unsetWebhook(bot)
+  try {
+    await saveToRedis(botExec)
+    if (bot.status) {
+      await setWebhook(bot)
+    } else {
+      await unsetWebhook(bot)
+    }
+    res.status(200).send()
+  } catch (err) {
+    console.log(err)
+    res.status(500).send()
   }
-  res.status(200).send()
 }

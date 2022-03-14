@@ -8,21 +8,22 @@ export const convertFromSrcToExec = (bot) => {
   const states = bot.src.concat([bot.initState]).map(node => {
     const nodeInfo = node.data
     const state = {
+      id: node.id,
       name: nodeInfo.label,
-      default_triggers: {},
+      default_triggers: [],
       cmd_triggers: {},
       msg_triggers: {},
     }
     for (const cmd of nodeInfo.commands) {
       state.cmd_triggers[cmd.name] = cmd.actions
     }
-    return state
+    return [state.id, state]
   })
 
   return {
     id: bot._id,
     token: bot.token,
-    states: states,
+    states: Object.fromEntries(states),
   }
 }
 
@@ -31,7 +32,7 @@ export const saveToRedis = async (botExec) =>
 
 export const setWebhook = async (bot) => {
   const tgBot = new Telegraf(bot.token)
-  const url = `${process.env.WEBHOOK_HOST}/${bot._id}`
+  const url = `${process.env.WEBHOOK_HOST}/update/${bot._id}`
   await tgBot.telegram.setWebhook(url)
 }
 
@@ -63,7 +64,7 @@ const botStateSchema = {
   "id": "/BotState",
   "type": "object",
   "properties": {
-    "id": { "type": "number" },
+    "id": { "type": "string" },
     "type": { "type": "string" },
     "position": { "type": "object" },
     "data": {
@@ -97,8 +98,7 @@ const botSchema = {
     "src": {
       "type": "array",
       "items": { "$ref": "/BotState" }
-    },
-    "created": { "type": "string" },
+    }
   },
   "required": ["_id", "token", "status", "initState", "src"]
 }

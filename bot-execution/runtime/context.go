@@ -10,12 +10,13 @@ import (
 )
 
 type updateContext struct {
-	api    *tgbotapi.BotAPI
-	bot    *storage.DbBot
-	user   *storage.BotUser
-	upd    *tgbotapi.Update
-	botDB  *storage.BotRepository
-	userDB *storage.UserBotRepository
+	api      *tgbotapi.BotAPI
+	bot      *storage.DbBot
+	user     *storage.BotUser
+	upd      *tgbotapi.Update
+	botDB    *storage.BotRepository
+	userDB   *storage.UserBotRepository
+	rabbitmq *storage.RabbitmqChannel
 }
 
 //newUpdateContext gathers all needed info for Update processing into updateContext object
@@ -24,6 +25,7 @@ func newUpdateContext(
 	upd *tgbotapi.Update,
 	botRepo *storage.BotRepository,
 	userRepo *storage.UserBotRepository,
+	rabbitmq *storage.RabbitmqChannel,
 ) (*updateContext, error) {
 	// Fetch bot
 	bot, err := (*botRepo).Find(botID)
@@ -51,11 +53,12 @@ func newUpdateContext(
 
 	// Create and return context
 	return &updateContext{
-		api:    api,
-		bot:    bot,
-		user:   userBot,
-		upd:    upd,
-		botDB:  botRepo,
-		userDB: userRepo,
+		api:      api,
+		bot:      bot,
+		user:     userBot,
+		upd:      upd,
+		botDB:    botRepo,
+		userDB:   userRepo,
+		rabbitmq: rabbitmq,
 	}, nil
 }

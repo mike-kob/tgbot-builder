@@ -53,7 +53,7 @@ func (r userRedisRepo) Insert(bUser *BotUser) error {
 	if err != nil {
 		return err
 	}
-	reply := r.Rdb.HSet(r.Ctx, bUser.BotID.String(), "user_"+bUser.UserID, res)
+	reply := r.Rdb.HSet(r.Ctx, bUser.BotID.Hex(), "user_"+bUser.UserID, res)
 	return reply.Err()
 }
 

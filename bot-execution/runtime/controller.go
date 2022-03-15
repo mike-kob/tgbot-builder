@@ -14,15 +14,18 @@ type iController interface {
 type controller struct {
 	UserBotRepo storage.UserBotRepository
 	BotRepo     storage.BotRepository
+	Rabbitmq    storage.RabbitmqChannel
 }
 
 func newApiController() iController {
 	userRepo := storage.NewUserRedisRepository()
 	botRepo := storage.NewBotRedisRepository()
+	channel := storage.NewRabbitmqChannel()
 
 	return controller{
 		UserBotRepo: userRepo,
 		BotRepo:     botRepo,
+		Rabbitmq:    channel,
 	}
 }
 
@@ -35,9 +38,13 @@ func (c controller) updateHandler(writer http.ResponseWriter, request *http.Requ
 		return
 	}
 
-	err = runUpdate(botID, update, &c.UserBotRepo, &c.BotRepo)
+	err = c.Rabbitmq.PublishUpdate(botID, update)
 	if err != nil {
 		sentry.CaptureException(err)
-		return
+	}
+
+	err = runUpdate(botID, update, &c.UserBotRepo, &c.BotRepo, &c.Rabbitmq)
+	if err != nil {
+		sentry.CaptureException(err)
 	}
 }

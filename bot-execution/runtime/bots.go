@@ -13,28 +13,28 @@ func runUpdate(
 	upd *tg.Update,
 	userRepo *storage.UserBotRepository,
 	botRepo *storage.BotRepository,
+	rabbitmq *storage.RabbitmqChannel,
 ) error {
-	updCtx, err := newUpdateContext(botID, upd, botRepo, userRepo)
+	updCtx, err := newUpdateContext(botID, upd, botRepo, userRepo, rabbitmq)
 	if err != nil {
 		return err
 	}
-
-	switch true {
-	case isCommandUpdate(upd):
-		return runCommand(updCtx)
-	case isMessageUpdate(upd):
-		return runMessage(updCtx)
-	default:
-		return errors.New("update type not recognized")
-	}
-}
-
-func runCommand(updCtx *updateContext) error {
 	state, ok := updCtx.bot.States[updCtx.user.State]
 	if !ok {
 		return errors.New("failed to find state")
 	}
 
+	switch true {
+	case isCommandUpdate(upd):
+		return runCommand(updCtx, &state)
+	case isMessageUpdate(upd):
+		return runMessage(updCtx, &state)
+	default:
+		return errors.New("update type not recognized")
+	}
+}
+
+func runCommand(updCtx *updateContext, state *storage.State) error {
 	cmdStr := updCtx.upd.Message.Text
 
 	for cmd, triggers := range state.CmdTriggers {
@@ -51,12 +51,7 @@ func runCommand(updCtx *updateContext) error {
 	return nil
 }
 
-func runMessage(updCtx *updateContext) error {
-	state := getState(updCtx)
-	if state == nil {
-		return errors.New("failed to find state")
-	}
-
+func runMessage(updCtx *updateContext, state *storage.State) error {
 	msg := updCtx.upd.Message.Text
 
 	for pattern, triggers := range state.MsgTriggers {
@@ -68,6 +63,7 @@ func runMessage(updCtx *updateContext) error {
 					return err
 				}
 			}
+			break
 		}
 	}
 
@@ -80,6 +76,8 @@ func runAction(action *storage.Action, updCtx *updateContext) error {
 		return sendMessage(action, updCtx)
 	case "change_state":
 		return changeState(action, updCtx)
+	case "make_request":
+		return makeRequest(action, updCtx)
 	default:
 		return errors.New("action not recognized")
 	}

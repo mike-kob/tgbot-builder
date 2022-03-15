@@ -75,12 +75,3 @@ func findOrCreateUser(
 
 	return userBot, nil
 }
-
-func getState(updCtx *updateContext) *storage.State {
-	for _, s := range updCtx.bot.States {
-		if s.Name == updCtx.user.State {
-			return &s
-		}
-	}
-	return nil
-}

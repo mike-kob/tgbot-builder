@@ -7,7 +7,7 @@ import (
 )
 
 type DbBot struct {
-	ID     primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	ID     primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	Token  string             `bson:"token,omitempty" json:"token"`
 	States map[string]State   `bson:"states,omitempty" json:"states"`
 }

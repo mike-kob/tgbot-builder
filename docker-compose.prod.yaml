@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:6.2-alpine
+    command: redis-server --appendonly yes --save 300 1
+    volumes:
+      - redis-data:/data
+    ports:
+      - 6379:6379
+
+  rabbitmq:
+    hostname: 'rabbitmq'
+    image: rabbitmq:3.9.13-management
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - rabbitmq-data:/var/lib/rabbitmq/mnesia/
+
+  bot-execution:
+    build:
+      context: ./bot-execution
+    environment:
+      - RUN_ENV=PROD
+      - PORT=80
+      - RABBITMQ_HOST=rabbitmq
+      - REDIS_HOST=redis
+      - SENTRY_DSN=${SENTRY_DSN_EXEC}
+    expose:
+      - 80
+
+  bot-management:
+    build:
+      context: ./bot-management
+    command: ["npm", "start"]
+    environment:
+      - PORT=80
+      - REDIS_HOST=redis
+      - WEBHOOK_HOST=https://${HOST_IP}
+      - SECRET=${BOT_MANAGE_AUTH_SECRET}
+      - SENTRY_DSN=${SENTRY_DSN_MANAGE}
+    expose:
+      - 80
+  
+  caddy:
+    image: caddy:2.4.6-alpine
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy-data:/data
+    environment:
+      - HOST_IP=${HOST_IP}
+    ports:
+      - ${EXEC_PUBLIC_PORT}:3000
+      - ${MANAGE_PUBLIC_PORT}:3001
+
+volumes:
+  redis-data:
+  rabbitmq-data:
+  caddy-data:

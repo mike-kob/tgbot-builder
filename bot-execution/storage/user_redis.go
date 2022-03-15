@@ -1,6 +1,8 @@
 package storage
 
 import (
+	"os"
+	"fmt"
 	"context"
 	"encoding/json"
 	"github.com/go-redis/redis/v8"
@@ -15,7 +17,7 @@ type userRedisRepo struct {
 func NewUserRedisRepository() UserBotRepository {
 	ctx := context.Background()
 	rdb := redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
+		Addr: fmt.Sprintf("%s:6379", os.Getenv("REDIS_HOST")),
 	})
 
 	return userRedisRepo{

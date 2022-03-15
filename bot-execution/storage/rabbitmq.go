@@ -1,6 +1,8 @@
 package storage
 
 import (
+	"os"
+	"fmt"
 	"encoding/json"
 	tg "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/streadway/amqp"
@@ -14,7 +16,7 @@ type RabbitmqChannel struct {
 }
 
 func NewRabbitmqChannel() RabbitmqChannel {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial(fmt.Sprintf("amqp://guest:guest@%s:5672/", os.Getenv("RABBITMQ_HOST")))
 	if err != nil {
 		panic(err)
 	}

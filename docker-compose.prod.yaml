@@ -37,12 +37,23 @@ services:
     environment:
       - PORT=80
       - REDIS_HOST=redis
+      - NODE_ENV=production
       - WEBHOOK_HOST=https://${HOST_IP}
       - SECRET=${BOT_MANAGE_AUTH_SECRET}
       - SENTRY_DSN=${SENTRY_DSN_MANAGE}
     expose:
       - 80
   
+  history:
+    build:
+      context: ./history
+    command: ["npm", "start"]
+    environment:
+      - NODE_ENV=production
+      - RABBITMQ_HOST=rabbitmq
+      - SENTRY_DSN=${SENTRY_DSN_HISTORY}
+      - CONN_STR=${MONGO_CONN_STR}
+
   caddy:
     image: caddy:2.4.6-alpine
     volumes:

@@ -1,0 +1,77 @@
+import React, { useContext, useState } from 'react'
+import {
+  makeStyles,
+  Typography,
+  TextField, Button, Dialog, DialogTitle, DialogActions,
+} from '@material-ui/core'
+
+import { DiagramContext } from '../../../Context'
+import { INIT_NODE_ID } from '@/pages/Bot/constans'
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+  },
+  nameField: {
+    width: '100%',
+    padding: theme.spacing(1, 0),
+  },
+}))
+
+const NameSection = (props) => {
+  const classes = useStyles(props)
+  const { current } = props
+  const [, dispatch] = useContext(DiagramContext)
+  const [dialogOpen, setDialogOpen] = useState(false)
+
+  const handleChange = (e) => {
+    dispatch({ type: 'UPDATE_NODE', data: current.setIn(['data', 'label'], e.target.value) })
+  }
+
+  const handleRemove = () => {
+    dispatch({ type: 'DELETE_NODE', data: current.get('id') })
+    dispatch({ type: 'DELETE_NODE', data: current.get('id') })
+  }
+
+  return (
+    <div className={classes.root}>
+      <Typography variant="h6" align="center">User state</Typography>
+      <TextField
+        value={current.getIn(['data', 'label'])}
+        onChange={handleChange}
+        variant="outlined"
+        size="small"
+        className={classes.nameField}
+        inputProps={{ maxLength: 50 }}
+        disabled={current.get('id') === INIT_NODE_ID}
+      />
+      <Button
+        variant="outlined"
+        onClick={() => setDialogOpen(true)}
+        disabled={current.get('id') === INIT_NODE_ID}
+      >
+        Remove
+      </Button>
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Do you want to remove this state?</DialogTitle>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)} color="primary">
+            No
+          </Button>
+          <Button onClick={handleRemove} color="primary" autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  )
+}
+
+export default NameSection

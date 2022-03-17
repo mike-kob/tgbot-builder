@@ -12,6 +12,7 @@ import {
 
 import { addBot, updateBotInfo, deleteBot } from '@/actions'
 import { useRouter } from 'next/router'
+import initState from '@/pages/Bot/Context/initState'
 
 const useStyles = makeStyles((theme) => ({
   deleteBtn: {
@@ -45,7 +46,7 @@ const NewBotDialog = (props) => {
         props.onUpdate(newBot)
       })
     } else {
-      const data = { name, token, status: 'Paused', src: {} }
+      const data = initState.get('bot').toJS()
       await addBot(data, (newBot) => {
         router.push('/bot/' + newBot._id)
         props.onAdd(newBot)

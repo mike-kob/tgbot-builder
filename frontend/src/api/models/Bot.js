@@ -6,8 +6,9 @@ const botSchema = new Schema({
   owner: String, // uid of owner user
   name: String,
   token: String,
-  status: String,
-  src: Object,
+  status: Boolean,
+  initState: Object,
+  src: Array,
   created: { type: Date, default: Date.now },
 })
 

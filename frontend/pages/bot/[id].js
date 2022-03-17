@@ -1,1 +1,1 @@
-export { default } from 'src/pages/App'
+export { default } from 'src/pages/Bot'

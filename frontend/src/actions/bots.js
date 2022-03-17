@@ -25,6 +25,32 @@ export const getBot = async (id) => {
   }
 }
 
+export const getBotUsers = async (id) => {
+  const backendResponse = await fetch(`/api/bot/${id}/users/`, {
+    method: 'GET',
+    credentials: 'include',
+  })
+
+  if (backendResponse.status === 200) {
+    return await backendResponse.json()
+  } else {
+    return []
+  }
+}
+
+export const getBotUserChat = async (id, userId) => {
+  const backendResponse = await fetch(`/api/bot/${id}/user/${userId}`, {
+    method: 'GET',
+    credentials: 'include',
+  })
+
+  if (backendResponse.status === 200) {
+    return await backendResponse.json()
+  } else {
+    return []
+  }
+}
+
 export const addBot = async (bot, onSuccess, onError) => {
   const backendResponse = await fetch('/api/bot', {
     method: 'POST',

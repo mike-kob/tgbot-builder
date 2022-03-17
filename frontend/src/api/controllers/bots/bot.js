@@ -26,14 +26,16 @@ const createBotHadler = async (req, res) => {
   }
 }
 
+const botProps = ['name', 'token', 'status', 'initState', 'src']
+
 const updateBotHandler = async (req, res, next) => {
   try {
     const bot = await Bot.findOne({ _id: req.query.id, owner: req.user.uid })
-
-    if (req.body.name) { bot.name = req.body.name }
-    if (req.body.token) { bot.token = req.body.token }
-    if (req.body.status) { bot.status = req.body.status }
-    if (req.body.src) { bot.src = req.body.src }
+    botProps.forEach(prop => {
+      if (typeof req.body[prop] !== 'undefined') {
+        bot[prop] = req.body[prop]
+      }
+    })
 
     await bot.save()
     res.status(200).send(bot)

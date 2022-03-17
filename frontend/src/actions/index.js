@@ -15,4 +15,6 @@ export {
   deleteBot,
   updateBotInfo,
   deployBot,
+  getBotUsers,
+  getBotUserChat,
 } from './bots'

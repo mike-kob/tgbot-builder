@@ -1,3 +1,4 @@
+// import Sentry from '@sentry/node'
 import {
   validateBot,
   convertFromSrcToExec,
@@ -5,10 +6,16 @@ import {
   setWebhook,
   unsetWebhook,
 } from './bots.js'
+import { Bot } from './models.js'
 
 export default async (req, res, next) => {
-  const bot = req.body;
-  bot._id = bot._id['$oid']
+  const bot = await Bot.findById(req.params.botId).lean();
+  if (!bot) {
+    // Sentry.captureMessage("Not found")
+    res.status(200).send()
+    return
+  }
+  bot._id = String(bot._id)
   const validationRes = validateBot(bot)
   if (!validationRes.valid) {
     res.status(400).send(validationRes.errors)

@@ -2,6 +2,7 @@ import express from 'express'
 import Sentry from '@sentry/node'
 import dotenv from 'dotenv'
 import bodyParser from 'body-parser'
+import mongoose from 'mongoose'
 
 dotenv.config()
 
@@ -15,6 +16,12 @@ const port = process.env.PORT || 5000
 // Sentry.init({
 //   dsn: process.env.SENTRY_DSN,
 // })
+// Database
+
+mongoose.connect(process.env.CONN_STR, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'))
+
+console.log('Connected to Mongo')
 
 // Server
 app
@@ -25,7 +32,7 @@ app
     next()
   })
   .use(bodyParser.json())
-  .post('/', auth, handler)
+  .post('/bot/:botId', auth, handler)
   // .use(Sentry.Handlers.errorHandler())
 
 // Start server

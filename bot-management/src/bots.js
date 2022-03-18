@@ -1,6 +1,7 @@
 import Redis from 'ioredis'
 import { Telegraf } from 'telegraf'
 import { Validator } from 'jsonschema'
+import fs from 'fs'
 
 const redis = new Redis({ host: process.env.REDIS_HOST })
 
@@ -33,7 +34,9 @@ export const saveToRedis = async (botExec) =>
 export const setWebhook = async (bot) => {
   const tgBot = new Telegraf(bot.token)
   const url = `${process.env.WEBHOOK_HOST}/update/${bot._id}`
-  await tgBot.telegram.setWebhook(url)
+  await tgBot.telegram.setWebhook(url, {
+    certificate: { source: fs.readFileSync('server.cert') }
+  })
 }
 
 export const unsetWebhook = async (bot) => {

@@ -27,8 +27,8 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - REDIS_HOST=redis
       - SENTRY_DSN=${SENTRY_DSN_EXEC}
-    expose:
-      - 80
+    ports:
+      - ${EXEC_PUBLIC_PORT}:80
 
   bot-management:
     build:
@@ -42,8 +42,8 @@ services:
       - SECRET=${BOT_MANAGE_AUTH_SECRET}
       - SENTRY_DSN=${SENTRY_DSN_MANAGE}
       - CONN_STR=${MONGO_CONN_STR}
-    expose:
-      - 80
+    ports:
+      - ${MANAGE_PUBLIC_PORT}:80
   
   history:
     build:
@@ -55,18 +55,6 @@ services:
       - SENTRY_DSN=${SENTRY_DSN_HISTORY}
       - CONN_STR=${MONGO_CONN_STR}
 
-  caddy:
-    image: caddy:2.4.6-alpine
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy-data:/data
-    environment:
-      - HOST_IP=${HOST_IP}
-    ports:
-      - ${EXEC_PUBLIC_PORT}:3000
-      - ${MANAGE_PUBLIC_PORT}:3001
-
 volumes:
   redis-data:
   rabbitmq-data:
-  caddy-data:

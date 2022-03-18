@@ -51,7 +51,7 @@ func changeState(trigger *storage.Action, updCtx *updateContext) error {
 		}
 	}
 
-	return updCtx.rabbitmq.PublishChangeState(updCtx.bot.ID.Hex(), oldState, newState)
+	return updCtx.rabbitmq.PublishChangeState(updCtx.bot.ID.Hex(), oldState, newState, updCtx.upd.Message.Chat)
 }
 
 func makeRequest(trigger *storage.Action, updCtx *updateContext) error {
@@ -70,7 +70,7 @@ func makeRequest(trigger *storage.Action, updCtx *updateContext) error {
 	}
 
 	client := http.Client{}
-	res, _ := client.Do(req)
+	res, err := client.Do(req)
 
-	return updCtx.rabbitmq.PublishMakeRequest(updCtx.bot.ID.Hex(), req, res)
+	return updCtx.rabbitmq.PublishMakeRequest(updCtx.bot.ID.Hex(), updCtx.upd.Message.Chat, req, res, err)
 }

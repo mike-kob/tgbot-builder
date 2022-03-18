@@ -2,6 +2,7 @@ package runtime
 
 import (
 	"bot-execution/storage"
+	"github.com/getsentry/sentry-go"
 
 	"errors"
 	tg "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -18,6 +19,10 @@ func runUpdate(
 	updCtx, err := newUpdateContext(botID, upd, botRepo, userRepo, rabbitmq)
 	if err != nil {
 		return err
+	}
+	err = rabbitmq.PublishUpdate(updCtx.bot.ID.Hex(), upd)
+	if err != nil {
+		sentry.CaptureException(err)
 	}
 	state, ok := updCtx.bot.States[updCtx.user.State]
 	if !ok {

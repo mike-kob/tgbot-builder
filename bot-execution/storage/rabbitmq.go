@@ -1,12 +1,13 @@
 package storage
 
 import (
-	"os"
-	"fmt"
 	"encoding/json"
+	"fmt"
 	tg "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/streadway/amqp"
 	"net/http"
+	"os"
+	"time"
 )
 
 const updatesExchange = "updates"
@@ -58,20 +59,34 @@ func (ch RabbitmqChannel) PublishSendMessage(botID string, msg *tg.Message) erro
 	return ch.publish("bot."+botID+".action.message", bytes)
 }
 
-func (ch RabbitmqChannel) PublishChangeState(botID, oldState, newState string) error {
-	bytes, err := json.Marshal(map[string]string{"oldState": oldState, "newState": newState})
+func (ch RabbitmqChannel) PublishChangeState(botID, oldState, newState string, chat *tg.Chat) error {
+	bytes, err := json.Marshal(map[string]interface{}{
+		"oldState": oldState,
+		"newState": newState,
+		"chat":     chat,
+		"date":     time.Now().Unix(),
+	})
 	if err != nil {
 		return err
 	}
 	return ch.publish("bot."+botID+".action.change_state", bytes)
 }
 
-func (ch RabbitmqChannel) PublishMakeRequest(botID string, req *http.Request, res *http.Response) error {
-	bytes, err := json.Marshal(map[string]string{
+func (ch RabbitmqChannel) PublishMakeRequest(botID string, chat *tg.Chat, req *http.Request, res *http.Response, err error) error {
+	info := map[string]interface{}{
+		"chat":   chat,
 		"url":    req.URL.String(),
 		"method": req.Method,
-		"status": res.Status,
-	})
+		"date":   time.Now().Unix(),
+	}
+	if res != nil {
+		info["status"] = res.Status
+	}
+	if err != nil {
+		info["status"] = "failed"
+		info["error"] = err.Error()
+	}
+	bytes, err := json.Marshal(info)
 	if err != nil {
 		return err
 	}

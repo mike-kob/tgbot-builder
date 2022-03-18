@@ -6,10 +6,10 @@
   reverse_proxy /update/* bot-execution
 }
 
-{$HOST_IP}:3001 {
+http://{$HOST_IP}:3001 {
   log {
     output file /data/bot-management.log
   }
 
-  reverse_proxy /update/* bot-management
+  reverse_proxy /bot/* bot-management
 }

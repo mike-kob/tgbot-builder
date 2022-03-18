@@ -38,11 +38,6 @@ func (c controller) updateHandler(writer http.ResponseWriter, request *http.Requ
 		return
 	}
 
-	err = c.Rabbitmq.PublishUpdate(botID, update)
-	if err != nil {
-		sentry.CaptureException(err)
-	}
-
 	err = runUpdate(botID, update, &c.UserBotRepo, &c.BotRepo, &c.Rabbitmq)
 	if err != nil {
 		sentry.CaptureException(err)

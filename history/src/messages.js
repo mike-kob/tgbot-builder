@@ -23,7 +23,7 @@ export const manageUpdate = async (botId, update) => {
     chatId: update.message.chat.id,
     isBot: false,
     type: "message",
-    ts: update.date,
+    ts: update.message.date,
     msg: update.message,
   })
   await msg.save()

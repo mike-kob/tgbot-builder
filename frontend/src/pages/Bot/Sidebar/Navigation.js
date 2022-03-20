@@ -11,7 +11,7 @@ import AccountTreeIcon from '@material-ui/icons/AccountTree'
 import PeopleIcon from '@material-ui/icons/People'
 
 import { DiagramContext } from '@/pages/Bot/Context'
-import { VIEW_NAME } from '@/pages/Bot/constans'
+import { VIEW_NAME } from '@/pages/Bot/constants'
 
 const Navigation = props => {
   const [state, dispatch] = useContext(DiagramContext)
@@ -19,7 +19,6 @@ const Navigation = props => {
 
   const setView = useCallback((view) => {
     dispatch({ type: 'SET_VIEW', data: view })
-    console.log('DONE')
   }, [dispatch])
 
   return (

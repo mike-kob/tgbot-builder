@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { TextField } from '@material-ui/core'
+import { TextField, Typography } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -19,12 +19,15 @@ const ChangeStateAction = (props) => {
     <div className={classes.root}>
       <TextField
         fullWidth
-        id="outlined-basic"
-        label="Msg"
-        variant="outlined" v
+        label="Text"
+        variant="outlined"
+        multiline
+        rows={5}
+        maxRows={15}
         value={action.getIn(['options', 'text'], '')}
         onChange={handleTextChange}
       />
+      <Typography variant="caption" color="textSecondary">Some helper text</Typography>
     </div>
   )
 }

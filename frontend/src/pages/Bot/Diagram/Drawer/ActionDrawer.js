@@ -3,16 +3,14 @@ import { makeStyles } from '@material-ui/core/styles'
 import {
   Typography,
   Box,
-  TextField,
   Drawer,
   Button,
 } from '@material-ui/core'
-import { Map } from 'immutable'
 import clsx from 'clsx'
 
 import Action from './actions/Action'
 import { DiagramContext, actionFactory } from '../../Context'
-import { INIT_NODE_ID } from '@/pages/Bot/constans'
+import { DRAWER, INIT_NODE_ID } from '@/pages/Bot/constants'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,57 +40,67 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const CustomDrawer = () => {
-  const classes = useStyles()
+const ActionDrawer = props => {
+  const classes = useStyles(props)
   const [state, dispatch] = useContext(DiagramContext)
   const selectedId = state.getIn(['selected', 'id'])
-  const current = selectedId === INIT_NODE_ID
-    ? state.getIn(['bot', 'initState'])
-    : state.getIn(['bot', 'src', selectedId])
-  const command = state.get('currentCommand')
-
-  const handleNameChange = useCallback((e) => {
-    dispatch({ type: 'UPDATE_CUR_COMMAND', data: command.set('name', e.target.value) })
-  }, [command])
+  const current = state.getIn(['bot', 'src', selectedId])
+  const actions = state.get('currentActions')
 
   const handleAddAction = useCallback(() => {
     dispatch({
-      type: 'UPDATE_CUR_COMMAND',
-      data: command.update('actions', (els) => els.push(actionFactory().set('id', String(els.size)))),
+      type: 'UPDATE_CUR_ACTIONS',
+      data: actions.push(actionFactory().set('id', String(actions.size))),
     })
-  }, [command])
+  }, [actions])
 
   const handleCloseDrawer = useCallback(() => {
     dispatch({ type: 'UPDATE_DRAWER', data: false })
   }, [])
 
   const handleSave = () => {
-    const commandId = command.get('id')
-    dispatch({
-      type: 'UPDATE_NODE',
-      data: current.updateIn(['data', 'commands'], (els) => els.has(commandId)
-        ? els.set(commandId, command)
-        : els.push(command.set('id', String(els.size)))),
-    })
+    switch (state.get('drawer')) {
+      case DRAWER.INITIAL:
+        dispatch({
+          type: 'UPDATE_NODE',
+          data: current.setIn(['data', 'initial'], actions),
+        })
+        break
+      case DRAWER.COMMAND:
+        dispatch({
+          type: 'UPDATE_NODE',
+          data: current.setIn(
+            ['data', 'commands', state.getIn(['currentCommand', 'id']), 'actions'], actions),
+        })
+        break
+      case DRAWER.MESSAGE:
+        dispatch({
+          type: 'UPDATE_NODE',
+          data: current.setIn(
+            ['data', 'messages', state.getIn(['currentMessage', 'id']), 'actions'], actions),
+        })
+        break
+    }
+
     dispatch({ type: 'UPDATE_DRAWER', data: false })
   }
 
   return (
-    <Drawer anchor={'right'} open={state.getIn(['drawer', 'open'])}>
+    <Drawer
+      anchor={'right'}
+      open={Boolean(state.get('drawer'))}
+      onClose={() => dispatch({ type: 'UPDATE_DRAWER', data: false })}
+    >
       <div className={classes.root}>
         <Typography variant="h6" align="center">
-          Add command
+          {state.get('drawer') === DRAWER.INITIAL && 'Initial actions'}
+          {state.get('drawer') === DRAWER.COMMAND && 'Command actions'}
+          {state.get('drawer') === DRAWER.MESSAGE && 'Message pattern actions'}
         </Typography>
-        <Box p={1}>
-          <TextField
-            value={'/' + command.get('name', '').replace('/', '')}
-            fullWidth
-            onChange={handleNameChange}
-          />
-        </Box>
-        {command.get('actions').map((a, i) => (
+        <Box m={1} />
+        {actions.map((a, i) => (
           <Box m={2} key={i}>
-            <Action command={command} action={a} index={i} />
+            <Action action={a} index={i} />
           </Box>
         ))}
         <Button
@@ -124,4 +132,4 @@ const CustomDrawer = () => {
   )
 }
 
-export default CustomDrawer
+export default ActionDrawer

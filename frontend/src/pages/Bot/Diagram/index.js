@@ -1,7 +1,7 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { makeStyles } from '@material-ui/core'
 
-import CommandDrawer from './Drawer/CommandDrawer'
+import ActionDrawer from './Drawer/ActionDrawer'
 import Chart from './Chart'
 import ToolPanel from './ToolPanel'
 import Popup from './Popup'
@@ -33,13 +33,10 @@ const Diagram = (props) => {
   return (
     <div className={classes.root}>
       <div className={classes.diagram}>
-        <Chart
-          initState={state.getIn(['bot', 'initState']).toJS()}
-          elements={state.getIn(['bot', 'src']).toJS()}
-        />
+        <Chart elements={Object.values(state.getIn(['bot', 'src']).toJS())} />
       </div>
       <ToolPanel/>
-      <CommandDrawer/>
+      <ActionDrawer/>
       <Popup/>
     </div>
   )

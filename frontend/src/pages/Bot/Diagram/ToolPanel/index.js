@@ -38,15 +38,14 @@ const ToolPanel = (props) => {
   const [state, dispatch] = useContext(DiagramContext)
 
   const handleAddNode = () => {
-    dispatch({ type: 'ADD_NODE', data: nodeFactory() })
+    const nodeNum = state.getIn(['bot', 'src']).size
+    dispatch({
+      type: 'ADD_NODE',
+      data: nodeFactory()
+        .setIn(['data', 'label'], `New state ${nodeNum}`)
+        .set('id', String((new Date()).getTime())),
+    })
   }
-
-  // const onSave = async () => {
-  //   await saveBot(router.query.id, state, () => router.push('/bots'))
-  // }
-  // const onDeploy = async () => {
-  //   await saveBot(router.query.id, state)
-  // }
 
   return (
     <div className={classes.root}>

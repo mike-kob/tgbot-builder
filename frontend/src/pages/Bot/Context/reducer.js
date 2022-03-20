@@ -1,4 +1,4 @@
-import { INIT_NODE_ID } from '@/pages/Bot/constans'
+import { INIT_NODE_ID } from '@/pages/Bot/constants'
 
 const reducer = (state, { type, data }) => {
   switch (type) {
@@ -7,18 +7,10 @@ const reducer = (state, { type, data }) => {
     case 'SET_BOT':
       return state.set('bot', data)
     case 'ADD_NODE':
-      return state.updateIn(['bot', 'src'], (els) => els.push(data.set('id', String(els.size))))
+      return state.setIn(['bot', 'src', data.get('id')], data)
     case 'UPDATE_NODE':
-      if (data.get('id') === INIT_NODE_ID) {
-        return state.setIn(['bot', 'initState'], data)
-      } else {
-        return state.setIn(['bot', 'src', data.get('id')], data)
-      }
+      return state.setIn(['bot', 'src', data.get('id')], data)
     case 'DELETE_NODE':
-      return state.deleteIn(['bot', 'src', data])
-    case 'ADD_LINK':
-      return state.updateIn(['bot', 'src'], (els) => els.push(data.set('id', String(els.size))))
-    case 'DELETE_LINK':
       return state.deleteIn(['bot', 'src', data])
     case 'SELECT_NODE':
       return state.set('selected', data)
@@ -26,8 +18,12 @@ const reducer = (state, { type, data }) => {
       return state.set('currentCommand', data)
     case 'UPDATE_CUR_COMMAND_ACTION':
       return state.setIn(['currentCommand', 'actions', data.get('id')], data)
+    case 'UPDATE_CUR_ACTIONS':
+      return state.set('currentActions', data)
+    case 'UPDATE_CUR_MESSAGE':
+      return state.set('currentMessage', data)
     case 'UPDATE_DRAWER':
-      return state.setIn(['drawer', 'open'], data)
+      return state.set('drawer', data)
     case 'UPDATE_POPUP':
       return state.update('popup', (el) => el.merge(data))
     case 'SET_SELECTED_USER':

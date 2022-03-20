@@ -8,7 +8,7 @@ import { Box } from '@material-ui/core'
 import Header from '@/components/Header'
 import { DiagramContext, DiagramProvider } from './Context'
 import Sidebar from './Sidebar'
-import { VIEW_NAME } from './constans'
+import { VIEW_NAME } from './constants'
 import { getBot } from '@/actions'
 
 const MainInfo = dynamic(() => import('./MainInfo'), { ssr: false })

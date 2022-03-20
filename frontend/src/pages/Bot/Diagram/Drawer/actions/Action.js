@@ -15,11 +15,14 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 import { DiagramContext } from '../../../Context'
 import SendMessageAction from './SendMessageAction'
 import ChangeStateAction from './ChangeStateAction'
+import MakeAPIRequestAction from './MakeAPIRequestAction'
+import { ACTION } from '@/pages/Bot/constants'
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
+    padding: theme.spacing(1),
   },
   actionButtons: {
     marginTop: 'auto',
@@ -38,38 +41,46 @@ const useStyles = makeStyles((theme) => ({
 const Action = (props) => {
   const classes = useStyles()
   const [state, dispatch] = useContext(DiagramContext)
-  const { command, action, index } = props
+  const { action, index } = props
+  const currentActions = state.get('currentActions')
 
   const handleChangeAction = (newAction) => {
-    dispatch({ type: 'UPDATE_CUR_COMMAND_ACTION', data: newAction })
+    dispatch({
+      type: 'UPDATE_CUR_ACTIONS',
+      data: currentActions.set(index, newAction),
+    })
   }
   const handleSelect = (e) => {
-    dispatch({ type: 'UPDATE_CUR_COMMAND_ACTION', data: action.set('type', e.target.value) })
+    dispatch({
+      type: 'UPDATE_CUR_ACTIONS',
+      data: currentActions.setIn([index, 'type'], e.target.value),
+    })
   }
   const handleRemove = () => {
     dispatch({
-      type: 'UPDATE_CUR_COMMAND',
-      data: command.deleteIn(['actions', index]),
+      type: 'UPDATE_CUR_ACTIONS',
+      data: currentActions.delete(index),
     })
   }
   const handleSwap = (i, j) => {
+    const el1 = currentActions.get(i)
+    const el2 = currentActions.get(j)
     dispatch({
-      type: 'UPDATE_CUR_COMMAND',
-      data: command.update('actions', (els) => {
-        const el1 = els.get(i)
-        const el2 = els.get(j)
-        return els.set(i, el2).set(j, el1)
-      }),
+      type: 'UPDATE_CUR_ACTIONS',
+      data: currentActions.set(i, el2).set(j, el1),
     })
   }
 
   let actionComponent
   switch (action.get('type')) {
-    case 'send_message':
+    case ACTION.SEND_MESSAGE:
       actionComponent = <SendMessageAction action={action} changeAction={handleChangeAction} />
       break
-    case 'change_state':
+    case ACTION.CHANGE_STATE:
       actionComponent = <ChangeStateAction action={action} changeAction={handleChangeAction} />
+      break
+    case ACTION.MAKE_REQUEST:
+      actionComponent = <MakeAPIRequestAction action={action} changeAction={handleChangeAction} />
       break
     default:
       actionComponent = <></>
@@ -79,18 +90,16 @@ const Action = (props) => {
   return (
     <Paper className={classes.root}>
       <FormControl variant="outlined" fullWidth className={classes.margin}>
-        <InputLabel htmlFor="outlined-age-native-simple">Action</InputLabel>
+        <InputLabel htmlFor="action-type-select">Action type</InputLabel>
         <Select
           value={action.get('type')}
+          id="action-type-select"
           onChange={handleSelect}
-          label="Action"
-          className={classes.select}
+          label="Action type"
         >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value={'send_message'}>Send message</MenuItem>
-          <MenuItem value={'change_state'}>Change state</MenuItem>
+          <MenuItem value={ACTION.SEND_MESSAGE}>Send message</MenuItem>
+          <MenuItem value={ACTION.CHANGE_STATE}>Change state</MenuItem>
+          <MenuItem value={ACTION.MAKE_REQUEST}>Make API request</MenuItem>
         </Select>
       </FormControl>
       {actionComponent}
@@ -103,7 +112,7 @@ const Action = (props) => {
         </IconButton>
         <IconButton
           onClick={() => handleSwap(index, index + 1)}
-          disabled={index === state.getIn(['currentCommand', 'actions']).size - 1}
+          disabled={index === state.get('currentActions').size - 1}
         >
           <ArrowDownwardIcon />
         </IconButton>

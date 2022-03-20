@@ -5,9 +5,8 @@ import {
   Box,
 } from '@material-ui/core'
 
-import { DiagramContext, commandFactory } from '../../../Context'
-import Command from './commands/Command'
-import { INIT_NODE_ID } from '@/pages/Bot/constants'
+import { DiagramContext, messageFactory } from '../../../Context'
+import MessageCard from './MessageCard'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,26 +25,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const CommandSection = (props) => {
+const MessageSection = (props) => {
   const classes = useStyles(props)
   const [, dispatch] = useContext(DiagramContext)
 
   const { current } = props
-  const commands = current.getIn(['data', 'commands'])
+  const messages = current.getIn(['data', 'messages'])
 
   const handleAdd = useCallback(() => {
     dispatch({
       type: 'UPDATE_NODE',
       data: current.updateIn(
-        ['data', 'commands'], els => els.push(commandFactory().set('id', String(commands.size)))),
+        ['data', 'messages'], els => els.push(messageFactory().set('id', String(messages.size)))),
     })
-  }, [commands])
+  }, [messages])
 
   return (
     <div className={classes.root}>
-      {commands.map((cmd, i) => (
+      {messages.map((msg, i) => (
         <Box m={1} key={i}>
-          <Command command={cmd} />
+          <MessageCard message={msg} />
         </Box>
       ))}
       <Button
@@ -53,11 +52,10 @@ const CommandSection = (props) => {
         color="primary"
         onClick={handleAdd}
         className={classes.outlinedButton}
-        disabled={current.get('id') === INIT_NODE_ID}
       >
-        + Add command</Button>
+        + Add pattern</Button>
     </div>
   )
 }
 
-export default CommandSection
+export default MessageSection

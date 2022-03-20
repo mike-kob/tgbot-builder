@@ -1,4 +1,5 @@
 import { fromJS } from 'immutable'
+import { ACTION } from '@/pages/Bot/constants'
 
 export const nodeFactory = () => fromJS({
   type: 'default',
@@ -9,6 +10,8 @@ export const nodeFactory = () => fromJS({
   data: {
     label: 'New state',
     commands: [],
+    initial: [],
+    messages: [],
   },
 })
 
@@ -17,8 +20,13 @@ export const commandFactory = () => fromJS({
   actions: [],
 })
 
+export const messageFactory = () => fromJS({
+  regexp: '.*',
+  actions: [],
+})
+
 export const actionFactory = () => fromJS({
-  type: null,
+  type: ACTION.SEND_MESSAGE,
   options: {},
 })
 

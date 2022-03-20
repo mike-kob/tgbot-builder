@@ -42,7 +42,6 @@ const MainInfo = props => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const router = useRouter()
   const bot = state.get('bot').toJS()
-  console.log('BOT', bot)
   const handleStatusChange = (e) =>
     updateBotInfo(router.query.id, { status: e.target.checked }, (newBot) =>
       dispatch({

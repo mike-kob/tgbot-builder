@@ -7,7 +7,7 @@ import {
 import Navigation from './Navigation'
 import DiagramOptions from './Options/Diagram'
 import { DiagramContext } from '@/pages/Bot/Context'
-import { VIEW_NAME } from '@/pages/Bot/constans'
+import { VIEW_NAME } from '@/pages/Bot/constants'
 
 const useStyles = makeStyles((theme) => ({
   root: {

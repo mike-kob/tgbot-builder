@@ -26,7 +26,7 @@ const createBotHadler = async (req, res) => {
   }
 }
 
-const botProps = ['name', 'token', 'status', 'initState', 'src']
+const botProps = ['name', 'token', 'status', 'src']
 
 const updateBotHandler = async (req, res, next) => {
   try {

@@ -19,5 +19,6 @@ export {
   nodeFactory,
   linkFactory,
   commandFactory,
+  messageFactory,
   actionFactory,
 } from './models'

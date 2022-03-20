@@ -53,7 +53,6 @@ const ChatMessage = props => {
   const classes = useStyles(props)
   const router = useRouter()
   const { message } = props
-  console.log(message)
 
   let text = ''
   switch (message.type) {

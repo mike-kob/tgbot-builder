@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core'
 
 import { DiagramContext } from '../../../Context'
-import { INIT_NODE_ID } from '@/pages/Bot/constans'
+import { ACTION, INIT_NODE_ID } from '@/pages/Bot/constants'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
 const NameSection = (props) => {
   const classes = useStyles(props)
   const { current } = props
-  const [, dispatch] = useContext(DiagramContext)
+  const [state, dispatch] = useContext(DiagramContext)
   const [dialogOpen, setDialogOpen] = useState(false)
 
   const handleChange = (e) => {
@@ -31,8 +31,16 @@ const NameSection = (props) => {
   }
 
   const handleRemove = () => {
-    dispatch({ type: 'DELETE_NODE', data: current.get('id') })
-    dispatch({ type: 'DELETE_NODE', data: current.get('id') })
+    const deleteId = current.get('id')
+    const actionUpdate = actions => actions
+      .filter(a => a.get('type') === ACTION.CHANGE_STATE && a.getIn(['options', 'state']) !== deleteId)
+    const newBot = state.get('bot')
+      .deleteIn(['src', deleteId])
+      .update('src', src => src.map(node => node
+        .updateIn(['data', 'initial'], actionUpdate)
+        .updateIn(['data', 'messages'], els => els.map(msg => msg.update('actions', actionUpdate)))
+        .updateIn(['data', 'commands'], els => els.map(cmd => cmd.update('actions', actionUpdate)))))
+    dispatch({ type: 'SET_BOT', data: newBot })
   }
 
   return (

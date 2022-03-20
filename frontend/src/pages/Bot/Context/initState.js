@@ -1,16 +1,15 @@
 import { fromJS } from 'immutable'
 
-import { INIT_NODE_ID, VIEW_NAME } from '../constans'
-import { commandFactory } from './models'
+import { INIT_NODE_ID, VIEW_NAME } from '../constants'
+import { commandFactory, messageFactory } from './models'
 
 export default fromJS({
   currentView: VIEW_NAME.MAIN,
-  drawer: {
-    open: false,
-    nodeId: undefined,
-  },
+  drawer: false,
   selected: {},
   currentCommand: commandFactory(),
+  currentMessage: messageFactory(),
+  currentActions: [],
   popup: {
     open: false,
   },
@@ -18,11 +17,18 @@ export default fromJS({
     name: '',
     token: '',
     status: false,
-    initState: {
-      id: INIT_NODE_ID,
-      data: { label: 'Initial state', commands: [{ id: '0', name: '/start', actions: [] }] },
+    src: {
+      [INIT_NODE_ID]: {
+        id: INIT_NODE_ID,
+        position: { x: 10, y: 10 },
+        data: {
+          label: 'Initial state',
+          commands: [{ id: '0', name: 'start', actions: [] }],
+          initial: [],
+          messages: [],
+        },
+      },
     },
-    src: [],
   },
   userSearch: '',
   users: [],

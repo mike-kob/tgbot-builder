@@ -46,7 +46,11 @@ const NewBotDialog = (props) => {
         props.onUpdate(newBot)
       })
     } else {
-      const data = initState.get('bot').toJS()
+      const data = {
+        ...initState.get('bot').toJS(),
+        token,
+        name,
+      }
       await addBot(data, (newBot) => {
         router.push('/bot/' + newBot._id)
         props.onAdd(newBot)
@@ -88,6 +92,7 @@ const NewBotDialog = (props) => {
             label="API token"
             fullWidth
             placeholder="Enter new to change"
+            type="password"
           />
         </DialogContent>
         <DialogActions>

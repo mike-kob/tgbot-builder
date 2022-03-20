@@ -5,10 +5,11 @@ import {
   saveToRedis,
   setWebhook,
   unsetWebhook,
+  deleteFromRedis,
 } from './bots.js'
 import { Bot } from './models.js'
 
-export default async (req, res, next) => {
+export const postHandler = async (req, res) => {
   const bot = await Bot.findById(req.params.botId).lean();
   if (!bot) {
     // Sentry.captureMessage("Not found")
@@ -30,6 +31,23 @@ export default async (req, res, next) => {
     } else {
       await unsetWebhook(bot)
     }
+    res.status(200).send()
+  } catch (err) {
+    console.log(err)
+    res.status(500).send()
+  }
+}
+
+export const deleteHandler = async (req, res) => {
+  const bot = await Bot.findById(req.params.botId).lean();
+  if (!bot) {
+    // Sentry.captureMessage("Not found")
+    res.status(200).send()
+    return
+  }
+  try {
+    await unsetWebhook(bot)
+    await deleteFromRedis(req.params.botId)
     res.status(200).send()
   } catch (err) {
     console.log(err)

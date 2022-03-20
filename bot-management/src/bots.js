@@ -6,17 +6,20 @@ import fs from 'fs'
 const redis = new Redis({ host: process.env.REDIS_HOST })
 
 export const convertFromSrcToExec = (bot) => {
-  const states = bot.src.concat([bot.initState]).map(node => {
+  const states = Object.values(bot.src).map(node => {
     const nodeInfo = node.data
     const state = {
       id: node.id,
       name: nodeInfo.label,
-      default_triggers: [],
+      default_triggers: nodeInfo.initial,
       cmd_triggers: {},
       msg_triggers: {},
     }
     for (const cmd of nodeInfo.commands) {
       state.cmd_triggers[cmd.name] = cmd.actions
+    }
+    for (const msg of nodeInfo.messages) {
+      state.cmd_triggers[msg.pattern] = msg.actions
     }
     return [state.id, state]
   })
@@ -28,8 +31,11 @@ export const convertFromSrcToExec = (bot) => {
   }
 }
 
-export const saveToRedis = async (botExec) => 
+export const saveToRedis = (botExec) => 
   redis.hset(botExec.id, '_info', JSON.stringify(botExec))
+
+export const deleteFromRedis = (botId) => 
+  redis.del(botId)
 
 export const setWebhook = async (bot) => {
   const tgBot = new Telegraf(bot.token)
@@ -44,23 +50,41 @@ export const unsetWebhook = async (bot) => {
   await tgBot.telegram.deleteWebhook()
 }
 
+const botActionSchema = {
+  "id": "/BotAction",
+  "type": "object",
+  "properties": {
+    "type": { "type": "string" },
+    "options": { "type": "object" },
+  },
+  "required": ["type", "options"]
+}
+
+
 const botCommandSchema = {
   "id": "/BotStateCommand",
   "type": "object",
   "properties": {
-    "name": { "type": "string" },
+    "name": { "type": "string", "pattern": "^\w$" },
     "actions": {
       "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "type": { "type": "string" },
-          "options": { "type": "object" },
-        }
-      }
+      "items": { "$ref": "/BotAction" }
     },
   },
   "required": ["name", "actions"]
+}
+
+const botMessageSchema = {
+  "id": "/BotStateMessage",
+  "type": "object",
+  "properties": {
+    "pattern": { "type": "string" },
+    "actions": {
+      "type": "array",
+      "items": { "$ref": "/BotAction" }
+    },
+  },
+  "required": ["pattern", "actions"]
 }
 
 const botStateSchema = {
@@ -78,8 +102,16 @@ const botStateSchema = {
           "type": "array",
           "items": { "$ref": "/BotStateCommand" },
         },
+        "messages": {
+          "type": "array",
+          "items": { "$ref": "/BotStateMessage" },
+        },
+        "initial": {
+          "type": "array",
+          "items": { "$ref": "/BotAction" },
+        }
       },
-      "required": ["label", "commands"]
+      "required": ["label", "commands", "messages", "initial"]
     }
   },
   "required": ["data"]
@@ -97,17 +129,18 @@ const botSchema = {
     "name": { "type": "string" },
     "token": { "type": "string" },
     "status": { "type": "boolean" },
-    "initState": { "$ref": "/BotState" },
     "src": {
       "type": "array",
       "items": { "$ref": "/BotState" }
     }
   },
-  "required": ["_id", "token", "status", "initState", "src"]
+  "required": ["_id", "token", "status", "src"]
 }
 
 const validator = new Validator()
+validator.addSchema(botActionSchema)
 validator.addSchema(botCommandSchema)
+validator.addSchema(botMessageSchema)
 validator.addSchema(botStateSchema)
 
 export const validateBot = (bot) => 

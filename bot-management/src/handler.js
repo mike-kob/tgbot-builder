@@ -13,12 +13,14 @@ export const postHandler = async (req, res) => {
   const bot = await Bot.findById(req.params.botId).lean();
   if (!bot) {
     // Sentry.captureMessage("Not found")
+    console.log("Bot not found")
     res.status(200).send()
     return
   }
   bot._id = String(bot._id)
   const validationRes = validateBot(bot)
   if (!validationRes.valid) {
+    console.log('Bot did not validate')
     res.status(400).send(validationRes.errors)
     return
   }

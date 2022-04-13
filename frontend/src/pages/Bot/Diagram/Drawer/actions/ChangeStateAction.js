@@ -8,6 +8,7 @@ import {
 } from '@material-ui/core'
 
 import { DiagramContext } from '../../../Context'
+import { INIT_NODE_ID } from '@/pages/Bot/constants'
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -36,11 +37,14 @@ const ChangeStateAction = (props) => {
           <MenuItem value="">
             <em>-</em>
           </MenuItem>
-          {state.getIn(['bot', 'src']).filter(el => el.get('id') !== selectedId).map(el => (
-            <MenuItem key={el.get('id')} value={el.get('id')}>
-              {el.getIn(['data', 'label'])}
-            </MenuItem>
-          ))}
+          {state.getIn(['bot', 'src'])
+            .filter(el => el.get('id') !== selectedId)
+            .filter(el => el.get('id') !== INIT_NODE_ID)
+            .map(el => (
+              <MenuItem key={el.get('id')} value={el.get('id')}>
+                {el.getIn(['data', 'label'])}
+              </MenuItem>
+            ))}
         </Select>
       </FormControl>
     </div>

@@ -22,6 +22,7 @@ const botUserSchema = new Schema({
   firstName: String,
   lastName: String,
   username: String,
+  db: Object,
   created: { type: Date, default: Date.now },
 })
 

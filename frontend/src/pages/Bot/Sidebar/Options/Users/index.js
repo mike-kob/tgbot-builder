@@ -1,14 +1,15 @@
 import React, { useContext } from 'react'
 import {
   makeStyles,
-  Divider,
   Typography,
   Box,
-  Link,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
 } from '@material-ui/core'
 
 import { DiagramContext } from '../../../Context'
-import { useRouter } from 'next/router'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,7 +31,6 @@ const useStyles = makeStyles((theme) => ({
 const UsersOptions = (props) => {
   const classes = useStyles(props)
   const [state] = useContext(DiagramContext)
-  const router = useRouter()
 
   const selected = state.get('selectedUser')
 
@@ -47,15 +47,44 @@ const UsersOptions = (props) => {
   return (
     <div className={classes.root}>
       <Typography>
-        {selected.firstName}
+        User info
       </Typography>
-      <Box m={1}>
-        <Divider />
-      </Box>
-      <Typography>
-        {selected.lastName}
-      </Typography>
-      <Link href={`/history/${router.query.id}/${selected.id}`} target="_blank">View chat</Link>
+      <Table size="small">
+        <TableBody>
+          <TableRow>
+            <TableCell>Id</TableCell>
+            <TableCell align="left">{selected.id}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>First name</TableCell>
+            <TableCell align="left">{selected.firstName}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Last name</TableCell>
+            <TableCell align="left">{selected.lastName}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Username</TableCell>
+            <TableCell align="left">{selected.username}</TableCell>
+          </TableRow>
+        </TableBody>
+        <Box m={1}/>
+        <Typography variant="subtitle1">
+          User data
+        </Typography>
+        <TableBody>
+          {Object.entries(selected.db).map((row) => (
+            <TableRow
+              key={row[0]}
+            >
+              <TableCell component="th" scope="row" variant="head">
+                {row[0]}
+              </TableCell>
+              <TableCell align="left">{row[1]}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   )
 }

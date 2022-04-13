@@ -1,6 +1,6 @@
 import connectAuth from '@/api/middleware/auth'
 import connectDb from '@/api/middleware/mongodb'
-import { Bot } from '@/api/models'
+import { Bot, BotUser } from '@/api/models'
 
 const botDetailHandler = async (req, res) => {
   try {
@@ -48,6 +48,7 @@ const updateBotHandler = async (req, res, next) => {
 export const deleteBotHandler = async (req, res) => {
   try {
     await Bot.deleteOne({ _id: req.query.id, owner: req.user.uid })
+    await BotUser.deleteMany({ botId: req.query.id, botOwner: req.user.uid })
     res.status(204).send('Deleted')
   } catch (err) {
     console.log(err)

@@ -6,6 +6,7 @@ import {
 
 import Navigation from './Navigation'
 import DiagramOptions from './Options/Diagram'
+import UsersOptions from './Options/Users'
 import { DiagramContext } from '@/pages/Bot/Context'
 import { VIEW_NAME } from '@/pages/Bot/constants'
 
@@ -34,6 +35,7 @@ const Sidebar = (props) => {
     <Box width="30%" minHeight="70vh">
       <Navigation/>
       {currentView === VIEW_NAME.DIAGRAM && <DiagramOptions/>}
+      {currentView === VIEW_NAME.USERS && <UsersOptions/>}
     </Box>
   )
 }

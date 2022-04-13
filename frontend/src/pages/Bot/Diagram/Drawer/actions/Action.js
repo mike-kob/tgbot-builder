@@ -16,6 +16,7 @@ import { DiagramContext } from '../../../Context'
 import SendMessageAction from './SendMessageAction'
 import ChangeStateAction from './ChangeStateAction'
 import MakeAPIRequestAction from './MakeAPIRequestAction'
+import SaveUserDataAction from './SaveUserDataAction'
 import { ACTION } from '@/pages/Bot/constants'
 
 const useStyles = makeStyles((theme) => ({
@@ -82,6 +83,9 @@ const Action = (props) => {
     case ACTION.MAKE_REQUEST:
       actionComponent = <MakeAPIRequestAction action={action} changeAction={handleChangeAction} />
       break
+    case ACTION.SAVE_USER_DATA:
+      actionComponent = <SaveUserDataAction action={action} changeAction={handleChangeAction} />
+      break
     default:
       actionComponent = <></>
       break
@@ -100,6 +104,7 @@ const Action = (props) => {
           <MenuItem value={ACTION.SEND_MESSAGE}>Send message</MenuItem>
           <MenuItem value={ACTION.CHANGE_STATE}>Change state</MenuItem>
           <MenuItem value={ACTION.MAKE_REQUEST}>Make API request</MenuItem>
+          <MenuItem value={ACTION.SAVE_USER_DATA}>Save user data</MenuItem>
         </Select>
       </FormControl>
       {actionComponent}

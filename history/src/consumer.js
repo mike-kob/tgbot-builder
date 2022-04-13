@@ -5,6 +5,7 @@ import {
   manageBotMessage,
   manageChangeState,
   manageMakeRequest,
+  manageSaveUserData,
 } from './messages.js'
 
 const parseKey = (routingKey) => {
@@ -37,6 +38,9 @@ export default channel => async msg => {
         break
       case 'make_request':
         await manageMakeRequest(parsedKey.botId, parsedMsg)
+        break
+      case 'save_user_data':
+        await manageSaveUserData(parsedKey.botId, parsedMsg)
         break
     }
   }

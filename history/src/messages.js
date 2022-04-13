@@ -3,15 +3,18 @@ import { Message, BotUser, Bot } from "./models.js"
 const ensureBotUser = async (bot, chat) => {
   const user = await BotUser.findOne({ botId: bot._id, id: chat.id })
   if (!user) {
-    await BotUser.create({
+    return await BotUser.create({
       botId: bot._id,
       botOwner: bot.owner,
       id: chat.id,
       firstName: chat.first_name,
       lastName: chat.last_name,
       username: chat.username,
+      db: {},
     })
   }
+
+  return user
 }
 
 export const manageUpdate = async (botId, update) => {
@@ -64,8 +67,29 @@ export const manageChangeState = async (botId, info) => {
     botId: bot._id,
     botOwner: bot.owner,
     chatId: info.chat.id,
-    isBot: false,
+    isBot: true,
     type: "change_state",
+    ts: info.date,
+    msg: info,
+  })
+}
+
+export const manageSaveUserData = async (botId, info) => {
+  const bot = await Bot.findById(botId)
+  const user = await ensureBotUser(bot, info.chat)
+
+  if (!user.db) {
+    user.db = { [info.key]: info.value }
+  } else {
+    user.db[info.key] = info.value
+  }
+  await user.save()
+  await Message.create({
+    botId: bot._id,
+    botOwner: bot.owner,
+    chatId: info.chat.id,
+    isBot: true,
+    type: "save_user_data",
     ts: info.date,
     msg: info,
   })

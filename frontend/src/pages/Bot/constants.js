@@ -15,6 +15,7 @@ export const ACTION = {
   CHANGE_STATE: 'change_state',
   SEND_MESSAGE: 'send_message',
   MAKE_REQUEST: 'make_request',
+  SAVE_USER_DATA: 'save_user_data',
 }
 
 export const ACTION_LABEL = {

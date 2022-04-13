@@ -12,15 +12,9 @@ import (
 //sendMessage sends message to telegram user
 func sendMessage(trigger *storage.Action, updCtx *updateContext) error {
 	text := trigger.Options["text"].(string)
-	var input string
-	if updCtx.upd.Message != nil {
-		input = updCtx.upd.Message.Text
-	} else {
-		input = ""
-	}
+	text = RenderTemplate(text, updCtx.upd, updCtx.user)
 
-	newText := strings.Replace(text, "{input}", input, -1)
-	msgConfig := tg.NewMessage(updCtx.upd.Message.Chat.ID, newText)
+	msgConfig := tg.NewMessage(updCtx.upd.Message.Chat.ID, text)
 	msg, err := updCtx.api.Send(msgConfig)
 	if err != nil {
 		return err
@@ -54,11 +48,15 @@ func changeState(trigger *storage.Action, updCtx *updateContext) error {
 	return updCtx.rabbitmq.PublishChangeState(updCtx.bot.ID.Hex(), oldState, newState, updCtx.upd.Message.Chat)
 }
 
+//makeRequest makes request to API
 func makeRequest(trigger *storage.Action, updCtx *updateContext) error {
 	method := trigger.Options["method"].(string)
 	url := trigger.Options["url"].(string)
 	headers := trigger.Options["headers"].(map[string]interface{})
 	body := trigger.Options["body"].(string)
+
+	url = RenderTemplate(url, updCtx.upd, updCtx.user)
+	body = RenderTemplate(body, updCtx.upd, updCtx.user)
 
 	req, err := http.NewRequest(method, url, strings.NewReader(body))
 	if err != nil {
@@ -73,4 +71,20 @@ func makeRequest(trigger *storage.Action, updCtx *updateContext) error {
 	res, err := client.Do(req)
 
 	return updCtx.rabbitmq.PublishMakeRequest(updCtx.bot.ID.Hex(), updCtx.upd.Message.Chat, req, res, err)
+}
+
+//saveUserData saves data to user storage
+func saveUserData(trigger *storage.Action, updCtx *updateContext) error {
+	key := trigger.Options["key"].(string)
+	value := trigger.Options["value"].(string)
+
+	value = RenderTemplate(value, updCtx.upd, updCtx.user)
+
+	updCtx.user.Db[key] = value
+	err := (*updCtx.userDB).Insert(updCtx.user)
+	if err != nil {
+		return err
+	}
+
+	return updCtx.rabbitmq.PublishSaveUserData(updCtx.bot.ID.Hex(), updCtx.upd.Message.Chat, key, value)
 }

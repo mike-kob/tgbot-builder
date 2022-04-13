@@ -83,6 +83,8 @@ func runAction(action *storage.Action, updCtx *updateContext) error {
 		return changeState(action, updCtx)
 	case "make_request":
 		return makeRequest(action, updCtx)
+	case "save_user_data":
+		return saveUserData(action, updCtx)
 	default:
 		return errors.New("action not recognized")
 	}

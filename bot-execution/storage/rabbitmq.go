@@ -93,6 +93,20 @@ func (ch RabbitmqChannel) PublishMakeRequest(botID string, chat *tg.Chat, req *h
 	return ch.publish("bot."+botID+".action.make_request", bytes)
 }
 
+func (ch RabbitmqChannel) PublishSaveUserData(botID string, chat *tg.Chat, key, value string) error {
+	info := map[string]interface{}{
+		"key":   key,
+		"value": value,
+		"chat":  chat,
+		"date":  time.Now().Unix(),
+	}
+	bytes, err := json.Marshal(info)
+	if err != nil {
+		return err
+	}
+	return ch.publish("bot."+botID+".action.save_user_data", bytes)
+}
+
 func (ch RabbitmqChannel) publish(key string, msg []byte) error {
 	return ch.Channel.Publish(
 		updatesExchange,

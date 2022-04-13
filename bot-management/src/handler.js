@@ -18,12 +18,6 @@ export const postHandler = async (req, res) => {
     return
   }
   bot._id = String(bot._id)
-  const validationRes = validateBot(bot)
-  if (!validationRes.valid) {
-    console.log('Bot did not validate', validationRes.errors)
-    res.status(400).send(validationRes.errors)
-    return
-  }
 
   const botExec = convertFromSrcToExec(bot)
   try {

@@ -16,7 +16,8 @@ export const convertFromSrcToExec = (bot) => {
       msg_triggers: {},
     }
     for (const cmd of nodeInfo.commands) {
-      state.cmd_triggers[cmd.name] = cmd.actions
+      const cmdName = '/' + cmd.name
+      state.cmd_triggers[cmdName] = cmd.actions
     }
     for (const msg of nodeInfo.messages) {
       state.cmd_triggers[msg.pattern] = msg.actions

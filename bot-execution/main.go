@@ -4,6 +4,7 @@ import (
 	"bot-execution/runtime"
 	"context"
 	"fmt"
+	"github.com/go-chi/chi/middleware"
 	"log"
 	"net/http"
 	"os"
@@ -16,6 +17,9 @@ import (
 
 func NewRouter() http.Handler {
 	router := chi.NewRouter()
+
+	router.Use(middleware.RequestID)
+	router.Use(middleware.Logger)
 
 	router.Mount("/update", runtime.Router())
 

@@ -23,6 +23,7 @@ const parseKey = (routingKey) => {
 }
 
 export default channel => async msg => {
+  console.log(new Date(), 'RCV msg with key', msg.fields.routingKey)
   const parsedMsg = JSON.parse(msg?.content.toString())
   const parsedKey = parseKey(msg.fields.routingKey)
 

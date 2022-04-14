@@ -25,14 +25,14 @@ func sendMessage(trigger *storage.Action, updCtx *updateContext) error {
 
 //changeState changes user state in DB
 func changeState(trigger *storage.Action, updCtx *updateContext) error {
-	oldState := updCtx.user.State
-	newState := trigger.Options["state"].(string)
-	state, ok := updCtx.bot.States[newState]
+	oldStateId := updCtx.user.State
+	newStateId := trigger.Options["state"].(string)
+	state, ok := updCtx.bot.States[newStateId]
 	if !ok {
 		return errors.New("failed to find state")
 	}
 
-	user, err := (*updCtx.userDB).UpdateState(updCtx.user, state.Name)
+	user, err := (*updCtx.userDB).UpdateState(updCtx.user, newStateId)
 	if err != nil {
 		return err
 	}
@@ -45,7 +45,7 @@ func changeState(trigger *storage.Action, updCtx *updateContext) error {
 		}
 	}
 
-	return updCtx.rabbitmq.PublishChangeState(updCtx.bot.ID.Hex(), oldState, newState, updCtx.upd.Message.Chat)
+	return updCtx.rabbitmq.PublishChangeState(updCtx.bot.ID.Hex(), oldStateId, newStateId, updCtx.upd.Message.Chat)
 }
 
 //makeRequest makes request to API

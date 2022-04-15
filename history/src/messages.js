@@ -62,7 +62,9 @@ export const manageMakeRequest = async (botId, info) => {
 
 export const manageChangeState = async (botId, info) => {
   const bot = await Bot.findById(botId)
-  await ensureBotUser(bot, info.chat)
+  const user = await ensureBotUser(bot, info.chat)
+  user.state = info.newState
+  user.save()
   await Message.create({
     botId: bot._id,
     botOwner: bot.owner,

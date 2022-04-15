@@ -73,8 +73,7 @@ const BotsLayout = (props) => {
             Here you can create your bots
           </Typography>
           <Typography variant="subtitle1" className={classes.subtitle} color="textSecondary">
-            This is page where you can view your created bots.
-            You can see brief info of bot ; create bot; remove bot and so on;
+            This is page where you can view your bots and create new ones.
           </Typography>
           <Button
             onClick={() => {

@@ -6,6 +6,7 @@ import { commandFactory, messageFactory } from './models'
 export default fromJS({
   currentView: VIEW_NAME.MAIN,
   drawer: false,
+  historyDrawer: false,
   selected: {},
   currentCommand: commandFactory(),
   currentMessage: messageFactory(),
@@ -16,6 +17,7 @@ export default fromJS({
   bot: {
     name: '',
     token: '',
+    description: '',
     status: false,
     src: {
       [INIT_NODE_ID]: {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   Box,
   Button,
@@ -14,6 +14,7 @@ import Header from '@/components/Header'
 import { useRouter } from 'next/router'
 import { getBotUserChat } from '@/actions'
 import clsx from 'clsx'
+import { DiagramContext } from '@/pages/Bot/Context'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: theme.spacing(30),
     display: 'flex',
     flexDirection: 'column',
-    margin: theme.spacing(2, 1),
+    marginBottom: theme.spacing(1),
   },
   content: {
     padding: 0,
@@ -51,8 +52,11 @@ const useStyles = makeStyles((theme) => ({
 
 const ChatMessage = props => {
   const classes = useStyles(props)
-  const router = useRouter()
+  const [state] = useContext(DiagramContext)
   const { message } = props
+
+  const getStateLabel = stateId =>
+    state.getIn(['bot', 'src', stateId, 'data', 'label'])
 
   let text = ''
   switch (message.type) {
@@ -63,7 +67,10 @@ const ChatMessage = props => {
       text = `${message.msg.method} ${message.msg.url}: ${message.msg.status}`
       break
     case 'change_state':
-      text = `${message.msg.oldState} -> ${message.msg.newState}`
+      text = `"${getStateLabel(message.msg.oldState)}" ->\n"${getStateLabel(message.msg.newState)}"`
+      break
+    case 'save_user_data':
+      text = `KEY: ${message.msg.key} \n VALUE: ${message.msg.value}`
       break
   }
   return (
@@ -71,7 +78,7 @@ const ChatMessage = props => {
       <Typography className={classes.title} color="textSecondary" gutterBottom>
         @{message.isBot ? `bot: ${message.type}` : message.msg.chat.username}
       </Typography>
-      <Typography variant="body1">
+      <Typography variant="body1" style={{ whiteSpace: 'pre-line' }}>
         {text}
       </Typography>
       <Typography variant="body2" component="p" color="textSecondary" align="right" className={classes.date}>

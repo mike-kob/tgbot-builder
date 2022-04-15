@@ -5,6 +5,7 @@ import { Bot, BotUser } from '@/api/models'
 const botDetailHandler = async (req, res) => {
   try {
     const bot = await Bot.findById(req.query.id)
+    bot.token = ''
     res.status(200).send(bot.toObject({ minimize: false }))
   } catch (err) {
     console.log(err)
@@ -26,7 +27,7 @@ const createBotHadler = async (req, res) => {
   }
 }
 
-const botProps = ['name', 'token', 'status', 'src']
+const botProps = ['name', 'token', 'status', 'src', 'description']
 
 const updateBotHandler = async (req, res, next) => {
   try {

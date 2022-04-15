@@ -66,13 +66,13 @@ const MainInfo = props => {
       <Formik
         initialValues={bot}
         enableReinitialize
-        onSubmit={(values) =>
-          updateBotInfo(router.query.id, values, (newBot) =>
-            dispatch({
-              type: 'SET_BOT',
-              data: fromJS(newBot),
-            }))
-        }
+        onSubmit={(values) => {
+          setLoading(true)
+          updateBotInfo(router.query.id, values, (newBot) => {
+            dispatch({ type: 'SET_BOT', data: fromJS(newBot) })
+            setLoading(false)
+          })
+        }}
       >
         {({
           values,
@@ -100,6 +100,18 @@ const MainInfo = props => {
                 type="password"
                 size="small"
                 margin="normal"
+              />
+              <TextField
+                value={values.description}
+                onChange={handleChange}
+                name="description"
+                variant="outlined"
+                label="Description"
+                type="password"
+                size="small"
+                margin="normal"
+                multiline
+                rows={4}
               />
             </Box>
             <Button

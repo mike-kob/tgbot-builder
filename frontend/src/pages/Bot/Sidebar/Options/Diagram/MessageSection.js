@@ -2,7 +2,7 @@ import React, { useCallback, useContext } from 'react'
 import {
   makeStyles,
   Button,
-  Box,
+  Box, Typography,
 } from '@material-ui/core'
 
 import { DiagramContext, messageFactory } from '../../../Context'
@@ -36,15 +36,20 @@ const MessageSection = (props) => {
     dispatch({
       type: 'UPDATE_NODE',
       data: current.updateIn(
-        ['data', 'messages'], els => els.push(messageFactory().set('id', String(messages.size)))),
+        ['data', 'messages'], els => els.push(messageFactory())),
     })
   }, [messages])
 
   return (
     <div className={classes.root}>
+      <Box my={0.5} textAlign="center">
+        <Typography variant="caption" color="textSecondary">
+          Patterns will be tried from top to bottom. First matching pattern will be applied.
+        </Typography>
+      </Box>
       {messages.map((msg, i) => (
         <Box m={1} key={i}>
-          <MessageCard message={msg} />
+          <MessageCard current={current} message={msg} index={i} />
         </Box>
       ))}
       <Button

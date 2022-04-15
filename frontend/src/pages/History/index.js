@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core'
 
 import Header from '@/components/Header'
-import Message from './Message'
+import Message from '../Bot/Users/Message'
 import { useRouter } from 'next/router'
 import { getBotUserChat } from '@/actions'
 

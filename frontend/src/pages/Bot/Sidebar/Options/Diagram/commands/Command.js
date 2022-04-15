@@ -24,6 +24,9 @@ const useStyles = makeStyles((theme) => ({
   commandName: {
     margin: theme.spacing(0.5),
   },
+  noMargin: {
+    margin: '0px',
+  },
 }))
 
 const Command = (props) => {
@@ -72,7 +75,7 @@ const Command = (props) => {
         size="small"
         InputProps={{
           style: { padding: 4 },
-          startAdornment: <InputAdornment position="start">/</InputAdornment>,
+          startAdornment: <InputAdornment classes={{ positionStart: classes.noMargin }} position="start">/</InputAdornment>,
         }}
         className={classes.commandName}
         disabled={initialSelected}

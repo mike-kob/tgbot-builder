@@ -1,13 +1,8 @@
 import React, { useContext, useEffect } from 'react'
 import {
   Box,
-  Link,
   makeStyles,
-  TextField,
   Typography,
-  FormGroup,
-  Switch,
-  FormControlLabel,
   Button,
 } from '@material-ui/core'
 import { DataGrid } from '@material-ui/data-grid'
@@ -17,6 +12,7 @@ import { useRouter } from 'next/router'
 import { getBotUsers } from '@/actions'
 import { fromJS } from 'immutable'
 import useLoader from '@/hooks/useLoader'
+import ChatHistoryDrawer from '@/pages/Bot/Users/ChatHistoryDrawer'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,24 +44,19 @@ const columns = [
     width: 150,
   },
   {
-    field: 'fullName',
-    headerName: 'Full name',
+    field: 'firstName',
+    headerName: 'First name',
+    width: 150,
+  },
+  {
+    field: 'lastName',
+    headerName: 'Last name',
     width: 150,
   },
   {
     field: 'state',
     headerName: 'State',
     width: 150,
-  },
-  {
-    field: 'chat',
-    headerName: 'Chat',
-    sortable: false,
-    width: 100,
-    filter: false,
-    renderCell: (params) => (
-      <Link href={`/history/${params.row.botId}/${params.row.id}`} target="_blank">View chat</Link>
-    ),
   },
 ]
 
@@ -76,7 +67,7 @@ const Users = props => {
   const [, setLoading] = useLoader()
 
   const handleSelect = (row) =>
-    dispatch({ type: 'SET_SELECTED_USER', data: row.row })
+    dispatch({ type: 'SET_SELECTED_USER', data: fromJS(row.row) })
 
   const handleRefresh = async () => {
     setLoading(true)
@@ -93,7 +84,6 @@ const Users = props => {
 
   const rows = state.get('users')
     .map(user => user.update('state', s => state.getIn(['bot', 'src', s, 'data', 'label'])))
-    .map(user => user.set('fullName', `${user.get('firstName')} ${user.get('lastName')}`))
     .toJS()
 
   return (
@@ -111,6 +101,7 @@ const Users = props => {
           pageSize={10}
         />
       </Box>
+      <ChatHistoryDrawer/>
     </Box>
   )
 }

@@ -24,6 +24,8 @@ const reducer = (state, { type, data }) => {
       return state.set('currentMessage', data)
     case 'UPDATE_DRAWER':
       return state.set('drawer', data)
+    case 'UPDATE_HISTORY_DRAWER':
+      return state.set('historyDrawer', data)
     case 'UPDATE_POPUP':
       return state.update('popup', (el) => el.merge(data))
     case 'SET_SELECTED_USER':

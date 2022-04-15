@@ -10,6 +10,7 @@ import { DiagramContext, DiagramProvider } from './Context'
 import Sidebar from './Sidebar'
 import { VIEW_NAME } from './constants'
 import { getBot } from '@/actions'
+import useLoader from '@/hooks/useLoader'
 
 const MainInfo = dynamic(() => import('./MainInfo'), { ssr: false })
 const Diagram = dynamic(() => import('./Diagram'), { ssr: false })
@@ -18,12 +19,15 @@ const Users = dynamic(() => import('./Users'), { ssr: false })
 const View = () => {
   const [state, dispatch] = useContext(DiagramContext)
   const router = useRouter()
+  const [, setLoading] = useLoader()
   const currentView = state.get('currentView')
 
   useEffect(async () => {
     if (router.query.id) {
+      setLoading(true)
       const bot = await getBot(router.query.id)
       dispatch({ type: 'SET_BOT', data: fromJS(bot) })
+      setLoading(false)
     }
   }, [router.query.id])
 

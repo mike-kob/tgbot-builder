@@ -2,6 +2,9 @@ import React, { useContext } from 'react'
 import { Chip, IconButton, InputAdornment, makeStyles, Paper, TextField } from '@material-ui/core'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
+
 
 import { DiagramContext } from '../../../Context'
 import { ACTION_ICON, ACTION_LABEL, DRAWER, INIT_NODE_ID } from '@/pages/Bot/constants'
@@ -24,25 +27,36 @@ const useStyles = makeStyles((theme) => ({
   regexp: {
     margin: theme.spacing(0.5),
   },
+  noMargin: {
+    margin: '0px',
+  },
 }))
 
 const MessageCard = (props) => {
   const classes = useStyles(props)
   const [state, dispatch] = useContext(DiagramContext)
 
-  const { message } = props
-  const selectedId = state.getIn(['selected', 'id'])
-  const current = state.getIn(['bot', 'src', selectedId])
+  const { current, message, index } = props
 
   const onEdit = () => {
     dispatch({ type: 'UPDATE_CUR_MESSAGE', data: message })
     dispatch({ type: 'UPDATE_CUR_ACTIONS', data: message.get('actions') })
     dispatch({ type: 'UPDATE_DRAWER', data: DRAWER.MESSAGE })
   }
+
+  const handleSwap = (i, j) => {
+    const el1 = current.getIn(['data', 'messages', i])
+    const el2 = current.getIn(['data', 'messages', j])
+
+    dispatch({
+      type: 'UPDATE_NODE',
+      data: current.setIn(['data', 'messages', i], el2).setIn(['data', 'messages', j], el1),
+    })
+  }
   const onDelete = () => {
     const onApprove = () => dispatch({
       type: 'UPDATE_NODE',
-      data: current.deleteIn(['data', 'messages', message.get('id')]),
+      data: current.deleteIn(['data', 'messages', index]),
     })
     const onReject = () => { }
     dispatch({
@@ -58,7 +72,7 @@ const MessageCard = (props) => {
   const onRegexpEdit = (e) => {
     dispatch({
       type: 'UPDATE_NODE',
-      data: current.setIn(['data', 'messages', message.get('id'), 'regexp'], e.target.value),
+      data: current.setIn(['data', 'messages', index, 'regexp'], e.target.value),
     })
   }
 
@@ -71,9 +85,9 @@ const MessageCard = (props) => {
         variant="outlined"
         size="small"
         InputProps={{
-          style: { padding: '8px 4px' },
-          startAdornment: <InputAdornment position="start">/</InputAdornment>,
-          endAdornment: <InputAdornment position="end">/</InputAdornment>,
+          style: { padding: '8px 4px', fontFamily: 'monospace' },
+          startAdornment: <InputAdornment classes={{ positionStart: classes.noMargin }} position="start">/</InputAdornment>,
+          endAdornment: <InputAdornment classes={{ positionEnd: classes.noMargin }} position="end">/</InputAdornment>,
         }}
         className={classes.regexp}
       />
@@ -89,6 +103,12 @@ const MessageCard = (props) => {
         ))}
       </div>
       <div className={classes.actions}>
+        <IconButton onClick={() => handleSwap(index, index - 1)} disabled={index === 0}>
+          <ArrowUpwardIcon fontSize="small" />
+        </IconButton>
+        <IconButton onClick={() => handleSwap(index, index + 1)} disabled={index === current.getIn(['data', 'messages']).size - 1}>
+          <ArrowDownwardIcon fontSize="small" />
+        </IconButton>
         <IconButton onClick={onEdit}>
           <EditIcon />
         </IconButton>

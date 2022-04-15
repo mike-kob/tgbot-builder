@@ -13,7 +13,7 @@ const handler = async (req, res) => {
   }
 
   try {
-    const bots = await Bot.find({ owner: req.user.uid }).select(['_id', 'name', 'status'])
+    const bots = await Bot.find({ owner: req.user.uid }).select(['_id', 'name', 'status', 'description'])
     res.status(200).send(bots)
   } catch (err) {
     console.log(err)

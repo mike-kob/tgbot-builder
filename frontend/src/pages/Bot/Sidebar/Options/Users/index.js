@@ -6,8 +6,9 @@ import {
   Table,
   TableBody,
   TableRow,
-  TableCell,
+  TableCell, Button,
 } from '@material-ui/core'
+import { Map } from 'immutable'
 
 import { DiagramContext } from '../../../Context'
 
@@ -26,15 +27,27 @@ const useStyles = makeStyles((theme) => ({
   noSelected: {
     display: 'flex',
   },
+  outlinedButton: {
+    border: '2px solid',
+    borderRadius: '7px',
+    maxWidth: theme.spacing(20),
+    margin: theme.spacing(1, 'auto'),
+    '&:hover': {
+      border: '2px solid',
+    },
+  },
 }))
 
 const UsersOptions = (props) => {
   const classes = useStyles(props)
-  const [state] = useContext(DiagramContext)
+  const [state, dispatch] = useContext(DiagramContext)
 
   const selected = state.get('selectedUser')
 
-  if (!selected.id) {
+  const handleOpenHistory = () =>
+    dispatch({ type: 'UPDATE_HISTORY_DRAWER', data: true })
+
+  if (!selected.get('id')) {
     return (
       <Box mt={1} mx="auto" display="flex">
         <Typography variant="subtitle1" color="textSecondary" style={{ margin: 'auto' }}>
@@ -53,23 +66,23 @@ const UsersOptions = (props) => {
         <TableBody>
           <TableRow>
             <TableCell>Id</TableCell>
-            <TableCell align="left">{selected.id}</TableCell>
+            <TableCell align="left">{selected.get('id')}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>First name</TableCell>
-            <TableCell align="left">{selected.firstName}</TableCell>
+            <TableCell align="left">{selected.get('firstName')}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>Last name</TableCell>
-            <TableCell align="left">{selected.lastName}</TableCell>
+            <TableCell align="left">{selected.get('lastName')}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>Username</TableCell>
-            <TableCell align="left">{selected.username}</TableCell>
+            <TableCell align="left">{selected.get('username')}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>Current state</TableCell>
-            <TableCell align="left">{selected.state}</TableCell>
+            <TableCell align="left">{selected.get('state')}</TableCell>
           </TableRow>
         </TableBody>
         <Box m={1}/>
@@ -77,7 +90,7 @@ const UsersOptions = (props) => {
           User data
         </Typography>
         <TableBody>
-          {Object.entries(selected.db || {}).map((row) => (
+          {Object.entries(selected.get('db', new Map()).toJS()).map((row) => (
             <TableRow
               key={row[0]}
             >
@@ -89,6 +102,12 @@ const UsersOptions = (props) => {
           ))}
         </TableBody>
       </Table>
+
+      <Box mx="auto" my={1}>
+        <Button variant="outlined" color="primary" className={classes.outlinedButton} onClick={handleOpenHistory}>
+          View chat
+        </Button>
+      </Box>
     </div>
   )
 }

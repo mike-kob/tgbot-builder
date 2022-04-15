@@ -4,10 +4,12 @@ import { makeStyles } from '@material-ui/core/styles'
 import {
   Typography,
   Paper,
-  IconButton,
+  IconButton, Box,
 } from '@material-ui/core'
 import { useRouter } from 'next/router'
-import EditIcon from '@material-ui/icons/Edit'
+
+import PlayArrowIcon from '@material-ui/icons/PlayArrow'
+import PauseIcon from '@material-ui/icons/Pause'
 
 const useStyles = makeStyles((theme) => ({
   depositContext: {
@@ -27,7 +29,14 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 'auto',
   },
   titleLink: {
+    color: theme.palette.primary.dark,
     cursor: 'pointer',
+  },
+  active: {
+    color: theme.palette.primary.main,
+  },
+  paused: {
+    color: 'gray',
   },
 }))
 
@@ -47,9 +56,13 @@ const BotCard = (props) => {
         className={classes.titleLink}
         onClick={() => router.push('/bot/' + bot._id) }
       >{bot.name}</Typography>
-      <IconButton className={classes.editButton} onClick={props.onEdit}>
-        <EditIcon/>
-      </IconButton>
+      <Typography variant="caption" color="textSecondary">
+        {bot.description}
+      </Typography>
+      <Box mt="auto" display="flex" alignItems="center" className={bot.status ? classes.active : classes.paused}>
+        {bot.status ? <PlayArrowIcon/> : <PauseIcon/>}
+        <span>{bot.status ? 'Active' : 'Paused'}</span>
+      </Box>
     </Paper>
   )
 }

@@ -52,7 +52,7 @@ export default channel => async msg => {
     console.log('ACKED')
   } catch (err) {
     channel.nack(msg)
-    console.err(err)
+    console.error(err)
     Sentry.captureException(err)
   }
 }

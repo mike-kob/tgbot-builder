@@ -5,7 +5,7 @@ const Schema = mongoose.Schema
 const botUserSchema = new Schema({
   botId: mongoose.SchemaTypes.ObjectId,
   botOwner: { type: String, index: 1 },
-  id: { type: Number, index: { unique: true } },
+  id: { type: Number },
   firstName: String,
   lastName: String,
   username: String,

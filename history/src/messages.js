@@ -83,6 +83,7 @@ export const manageSaveUserData = async (botId, info) => {
   } else {
     user.db[info.key] = info.value
   }
+  user.markModified('db');
   await user.save()
   await Message.create({
     botId: bot._id,

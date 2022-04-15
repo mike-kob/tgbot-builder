@@ -77,7 +77,7 @@ const UsersOptions = (props) => {
           User data
         </Typography>
         <TableBody>
-          {Object.entries(selected.db).map((row) => (
+          {Object.entries(selected.db || {}).map((row) => (
             <TableRow
               key={row[0]}
             >

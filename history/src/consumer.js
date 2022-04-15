@@ -28,7 +28,7 @@ export default channel => async msg => {
     console.log(new Date(), 'RCV msg with key', msg.fields.routingKey)
     const parsedMsg = JSON.parse(msg?.content.toString())
     const parsedKey = parseKey(msg.fields.routingKey)
-    console.log('TYPE', parsedKey.type)
+    console.log('TYPE', parsedKey.type, 'KEY', parsedKey, 'MSG', parsedMsg)
 
     if (parsedKey.type === 'update') {
       await manageUpdate(parsedKey.botId, parsedMsg)

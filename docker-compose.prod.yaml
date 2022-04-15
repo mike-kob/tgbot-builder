@@ -8,6 +8,11 @@ services:
       - redis-data:/data
     ports:
       - 6379:6379
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: redis
 
   rabbitmq:
     hostname: 'rabbitmq'
@@ -17,6 +22,11 @@ services:
         - 15672:15672
     volumes:
         - rabbitmq-data:/var/lib/rabbitmq/mnesia/
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: rabbitmq
 
   bot-execution:
     build:
@@ -29,6 +39,11 @@ services:
       - SENTRY_DSN=${SENTRY_DSN_EXEC}
     ports:
       - 8088:80
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: bot.execution
 
   bot-management:
     build:
@@ -46,6 +61,11 @@ services:
       - 5000:80
     volumes:
       - ${CERT_PATH}:/app/server.cert
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: bot.management
   
   history:
     build:
@@ -56,6 +76,11 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - SENTRY_DSN=${SENTRY_DSN_HISTORY}
       - CONN_STR=${MONGO_CONN_STR}
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: bot.history
 
 volumes:
   redis-data:

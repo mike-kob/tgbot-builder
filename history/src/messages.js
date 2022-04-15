@@ -77,7 +77,7 @@ export const manageChangeState = async (botId, info) => {
 export const manageSaveUserData = async (botId, info) => {
   const bot = await Bot.findById(botId)
   const user = await ensureBotUser(bot, info.chat)
-
+  console.log('INFO', info)
   if (!user.db) {
     user.db = { [info.key]: info.value }
   } else {

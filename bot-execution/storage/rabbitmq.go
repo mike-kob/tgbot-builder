@@ -5,6 +5,7 @@ import (
 	"fmt"
 	tg "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/streadway/amqp"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -56,7 +57,7 @@ func (ch RabbitmqChannel) PublishSendMessage(botID string, msg *tg.Message) erro
 	if err != nil {
 		return err
 	}
-	return ch.publish("bot."+botID+".action.message", bytes)
+	return ch.publish("bot."+botID+".action.send_message", bytes)
 }
 
 func (ch RabbitmqChannel) PublishChangeState(botID, oldState, newState string, chat *tg.Chat) error {
@@ -108,6 +109,7 @@ func (ch RabbitmqChannel) PublishSaveUserData(botID string, chat *tg.Chat, key, 
 }
 
 func (ch RabbitmqChannel) publish(key string, msg []byte) error {
+	log.Println("Publishing message with key", key)
 	return ch.Channel.Publish(
 		updatesExchange,
 		key,

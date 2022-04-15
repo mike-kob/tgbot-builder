@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import Sentry from '@sentry/node'
 
 import {
   manageUpdate,
@@ -23,28 +24,39 @@ const parseKey = (routingKey) => {
 }
 
 export default channel => async msg => {
-  console.log(new Date(), 'RCV msg with key', msg.fields.routingKey)
-  const parsedMsg = JSON.parse(msg?.content.toString())
-  const parsedKey = parseKey(msg.fields.routingKey)
+  try {
+    console.log(new Date(), 'RCV msg with key', msg.fields.routingKey)
+    const parsedMsg = JSON.parse(msg?.content.toString())
+    const parsedKey = parseKey(msg.fields.routingKey)
+    console.log('TYPE', parsedKey.type)
 
-  if (parsedKey.type === 'update') {
-    await manageUpdate(parsedKey.botId, parsedMsg)
-  } else {
-    switch (parsedKey.action) {
-      case 'send_message':
-        await manageBotMessage(parsedKey.botId, parsedMsg)
-        break
-      case 'change_state':
-        await manageChangeState(parsedKey.botId, parsedMsg)
-        break
-      case 'make_request':
-        await manageMakeRequest(parsedKey.botId, parsedMsg)
-        break
-      case 'save_user_data':
-        await manageSaveUserData(parsedKey.botId, parsedMsg)
-        break
+    if (parsedKey.type === 'update') {
+      await manageUpdate(parsedKey.botId, parsedMsg)
+    } else {
+      switch (parsedKey.action) {
+        case 'send_message':
+          await manageBotMessage(parsedKey.botId, parsedMsg)
+          break
+        case 'change_state':
+          await manageChangeState(parsedKey.botId, parsedMsg)
+          break
+        case 'make_request':
+          await manageMakeRequest(parsedKey.botId, parsedMsg)
+          break
+        case 'save_user_data':
+          await manageSaveUserData(parsedKey.botId, parsedMsg)
+          break
+      }
     }
+    channel.ack(msg)
+    console.log('ACKED')
+  } catch (err) {
+    channel.nack(msg)
+    console.err(err)
+    Sentry.captureException(err)
   }
-  channel.ack(msg)
-  console.log('ACKED')
+}
+
+const wrapper = () => {
+  
 }

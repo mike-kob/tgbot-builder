@@ -87,7 +87,7 @@ const Users = props => {
 
   useEffect(async () => {
     if (router.query.id) {
-      handleRefresh()
+      await handleRefresh()
     }
   }, [router.query.id])
 
@@ -100,7 +100,7 @@ const Users = props => {
     <Box display="flex" flexDirection="column" mx={3} my={2} width="70%">
       <Box display="flex">
         <Typography variant="h6" display="inline">Users</Typography>
-        <Button className={classes.marginLeft}>Refresh</Button>
+        <Button className={classes.marginLeft} onClick={handleRefresh}>Refresh</Button>
       </Box>
       <Box mt={2} display="flex" flexDirection="column" height={650}>
         <DataGrid

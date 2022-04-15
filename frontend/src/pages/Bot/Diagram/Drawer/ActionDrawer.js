@@ -77,7 +77,7 @@ const ActionDrawer = props => {
         dispatch({
           type: 'UPDATE_NODE',
           data: current.setIn(
-            ['data', 'messages', state.getIn(['currentMessage', 'id']), 'actions'], actions),
+            ['data', 'messages', state.getIn(['currentMessage', 'index']), 'actions'], actions),
         })
         break
     }

@@ -39,7 +39,7 @@ const MessageCard = (props) => {
   const { current, message, index } = props
 
   const onEdit = () => {
-    dispatch({ type: 'UPDATE_CUR_MESSAGE', data: message })
+    dispatch({ type: 'UPDATE_CUR_MESSAGE', data: message.set('index', index) })
     dispatch({ type: 'UPDATE_CUR_ACTIONS', data: message.get('actions') })
     dispatch({ type: 'UPDATE_DRAWER', data: DRAWER.MESSAGE })
   }

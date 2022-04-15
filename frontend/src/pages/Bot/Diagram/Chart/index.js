@@ -38,6 +38,9 @@ const Chart = ({ elements }) => {
       onNodeDragStop={handleMove}
       snapToGrid={true}
       snapGrid={[10, 10]}
+      zoomOnScroll={false}
+      zoomOnDoubleClick={false}
+      zoomOnPinch={false}
     >
       <Background color="#aaa" gap={10}/>
     </ReactFlow>

@@ -10,6 +10,7 @@ const botUserSchema = new Schema({
   lastName: String,
   username: String,
   db: Object,
+  state: String,
   created: { type: Date, default: Date.now },
 })
 

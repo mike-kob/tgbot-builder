@@ -5,15 +5,15 @@ import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import theme from '../src/theme'
 import getFirebase from '../src/utils/firebase'
-import { Store, UserContext } from '../src/utils/userContext'
+import { Store, AppContext } from '@/utils/appContext'
 import { getUser } from '../src/actions'
 import './App.css'
 
 function MyApp (props) {
-  const [, dispatch] = React.useContext(UserContext)
+  const [, dispatch] = React.useContext(AppContext)
   React.useEffect(async () => {
     const user = await getUser()
-    dispatch(user)
+    dispatch({ user })
   }, [])
   React.useEffect(() => {
     const firebase = getFirebase()

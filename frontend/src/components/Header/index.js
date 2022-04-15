@@ -11,11 +11,11 @@ import {
   ClickAwayListener,
   MenuList,
   MenuItem,
-  IconButton,
+  IconButton, CircularProgress, Box,
 } from '@material-ui/core'
 import { useRouter } from 'next/router'
 
-import { UserContext } from 'src/utils/userContext'
+import { AppContext } from '@/utils/appContext'
 import { logout } from '../../actions'
 
 const useStyles = makeStyles((theme) => ({
@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0, 1),
   },
   rightPanel: {
+    display: 'flex',
     marginLeft: 'auto',
   },
   menu: {
@@ -34,14 +35,18 @@ const useStyles = makeStyles((theme) => ({
   logoText: {
     color: 'white',
   },
+  loader: {
+    color: 'white',
+  },
 }))
 
 const Header = (props) => {
-  const [user] = useContext(UserContext)
+  const [state] = useContext(AppContext)
   const router = useRouter()
   const classes = useStyles(props)
   const [open, setOpen] = useState(false)
   const anchorRef = React.useRef(null)
+  const { user, loading } = state
 
   const handleClose = (e) => {
     if (anchorRef.current && anchorRef.current.contains(e.target)) {
@@ -57,6 +62,9 @@ const Header = (props) => {
           TGBot builder
         </Typography>
         <div className={classes.rightPanel}>
+          <Box p={1}>
+            {loading && <CircularProgress className={classes.loader}/>}
+          </Box>
           {user.uid &&
             <>
               <IconButton onClick={() => setOpen(s => !s)} disabled={props.menuDisabled}>

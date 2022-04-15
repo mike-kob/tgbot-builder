@@ -67,6 +67,10 @@ const UsersOptions = (props) => {
             <TableCell>Username</TableCell>
             <TableCell align="left">{selected.username}</TableCell>
           </TableRow>
+          <TableRow>
+            <TableCell>Current state</TableCell>
+            <TableCell align="left">{selected.state}</TableCell>
+          </TableRow>
         </TableBody>
         <Box m={1}/>
         <Typography variant="subtitle1">

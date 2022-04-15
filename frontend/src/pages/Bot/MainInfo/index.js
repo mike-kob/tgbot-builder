@@ -16,6 +16,8 @@ import { Formik } from 'formik'
 
 import { deleteBot, updateBotInfo } from '@/actions'
 import { fromJS } from 'immutable'
+import { AppContext } from '@/utils/appContext'
+import useLoader from '@/hooks/useLoader'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,15 +41,23 @@ const useStyles = makeStyles((theme) => ({
 const MainInfo = props => {
   const classes = useStyles()
   const [state, dispatch] = useContext(DiagramContext)
+  const [, setLoading] = useLoader()
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [enableSwitch, setEnableSwitch] = useState(true)
   const router = useRouter()
   const bot = state.get('bot').toJS()
-  const handleStatusChange = (e) =>
-    updateBotInfo(router.query.id, { status: e.target.checked }, (newBot) =>
+  const handleStatusChange = (e) => {
+    setEnableSwitch(false)
+    setLoading(true)
+    updateBotInfo(router.query.id, { status: e.target.checked }, (newBot) => {
       dispatch({
         type: 'SET_BOT',
         data: fromJS(newBot),
-      }))
+      })
+      setEnableSwitch(true)
+      setLoading(false)
+    })
+  }
   const handleDeleteBot = () =>
     deleteBot(router.query.id, () => router.push('/bots'))
 
@@ -108,7 +118,7 @@ const MainInfo = props => {
       <Box display="flex" flexDirection="column" width="50%">
         <FormGroup>
           <FormControlLabel
-            control={<Switch checked={bot.status} onChange={handleStatusChange}/>}
+            control={<Switch checked={bot.status} disabled={!enableSwitch} onChange={handleStatusChange}/>}
             label="Activate"
           />
         </FormGroup>

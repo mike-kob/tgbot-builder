@@ -15,12 +15,19 @@ const Chart = ({ elements }) => {
     dispatch({ type: 'UPDATE_NODE', data: fromJS(node) })
   }
 
-  const links = elements.flatMap(el => el.data.commands.flatMap(cmd =>
+  const links = elements.flatMap(el => (el.data.commands.concat(el.data.messages)).flatMap(cmd =>
     cmd.actions.filter(a => a.type === 'change_state').flatMap(action => {
       const srcState = el.id
       const targetState = action.options.state
       return { source: srcState, target: targetState }
-    }))).map((link, idx) => ({ id: elements.length + idx, ...link }))
+    })))
+    .concat(elements.flatMap(el => el.data.initial.filter(a => a.type === 'change_state').flatMap(action => {
+      const srcState = el.id
+      const targetState = action.options.state
+      return { source: srcState, target: targetState }
+    })))
+    .map((link, idx) => ({ id: elements.length + idx, ...link }))
+  console.log(links)
 
   return (
     <ReactFlow

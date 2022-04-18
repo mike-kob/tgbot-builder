@@ -1,47 +1,36 @@
 package storage
 
 import (
-	"os"
-	"fmt"
-	"context"
+	"bot-execution/services"
 	"encoding/json"
-	"github.com/go-redis/redis/v8"
 )
 
 type botRedisRepo struct {
-	Ctx context.Context
-	Rdb redis.Client
+	rdb services.IRedis
 }
 
 //NewBotRedisRepository creates new repository
 func NewBotRedisRepository() BotRepository {
-	ctx := context.Background()
-	rdb := redis.NewClient(&redis.Options{
-		Addr: fmt.Sprintf("%s:6379", os.Getenv("REDIS_HOST")),
-	})
+	rdb := services.NewRedis()
 
 	return botRedisRepo{
-		Ctx: ctx,
-		Rdb: *rdb,
+		rdb: *rdb,
 	}
 }
 
-func (r botRedisRepo) Find(id string) (*DbBot, error) {
-	var bot DbBot
-	var reply = r.Rdb.HGet(r.Ctx, id, "_info")
-	res, err := reply.Bytes()
+func (r botRedisRepo) Find(botID string) (*DbBot, error) {
+	res, err := r.rdb.HGet(botID, "_info")
 	if err != nil {
 		return nil, err
 	}
+
+	var bot DbBot
 	err = json.Unmarshal(res, &bot)
 	if err != nil {
 		return nil, err
 	}
-	return &bot, nil
-}
 
-func (r botRedisRepo) Update(bot *DbBot) error {
-	return r.Insert(bot)
+	return &bot, nil
 }
 
 func (r botRedisRepo) Insert(bot *DbBot) error {
@@ -49,11 +38,15 @@ func (r botRedisRepo) Insert(bot *DbBot) error {
 	if err != nil {
 		return err
 	}
-	reply := r.Rdb.HSet(r.Ctx, bot.ID.String(), "_info", res)
-	return reply.Err()
+
+	return r.rdb.HSet(bot.ID, "_info", res)
 }
 
-func (r botRedisRepo) Delete(id string) error {
-	reply := r.Rdb.Del(r.Ctx, id)
-	return reply.Err()
+func (r botRedisRepo) Delete(botID string) error {
+	return r.rdb.Del(botID)
+}
+
+func (r botRedisRepo) GetUserIDsByState(botID, state string) ([]string, error) {
+	setKey := "states_" + botID + ":" + state
+	return r.rdb.SMembers(setKey)
 }

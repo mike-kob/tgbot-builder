@@ -1,34 +1,28 @@
 package storage
 
-import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
-
-	tg "github.com/go-telegram-bot-api/telegram-bot-api"
-)
-
 type DbBot struct {
-	ID     primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
-	Token  string             `bson:"token,omitempty" json:"token"`
-	States map[string]State   `bson:"states,omitempty" json:"states"`
+	ID     string           `json:"id,omitempty"`
+	Token  string           `json:"token"`
+	Active bool             `json:"active"`
+	States map[string]State `json:"states"`
 }
 
 type State struct {
-	Name            string              `bson:"name,omitempty" json:"name"`
-	DefaultTriggers []Action            `bson:"default_triggers,omitempty" json:"default_triggers"`
-	CmdTriggers     map[string][]Action `bson:"cmd_triggers,omitempty" json:"cmd_triggers"`
-	MsgTriggers     map[string][]Action `bson:"msg_triggers,omitempty" json:"msg_triggers"`
+	Name             string              `json:"name"`
+	DefaultTriggers  []Action            `json:"default_triggers"`
+	CmdTriggers      map[string][]Action `json:"cmd_triggers"`
+	MsgTriggers      map[string][]Action `json:"msg_triggers"`
+	ScheduleTriggers map[string][]Action `json:"schedule_triggers"`
 }
 
 type Action struct {
-	Type    string                 `bson:"type,omitempty" json:"type"`
-	Options map[string]interface{} `bson:"options,omitempty" json:"options"`
+	Type    string                 `json:"type"`
+	Options map[string]interface{} `json:"options"`
 }
 
 type BotUser struct {
-	ID      primitive.ObjectID `bson:"_id,omitempty"`
-	BotID   primitive.ObjectID `bson:"bot_id,omitempty"`
-	UserID  string             `bson:"user_id,omitempty"`
-	State   string             `bson:"state,omitempty"`
-	Profile tg.User            `bson:"profile,omitempty"`
-	Db      map[string]string  `bson:"db,omitempty"`
+	UserID string            `json:"user_id"`
+	BotID  string            `json:"bot_id"`
+	State  string            `json:"state"`
+	Db     map[string]string `json:"db"`
 }

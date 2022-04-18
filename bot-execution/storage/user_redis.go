@@ -1,52 +1,64 @@
 package storage
 
 import (
-	"os"
-	"fmt"
-	"context"
+	"bot-execution/services"
 	"encoding/json"
-	"github.com/go-redis/redis/v8"
 )
 
 type userRedisRepo struct {
-	Ctx context.Context
-	Rdb redis.Client
+	rdb services.IRedis
 }
 
 //NewUserRedisRepository creates new repository
 func NewUserRedisRepository() UserBotRepository {
-	ctx := context.Background()
-	rdb := redis.NewClient(&redis.Options{
-		Addr: fmt.Sprintf("%s:6379", os.Getenv("REDIS_HOST")),
-	})
+	rdb := services.NewRedis()
 
 	return userRedisRepo{
-		Ctx: ctx,
-		Rdb: *rdb,
+		rdb: *rdb,
 	}
 }
 
-func (r userRedisRepo) Find(userID, botID string) (*BotUser, error) {
-	var bUser BotUser
-	var reply = r.Rdb.HGet(r.Ctx, botID, "user_"+userID)
-	res, err := reply.Bytes()
+func (r userRedisRepo) Find(botID, userID string) (*BotUser, error) {
+	res, err := r.rdb.HGet(botID, userID)
 	if err != nil {
-		if err.Error() == "redis: nil" {
-			return nil, nil
-		} else {
-			return nil, err
-		}
+		return nil, err
 	}
+
+	var bUser BotUser
 	err = json.Unmarshal(res, &bUser)
 	if err != nil {
 		return nil, err
 	}
-	return &bUser, nil
 
+	return &bUser, nil
 }
 
-func (r userRedisRepo) UpdateState(bUser *BotUser, state string) (*BotUser, error) {
-	bUser.State = state
+func (r userRedisRepo) FindMany(botID string, userIDs []string) ([]*BotUser, error) {
+	reply, err := r.rdb.HMGet(botID, userIDs...)
+	if err != nil {
+		return nil, err
+	}
+
+	res := make([]*BotUser, len(userIDs))
+	for i, v := range reply {
+		err = json.Unmarshal(v.([]byte), &res[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return res, nil
+}
+
+func (r userRedisRepo) UpdateState(bUser *BotUser, newState string) (*BotUser, error) {
+	srcKey := "states_" + bUser.BotID + ":" + bUser.State
+	dstKey := "states_" + bUser.BotID + ":" + newState
+	err := r.rdb.SMove(srcKey, dstKey, bUser.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	bUser.State = newState
 	return bUser, r.Insert(bUser)
 }
 
@@ -55,11 +67,16 @@ func (r userRedisRepo) Insert(bUser *BotUser) error {
 	if err != nil {
 		return err
 	}
-	reply := r.Rdb.HSet(r.Ctx, bUser.BotID.Hex(), "user_"+bUser.UserID, res)
-	return reply.Err()
+
+	setKey := "states_" + bUser.BotID + ":" + bUser.State
+	err = r.rdb.SAdd(setKey, bUser.UserID)
+	if err != nil {
+		return err
+	}
+
+	return r.rdb.HSet(bUser.BotID, bUser.UserID, res)
 }
 
-func (r userRedisRepo) Delete(userID, botID string) error {
-	reply := r.Rdb.HDel(r.Ctx, botID, "user_"+userID)
-	return reply.Err()
+func (r userRedisRepo) Delete(botID, userID string) error {
+	return r.rdb.HDel(botID, userID)
 }

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bot-execution/runtime"
+	"bot-execution/services"
 	"context"
 	"fmt"
 	"github.com/go-chi/chi/middleware"
@@ -20,8 +20,9 @@ func NewRouter() http.Handler {
 
 	router.Use(middleware.RequestID)
 	router.Use(middleware.Logger)
+	controller := newApiController()
 
-	router.Mount("/update", runtime.Router())
+	router.Post("/update/{id}", controller.updateHandler)
 
 	return router
 }
@@ -37,10 +38,7 @@ func main() {
 	}
 	defer sentry.Flush(2 * time.Second)
 
-	port := os.Getenv("PORT")
-	if len(port) == 0 {
-		port = "8088"
-	}
+	port := services.GetEnvFallback("PORT", "8088")
 	srv := &http.Server{
 		Addr:    ":" + port,
 		Handler: NewRouter(),

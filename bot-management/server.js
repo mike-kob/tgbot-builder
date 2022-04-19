@@ -7,6 +7,7 @@ import mongoose from 'mongoose'
 dotenv.config()
 
 import { postHandler, deleteHandler } from './src/handler.js'
+import { scheduleHandler } from './src/schedule.js'
 import auth from './src/auth.js'
 
 const app = express()
@@ -32,8 +33,9 @@ app
     next()
   })
   .use(bodyParser.json())
-  .post('/bot/:botId', auth, postHandler)
-  .delete('/bot/:botId', auth, deleteHandler)
+  .post('/bot/schedule', auth, scheduleHandler)
+  .post('/bot/doc/:botId', auth, postHandler)
+  .delete('/bot/doc/:botId', auth, deleteHandler)
   // .use(Sentry.Handlers.errorHandler())
 
 // Start server

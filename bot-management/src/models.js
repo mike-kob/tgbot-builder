@@ -9,6 +9,7 @@ const botSchema = new Schema({
   status: Boolean,
   initState: Object,
   src: Array,
+  scheduleEnd: Date,
   created: { type: Date, default: Date.now },
 })
 

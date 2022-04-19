@@ -42,8 +42,7 @@ const ToolPanel = (props) => {
     dispatch({
       type: 'ADD_NODE',
       data: nodeFactory()
-        .setIn(['data', 'label'], `New state ${nodeNum}`)
-        .set('id', String((new Date()).getTime())),
+        .setIn(['data', 'label'], `New state ${nodeNum}`),
     })
   }
 

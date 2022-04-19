@@ -1,7 +1,7 @@
 import { fromJS } from 'immutable'
 
 import { INIT_NODE_ID, VIEW_NAME } from '../constants'
-import { commandFactory, messageFactory } from './models'
+import { commandFactory, messageFactory, scheduleFactory } from './models'
 
 export default fromJS({
   currentView: VIEW_NAME.MAIN,
@@ -10,6 +10,7 @@ export default fromJS({
   selected: {},
   currentCommand: commandFactory(),
   currentMessage: messageFactory(),
+  currentScheduleEntry: scheduleFactory(),
   currentActions: [],
   popup: {
     open: false,
@@ -28,6 +29,7 @@ export default fromJS({
           commands: [{ id: '0', name: 'start', actions: [] }],
           initial: [],
           messages: [],
+          schedule: [],
         },
       },
     },

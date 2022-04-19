@@ -2,6 +2,7 @@ import { fromJS } from 'immutable'
 import { ACTION } from '@/pages/Bot/constants'
 
 export const nodeFactory = () => fromJS({
+  id: String((new Date()).getTime()),
   type: 'default',
   position: {
     x: 300,
@@ -22,6 +23,12 @@ export const commandFactory = () => fromJS({
 
 export const messageFactory = () => fromJS({
   regexp: '.*',
+  actions: [],
+})
+
+export const scheduleFactory = () => fromJS({
+  id: String((new Date()).getTime()),
+  cron: '0 12 * * *',
   actions: [],
 })
 

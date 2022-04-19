@@ -14,6 +14,7 @@ import NameSection from './NameSection'
 import { INIT_NODE_ID } from '@/pages/Bot/constants'
 import InitialSection from '@/pages/Bot/Sidebar/Options/Diagram/InitialSection'
 import MessageSection from '@/pages/Bot/Sidebar/Options/Diagram/MessageSection'
+import ScheduleSection from '@/pages/Bot/Sidebar/Options/Diagram/ScheduleSection'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -69,10 +70,12 @@ const Sidebar = (props) => {
         <Tab label="Initial" className={classes.tab} disabled={initialSelected}/>
         <Tab label="Commands" className={classes.tab}/>
         <Tab label="Messages" className={classes.tab} disabled={initialSelected}/>
+        <Tab label="Schedule" className={classes.tab} disabled={initialSelected}/>
       </Tabs>
       {tab === 0 && <InitialSection current={current} />}
       {tab === 1 && <CommandSection current={current} />}
       {tab === 2 && <MessageSection current={current} />}
+      {tab === 3 && <ScheduleSection current={current} />}
     </div>
   )
 }

@@ -80,6 +80,13 @@ const ActionDrawer = props => {
             ['data', 'messages', state.getIn(['currentMessage', 'index']), 'actions'], actions),
         })
         break
+      case DRAWER.SCHEDULE:
+        dispatch({
+          type: 'UPDATE_NODE',
+          data: current.setIn(
+            ['data', 'schedule', state.getIn(['currentScheduleEntry', 'index']), 'actions'], actions),
+        })
+        break
     }
 
     dispatch({ type: 'UPDATE_DRAWER', data: false })
@@ -96,6 +103,7 @@ const ActionDrawer = props => {
           {state.get('drawer') === DRAWER.INITIAL && 'Initial actions'}
           {state.get('drawer') === DRAWER.COMMAND && 'Command actions'}
           {state.get('drawer') === DRAWER.MESSAGE && 'Message pattern actions'}
+          {state.get('drawer') === DRAWER.SCHEDULE && 'Schedule actions'}
         </Typography>
         <Box m={1} />
         {actions.map((a, i) => (

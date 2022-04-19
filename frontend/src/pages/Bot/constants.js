@@ -36,4 +36,5 @@ export const DRAWER = {
   INITIAL: 'initial',
   COMMAND: 'command',
   MESSAGE: 'message',
+  SCHEDULE: 'schedule',
 }

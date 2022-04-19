@@ -1,5 +1,3 @@
-import { INIT_NODE_ID } from '@/pages/Bot/constants'
-
 const reducer = (state, { type, data }) => {
   switch (type) {
     case 'SET_VIEW':
@@ -22,6 +20,8 @@ const reducer = (state, { type, data }) => {
       return state.set('currentActions', data)
     case 'UPDATE_CUR_MESSAGE':
       return state.set('currentMessage', data)
+    case 'UPDATE_CUR_SCHEDULE_ENTRY':
+      return state.set('currentScheduleEntry', data)
     case 'UPDATE_DRAWER':
       return state.set('drawer', data)
     case 'UPDATE_HISTORY_DRAWER':

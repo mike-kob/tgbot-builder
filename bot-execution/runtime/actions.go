@@ -9,54 +9,54 @@ import (
 	tg "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
-//sendMessage sends message to telegram user
-func sendMessage(trigger *storage.Action, updCtx *updateContext) error {
+//sendMessage sends message to telegram User
+func sendMessage(trigger *storage.Action, ctx *ExecutionContext) error {
 	text := trigger.Options["text"].(string)
-	text = RenderTemplate(text, updCtx.upd, updCtx.user)
+	text = RenderTemplate(text, ctx.Upd, ctx.User)
 
-	msgConfig := tg.NewMessage(updCtx.upd.Message.Chat.ID, text)
-	msg, err := updCtx.api.Send(msgConfig)
+	msgConfig := tg.NewMessage(ctx.Upd.Message.Chat.ID, text)
+	msg, err := ctx.Api.Send(msgConfig)
 	if err != nil {
 		return err
 	}
 
-	return updCtx.rabbitmq.PublishSendMessage(updCtx.bot.ID.Hex(), &msg)
+	return ctx.Rabbitmq.PublishSendMessage(ctx.Bot.ID, &msg)
 }
 
-//changeState changes user state in DB
-func changeState(trigger *storage.Action, updCtx *updateContext) error {
-	oldStateId := updCtx.user.State
+//changeState changes User state in DB
+func changeState(trigger *storage.Action, ctx *ExecutionContext) error {
+	oldStateId := ctx.User.State
 	newStateId := trigger.Options["state"].(string)
-	state, ok := updCtx.bot.States[newStateId]
+	state, ok := ctx.Bot.States[newStateId]
 	if !ok {
 		return errors.New("failed to find state")
 	}
 
-	user, err := (*updCtx.userDB).UpdateState(updCtx.user, newStateId)
+	user, err := ctx.UserDB.UpdateState(ctx.User, newStateId)
 	if err != nil {
 		return err
 	}
-	updCtx.user = user
+	ctx.User = user
 
 	for _, trigger := range state.DefaultTriggers {
-		err := runAction(&trigger, updCtx)
+		err := runAction(&trigger, ctx)
 		if err != nil {
 			return err
 		}
 	}
 
-	return updCtx.rabbitmq.PublishChangeState(updCtx.bot.ID.Hex(), oldStateId, newStateId, updCtx.upd.Message.Chat)
+	return ctx.Rabbitmq.PublishChangeState(ctx.Bot.ID, oldStateId, newStateId, ctx.Upd.Message.Chat)
 }
 
 //makeRequest makes request to API
-func makeRequest(trigger *storage.Action, updCtx *updateContext) error {
+func makeRequest(trigger *storage.Action, ctx *ExecutionContext) error {
 	method := trigger.Options["method"].(string)
 	url := trigger.Options["url"].(string)
 	headers := trigger.Options["headers"].(map[string]interface{})
 	body := trigger.Options["body"].(string)
 
-	url = RenderTemplate(url, updCtx.upd, updCtx.user)
-	body = RenderTemplate(body, updCtx.upd, updCtx.user)
+	url = RenderTemplate(url, ctx.Upd, ctx.User)
+	body = RenderTemplate(body, ctx.Upd, ctx.User)
 
 	req, err := http.NewRequest(method, url, strings.NewReader(body))
 	if err != nil {
@@ -70,21 +70,21 @@ func makeRequest(trigger *storage.Action, updCtx *updateContext) error {
 	client := http.Client{}
 	res, err := client.Do(req)
 
-	return updCtx.rabbitmq.PublishMakeRequest(updCtx.bot.ID.Hex(), updCtx.upd.Message.Chat, req, res, err)
+	return ctx.Rabbitmq.PublishMakeRequest(ctx.Bot.ID, ctx.Upd.Message.Chat, req, res, err)
 }
 
-//saveUserData saves data to user storage
-func saveUserData(trigger *storage.Action, updCtx *updateContext) error {
+//saveUserData saves data to User storage
+func saveUserData(trigger *storage.Action, ctx *ExecutionContext) error {
 	key := trigger.Options["key"].(string)
 	value := trigger.Options["value"].(string)
 
-	value = RenderTemplate(value, updCtx.upd, updCtx.user)
+	value = RenderTemplate(value, ctx.Upd, ctx.User)
 
-	updCtx.user.Db[key] = value
-	err := (*updCtx.userDB).Insert(updCtx.user)
+	ctx.User.Db[key] = value
+	err := ctx.UserDB.Insert(ctx.User)
 	if err != nil {
 		return err
 	}
 
-	return updCtx.rabbitmq.PublishSaveUserData(updCtx.bot.ID.Hex(), updCtx.upd.Message.Chat, key, value)
+	return ctx.Rabbitmq.PublishSaveUserData(ctx.Bot.ID, ctx.Upd.Message.Chat, key, value)
 }

@@ -11,6 +11,10 @@ import (
 var templateVarPattern = regexp.MustCompile("\\{\\{ (\\w+)\\.(\\w+) \\}\\}")
 
 func createUpdateDict(upd *tg.Update) map[string]string {
+	if upd == nil {
+		return map[string]string{}
+	}
+
 	return map[string]string{
 		"message_message_id":         strconv.Itoa(upd.Message.MessageID),
 		"message_date":               time.Unix(int64(upd.Message.Date), 0).Format(time.RFC822),

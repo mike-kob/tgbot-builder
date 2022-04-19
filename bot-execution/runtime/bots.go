@@ -3,49 +3,55 @@ package runtime
 import (
 	"bot-execution/storage"
 	"github.com/getsentry/sentry-go"
+	log "github.com/sirupsen/logrus"
 
 	"errors"
-	tg "github.com/go-telegram-bot-api/telegram-bot-api"
 	"regexp"
 )
 
-func runUpdate(
-	botID string,
-	upd *tg.Update,
-	userRepo *storage.UserBotRepository,
-	botRepo *storage.BotRepository,
-	rabbitmq *storage.RabbitmqChannel,
-) error {
-	updCtx, err := newUpdateContext(botID, upd, botRepo, userRepo, rabbitmq)
+func ExecuteOnUpdate(ctx *ExecutionContext) error {
+	err := ctx.Rabbitmq.PublishUpdate(ctx.Bot.ID, ctx.Upd)
 	if err != nil {
-		return err
-	}
-	err = rabbitmq.PublishUpdate(updCtx.bot.ID.Hex(), upd)
-	if err != nil {
+		log.Errorf("Error publishing update: %s", err)
 		sentry.CaptureException(err)
 	}
-	state, ok := updCtx.bot.States[updCtx.user.State]
-	if !ok {
-		return errors.New("failed to find state")
+
+	if !ctx.Bot.Active {
+		return nil
 	}
 
 	switch true {
-	case isCommandUpdate(upd):
-		return runCommand(updCtx, &state)
-	case isMessageUpdate(upd):
-		return runMessage(updCtx, &state)
+	case isCommandUpdate(ctx.Upd):
+		return runCommand(ctx)
+	case isMessageUpdate(ctx.Upd):
+		return runMessage(ctx)
 	default:
 		return errors.New("update type not recognized")
 	}
 }
 
-func runCommand(updCtx *updateContext, state *storage.State) error {
-	cmdStr := updCtx.upd.Message.Text
+func ExecuteOnTask(ctx *ExecutionContext, scheduleID string) error {
+	if !ctx.Bot.Active {
+		return nil
+	}
 
-	for cmd, triggers := range state.CmdTriggers {
+	for _, trigger := range ctx.State.ScheduleTriggers[scheduleID] {
+		err := runAction(&trigger, ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func runCommand(ctx *ExecutionContext) error {
+	cmdStr := ctx.Upd.Message.Text
+
+	for cmd, triggers := range ctx.State.CmdTriggers {
 		if cmdStr == cmd {
 			for _, trigger := range triggers {
-				err := runAction(&trigger, updCtx)
+				err := runAction(&trigger, ctx)
 				if err != nil {
 					return err
 				}
@@ -56,14 +62,14 @@ func runCommand(updCtx *updateContext, state *storage.State) error {
 	return nil
 }
 
-func runMessage(updCtx *updateContext, state *storage.State) error {
-	msg := updCtx.upd.Message.Text
+func runMessage(ctx *ExecutionContext) error {
+	msg := ctx.Upd.Message.Text
 
-	for pattern, triggers := range state.MsgTriggers {
+	for pattern, triggers := range ctx.State.MsgTriggers {
 		match, _ := regexp.MatchString(pattern, msg)
 		if match {
 			for _, trigger := range triggers {
-				err := runAction(&trigger, updCtx)
+				err := runAction(&trigger, ctx)
 				if err != nil {
 					return err
 				}
@@ -75,16 +81,16 @@ func runMessage(updCtx *updateContext, state *storage.State) error {
 	return nil
 }
 
-func runAction(action *storage.Action, updCtx *updateContext) error {
+func runAction(action *storage.Action, ctx *ExecutionContext) error {
 	switch action.Type {
 	case "send_message":
-		return sendMessage(action, updCtx)
+		return sendMessage(action, ctx)
 	case "change_state":
-		return changeState(action, updCtx)
+		return changeState(action, ctx)
 	case "make_request":
-		return makeRequest(action, updCtx)
+		return makeRequest(action, ctx)
 	case "save_user_data":
-		return saveUserData(action, updCtx)
+		return saveUserData(action, ctx)
 	default:
 		return errors.New("action not recognized")
 	}

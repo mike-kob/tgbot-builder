@@ -3,6 +3,7 @@ version: '3.8'
 services:
   redis:
     image: redis:6.2-alpine
+    container_name: redis
     command: redis-server --appendonly yes --save 300 1
     volumes:
       - redis-data:/data
@@ -11,14 +12,15 @@ services:
 
   rabbitmq:
     hostname: 'rabbitmq'
+    container_name: rabbitmq
     image: rabbitmq:3.9.13-management
     ports:
         - 5672:5672
         - 15672:15672
     volumes:
         - rabbitmq-data:/var/lib/rabbitmq/mnesia/
-
-  bot-execution:
+  
+  bot-execution-base:
     build:
       context: ./bot-execution
     environment:
@@ -27,8 +29,18 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - REDIS_HOST=redis
       - SENTRY_DSN=${SENTRY_DSN_EXEC}
+
+  bot-execution-http:
+    extends:
+      service: bot-execution-base
+    command: ['update_http']
     ports:
       - 8088:80
+
+  bot-execution-consumer:
+    extends:
+      service: bot-execution-base
+    command: ['scheduling']
 
   bot-management:
     build:

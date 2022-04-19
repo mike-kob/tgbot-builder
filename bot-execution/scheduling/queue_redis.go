@@ -15,7 +15,7 @@ type redisTaskQueue struct {
 func NewRedisTaskQueue() *redisTaskQueue {
 	return &redisTaskQueue{
 		rdb:  services.NewRedis(),
-		qKey: "schedule_tasks",
+		qKey: "bot_schedule",
 	}
 }
 
@@ -25,8 +25,8 @@ func (q redisTaskQueue) Size() (int, error) {
 }
 
 func (q redisTaskQueue) Fetch(start, end time.Time) ([]*Task, error) {
-	min := strconv.FormatInt(start.Unix(), 10)
-	max := strconv.FormatInt(end.Unix(), 10)
+	min := strconv.FormatInt(start.UnixMilli(), 10)
+	max := strconv.FormatInt(end.UnixMilli(), 10)
 
 	res, err := q.rdb.ZPopRange(q.qKey, min, max)
 	if err != nil {

@@ -60,7 +60,7 @@ func (ch RabbitmqChannel) PublishSendMessage(botID string, msg *tg.Message) erro
 	return ch.publish("bot."+botID+".action.send_message", bytes)
 }
 
-func (ch RabbitmqChannel) PublishChangeState(botID, oldState, newState string, chat *tg.Chat) error {
+func (ch RabbitmqChannel) PublishChangeState(botID, oldState, newState string, chat *tg.User) error {
 	bytes, err := json.Marshal(map[string]interface{}{
 		"oldState": oldState,
 		"newState": newState,
@@ -73,7 +73,7 @@ func (ch RabbitmqChannel) PublishChangeState(botID, oldState, newState string, c
 	return ch.publish("bot."+botID+".action.change_state", bytes)
 }
 
-func (ch RabbitmqChannel) PublishMakeRequest(botID string, chat *tg.Chat, req *http.Request, res *http.Response, err error) error {
+func (ch RabbitmqChannel) PublishMakeRequest(botID string, chat *tg.User, req *http.Request, res *http.Response, err error) error {
 	info := map[string]interface{}{
 		"chat":   chat,
 		"url":    req.URL.String(),
@@ -94,7 +94,7 @@ func (ch RabbitmqChannel) PublishMakeRequest(botID string, chat *tg.Chat, req *h
 	return ch.publish("bot."+botID+".action.make_request", bytes)
 }
 
-func (ch RabbitmqChannel) PublishSaveUserData(botID string, chat *tg.Chat, key, value string) error {
+func (ch RabbitmqChannel) PublishSaveUserData(botID string, chat *tg.User, key, value string) error {
 	info := map[string]interface{}{
 		"key":   key,
 		"value": value,

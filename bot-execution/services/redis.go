@@ -46,7 +46,7 @@ func NewRedis() *Redis {
 
 func (r Redis) HGet(key, field string) ([]byte, error) {
 	res := r.Rdb.HGet(r.Ctx, key, field)
-	if res.Err().Error() == "redis: nil" {
+	if res.Err() != nil && res.Err().Error() == "redis: nil" {
 		return nil, nil
 	}
 	if res.Err() != nil {

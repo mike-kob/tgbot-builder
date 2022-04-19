@@ -1,5 +1,7 @@
 package storage
 
+import tg "github.com/go-telegram-bot-api/telegram-bot-api"
+
 type DbBot struct {
 	ID     string           `json:"id,omitempty"`
 	Token  string           `json:"token"`
@@ -21,8 +23,9 @@ type Action struct {
 }
 
 type BotUser struct {
-	UserID string            `json:"user_id"`
-	BotID  string            `json:"bot_id"`
-	State  string            `json:"state"`
-	Db     map[string]string `json:"db"`
+	UserID  string            `json:"user_id"`
+	BotID   string            `json:"bot_id"`
+	State   string            `json:"state"`
+	Profile tg.User           `json:"profile"`
+	Db      map[string]string `json:"db"`
 }

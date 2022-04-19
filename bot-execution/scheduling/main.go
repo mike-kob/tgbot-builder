@@ -3,6 +3,7 @@ package main
 import (
 	"bot-execution/services"
 	"github.com/go-co-op/gocron"
+	"io"
 	"os"
 	"time"
 
@@ -25,7 +26,8 @@ func main() {
 	fileName := services.GetEnvFallback("SCHEDULE_LOG_FILE", "schedule.log")
 	file, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err == nil {
-		log.SetOutput(file)
+		mw := io.MultiWriter(os.Stdout, file)
+		log.SetOutput(mw)
 	} else {
 		log.Fatalf("Failed to log to file")
 		return

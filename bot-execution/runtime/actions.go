@@ -13,8 +13,7 @@ import (
 func sendMessage(trigger *storage.Action, ctx *ExecutionContext) error {
 	text := trigger.Options["text"].(string)
 	text = RenderTemplate(text, ctx.Upd, ctx.User)
-
-	msgConfig := tg.NewMessage(ctx.Upd.Message.Chat.ID, text)
+	msgConfig := tg.NewMessage(int64(ctx.User.Profile.ID), text)
 	msg, err := ctx.Api.Send(msgConfig)
 	if err != nil {
 		return err
@@ -45,7 +44,7 @@ func changeState(trigger *storage.Action, ctx *ExecutionContext) error {
 		}
 	}
 
-	return ctx.Rabbitmq.PublishChangeState(ctx.Bot.ID, oldStateId, newStateId, ctx.Upd.Message.Chat)
+	return ctx.Rabbitmq.PublishChangeState(ctx.Bot.ID, oldStateId, newStateId, &ctx.User.Profile)
 }
 
 //makeRequest makes request to API
@@ -70,7 +69,7 @@ func makeRequest(trigger *storage.Action, ctx *ExecutionContext) error {
 	client := http.Client{}
 	res, err := client.Do(req)
 
-	return ctx.Rabbitmq.PublishMakeRequest(ctx.Bot.ID, ctx.Upd.Message.Chat, req, res, err)
+	return ctx.Rabbitmq.PublishMakeRequest(ctx.Bot.ID, &ctx.User.Profile, req, res, err)
 }
 
 //saveUserData saves data to User storage
@@ -86,5 +85,5 @@ func saveUserData(trigger *storage.Action, ctx *ExecutionContext) error {
 		return err
 	}
 
-	return ctx.Rabbitmq.PublishSaveUserData(ctx.Bot.ID, ctx.Upd.Message.Chat, key, value)
+	return ctx.Rabbitmq.PublishSaveUserData(ctx.Bot.ID, &ctx.User.Profile, key, value)
 }

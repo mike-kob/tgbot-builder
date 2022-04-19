@@ -23,6 +23,9 @@ func (r userRedisRepo) Find(botID, userID string) (*BotUser, error) {
 	if err != nil {
 		return nil, err
 	}
+	if res == nil {
+		return nil, nil
+	}
 
 	var bUser BotUser
 	err = json.Unmarshal(res, &bUser)
@@ -41,7 +44,7 @@ func (r userRedisRepo) FindMany(botID string, userIDs []string) ([]*BotUser, err
 
 	res := make([]*BotUser, len(userIDs))
 	for i, v := range reply {
-		err = json.Unmarshal(v.([]byte), &res[i])
+		err = json.Unmarshal([]byte(v.(string)), &res[i])
 		if err != nil {
 			return nil, err
 		}

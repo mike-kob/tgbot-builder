@@ -30,7 +30,7 @@ func newContextFromUpdate(
 		return nil, err
 	}
 	userID := strconv.Itoa(userProfile.ID)
-	botUser, err := findOrCreateUser(userID, botID, userRepo)
+	botUser, err := findOrCreateUser(userID, botID, userProfile, userRepo)
 	if err != nil {
 		return nil, err
 	}
@@ -75,19 +75,21 @@ func getUserInfo(upd *tgbotapi.Update) (*tgbotapi.User, error) {
 func findOrCreateUser(
 	userID string,
 	botID string,
+	profile *tgbotapi.User,
 	userRepo storage.UserBotRepository,
 ) (*storage.BotUser, error) {
-	userBot, err := userRepo.Find(userID, botID)
+	userBot, err := userRepo.Find(botID, userID)
 	if err != nil {
 		return nil, err
 	}
 
 	if userBot == nil {
 		userBot = &storage.BotUser{
-			BotID:  botID,
-			UserID: userID,
-			State:  "init",
-			Db:     map[string]string{},
+			BotID:   botID,
+			UserID:  userID,
+			State:   "init",
+			Profile: *profile,
+			Db:      map[string]string{},
 		}
 		err = userRepo.Insert(userBot)
 		if err != nil {

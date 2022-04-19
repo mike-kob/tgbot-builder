@@ -11,17 +11,23 @@ const createBotSchedule = (bot, start, end) => {
   const options = {
     currentDate: start,
     endDate: end,
-    utc: true
+    utc: true,
+    iterator: true,
   }
 
-  return bot.src.flatMap(state => Object.entries(state.schedules).flatMap(([id, schedule]) => {
+  return Object.values(bot.src).flatMap(state => state.data.schedule.flatMap((schedule) => {
     const interval = parser.parseExpression(schedule.cron, options)
-    return interval.iterate().map(d => ({
-      date: d.getTime(),
-      botId: bot._id,
-      stateId: state.id,
-      scheduleId: id,
-    }))
+    const res = []
+    while (interval.hasNext()) {
+      const obj = interval.next()
+      res.push({
+        date: obj.value.getTime(),
+        botId: bot._id,
+        stateId: state.id,
+        scheduleId: schedule.id,
+      })
+    }
+    return res
   }))
 }
 
@@ -38,17 +44,28 @@ const saveBotsSchedule = (bots, start, end) =>
   })
 
 export const scheduleHandler = async (req, res) => {
-  res.send(200)
+  res.status(200).send()
   const date = DateTime.utc().plus({ days: 1 })
   const start = date.startOf('day').toJSDate()
   const end = date.endOf('day').toJSDate()
 
-  let bots = await Bot.find({scheduleEnd: {$lt: date}}).limit(10)
+  const query = { 
+    $or: [
+      {scheduleEnd: {$lt: date}},
+      {scheduleEnd: {$exists: false}},
+    ]
+  }
+  let bots = await Bot.find(query).limit(10)
   while (bots.length) {
     console.log('Scheduling', bots.length, 'bots')
-    await saveBotsSchedule(bots, start, end)
+    try {
+      await saveBotsSchedule(bots, start, end)
+    } catch (err) {
+      console.error(err)
+      break
+    }
     console.log('Saved')
-    bots = await Bot.find({scheduleEnd: {$lt: date}}).limit(10)
+    bots = await Bot.find(query).limit(10)
   }
   console.log('Finished')
 }

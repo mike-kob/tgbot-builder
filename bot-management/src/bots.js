@@ -11,7 +11,6 @@ export const convertFromSrcToExec = (bot) => {
     const state = {
       id: node.id,
       name: nodeInfo.label,
-      active: nodeInfo.status,
       default_triggers: nodeInfo.initial,
       cmd_triggers: {},
       msg_triggers: {},
@@ -24,7 +23,7 @@ export const convertFromSrcToExec = (bot) => {
     for (const msg of nodeInfo.messages) {
       state.msg_triggers[msg.regexp] = msg.actions
     }
-    for (const s of nodeInfo.schedules) {
+    for (const s of nodeInfo.schedule) {
       state.schedule_triggers[s.id] = s.actions
     }
     return [state.id, state]
@@ -33,6 +32,7 @@ export const convertFromSrcToExec = (bot) => {
   return {
     id: bot._id,
     token: bot.token,
+    active: bot.status,
     states: Object.fromEntries(states),
   }
 }

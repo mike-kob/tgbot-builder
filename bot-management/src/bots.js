@@ -43,7 +43,7 @@ export const convertFromSrcToExec = (bot) => {
 
 export const updateBotInRedis = async (bot, botExec) => {
   const oldExec = await redis.hget(botExec.id, '_info')
-  if (oldExec && _.isEqual(oldExec, botExec)) {
+  if (oldExec && _.isEqual(JSON.parse(oldExec), botExec)) {
     return
   }
 

@@ -1,13 +1,10 @@
 import parser from 'cron-parser'
 import Redis from 'ioredis'
-import { DateTime } from 'luxon'
-
-import { Bot } from './models.js'
 
 const redis = new Redis({ host: process.env.REDIS_HOST })
 const SCHEDULE_QUEUE = 'bot_schedule'
 
-const createBotSchedule = (bot, start, end) => {
+const createBotSchedule = (bot, botVersion, start, end) => {
   const options = {
     currentDate: start,
     endDate: end,
@@ -23,6 +20,7 @@ const createBotSchedule = (bot, start, end) => {
       res.push({
         date: obj.value.getTime(),
         botId: bot._id,
+        botVersion: botVersion,
         stateId: state.id,
         scheduleId: schedule.id,
       })
@@ -31,41 +29,19 @@ const createBotSchedule = (bot, start, end) => {
   }))
 }
 
-const saveBotsSchedule = (bots, start, end) => 
+export const saveBotSchedule = async (bot, start, end) => {
+  const botVersion = await redis.hget(String(bot._id), "_version")
+  const scheduleEntries = createBotSchedule(bot, botVersion, start, end)
+    .flatMap(s => [s.date, JSON.stringify(s)])
+  
+  if (scheduleEntries.length) {
+    await redis.zadd(SCHEDULE_QUEUE, ...scheduleEntries)
+  }
+}
+
+export const saveBotsSchedule = (bots, start, end) => 
   bots.forEach(async bot => {
-    const scheduleEntries = createBotSchedule(bot, start, end)
-      .flatMap(s => [s.date, JSON.stringify(s)])
-    
-    if (scheduleEntries.length) {
-      await redis.zadd(SCHEDULE_QUEUE, ...scheduleEntries)
-    }
+    await saveBotSchedule(bot, start, end)
     bot.scheduleEnd = end
     await bot.save()
   })
-
-export const scheduleHandler = async (req, res) => {
-  res.status(200).send()
-  const date = DateTime.utc().plus({ days: 1 })
-  const start = date.startOf('day').toJSDate()
-  const end = date.endOf('day').toJSDate()
-
-  const query = { 
-    $or: [
-      {scheduleEnd: {$lt: date}},
-      {scheduleEnd: {$exists: false}},
-    ]
-  }
-  let bots = await Bot.find(query).limit(10)
-  while (bots.length) {
-    console.log('Scheduling', bots.length, 'bots')
-    try {
-      await saveBotsSchedule(bots, start, end)
-    } catch (err) {
-      console.error(err)
-      break
-    }
-    console.log('Saved')
-    bots = await Bot.find(query).limit(10)
-  }
-  console.log('Finished')
-}

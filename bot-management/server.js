@@ -1,13 +1,12 @@
 import express from 'express'
-import Sentry from '@sentry/node'
+// import Sentry from '@sentry/node'
 import dotenv from 'dotenv'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 
 dotenv.config()
 
-import { postHandler, deleteHandler } from './src/handler.js'
-import { scheduleHandler } from './src/schedule.js'
+import { postHandler, deleteHandler, scheduleHandler } from './src/handler.js'
 import auth from './src/auth.js'
 
 const app = express()

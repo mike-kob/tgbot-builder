@@ -2,6 +2,9 @@ import Redis from 'ioredis'
 import { Telegraf } from 'telegraf'
 import { Validator } from 'jsonschema'
 import fs from 'fs'
+import _ from 'lodash'
+
+import { saveBotSchedule } from './schedule.js'
 
 const redis = new Redis({ host: process.env.REDIS_HOST })
 
@@ -37,8 +40,20 @@ export const convertFromSrcToExec = (bot) => {
   }
 }
 
-export const saveToRedis = (botExec) => 
-  redis.hset(botExec.id, '_info', JSON.stringify(botExec))
+export const updateBotInRedis = async (bot, botExec) => {
+  const oldExec = await redis.hget(botExec.id, '_info')
+  if (oldExec && _.isEqual(oldExec, botExec)) {
+    return
+  }
+
+  await redis.hset(botExec.id, '_info', JSON.stringify(botExec))
+  await redis.hincrby(botExec.id, '_version', 1)
+
+  const start = new Date()
+  const end = bot.endSchedule
+
+  await saveBotSchedule(bot, start, end)
+}
 
 export const deleteFromRedis = (botId) => 
   redis.del(botId)

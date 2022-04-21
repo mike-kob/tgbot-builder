@@ -3,6 +3,7 @@ import { Telegraf } from 'telegraf'
 import { Validator } from 'jsonschema'
 import fs from 'fs'
 import _ from 'lodash'
+import { DateTime } from 'luxon'
 
 import { saveBotSchedule } from './schedule.js'
 
@@ -49,10 +50,10 @@ export const updateBotInRedis = async (bot, botExec) => {
   await redis.hset(botExec.id, '_info', JSON.stringify(botExec))
   await redis.hincrby(botExec.id, '_version', 1)
 
-  const start = new Date()
-  const end = bot.endSchedule
+  const start = DateTime.utc()
+  const end = bot.scheduleEnd ? new DateTime(bot.scheduleEnd) : start.endOf('day')
 
-  await saveBotSchedule(bot, start, end)
+  await saveBotSchedule(bot, start.toJSDate(), end.toJSDate())
 }
 
 export const deleteFromRedis = (botId) => 

@@ -65,17 +65,21 @@ func (c *taskQueueConsumer) Consume() {
 }
 
 func (c *taskQueueConsumer) consumeOneTask(task *Task) error {
+	ctx, err := newContextFromTask(task, &c.BotRepo, &c.UserBotRepo, &c.Rabbitmq)
+	if err != nil {
+		return err
+	}
+
+	if !ctx.Bot.Active || ctx.Bot.Version != task.BotVersion {
+		return nil
+	}
+
 	userIDs, err := c.BotRepo.GetUserIDsByState(task.BotID, task.StateID)
 	if err != nil {
 		return err
 	}
 
 	botUsers, err := c.UserBotRepo.FindMany(task.BotID, userIDs)
-	if err != nil {
-		return err
-	}
-
-	ctx, err := newContextFromTask(task, &c.BotRepo, &c.UserBotRepo, &c.Rabbitmq)
 	if err != nil {
 		return err
 	}

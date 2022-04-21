@@ -5,6 +5,7 @@ import "time"
 type Task struct {
 	Date       int64  `json:"date"`
 	BotID      string `json:"botId"`
+	BotVersion string `json:"botVersion"`
 	StateID    string `json:"stateId"`
 	ScheduleID string `json:"scheduleId"`
 }

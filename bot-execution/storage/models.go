@@ -3,10 +3,11 @@ package storage
 import tg "github.com/go-telegram-bot-api/telegram-bot-api"
 
 type DbBot struct {
-	ID     string           `json:"id,omitempty"`
-	Token  string           `json:"token"`
-	Active bool             `json:"active"`
-	States map[string]State `json:"states"`
+	ID      string `json:"id,omitempty"`
+	Token   string `json:"token"`
+	Active  bool   `json:"active"`
+	Version string
+	States  map[string]State `json:"states"`
 }
 
 type State struct {

@@ -54,8 +54,8 @@ func (r userRedisRepo) FindMany(botID string, userIDs []string) ([]*BotUser, err
 }
 
 func (r userRedisRepo) UpdateState(bUser *BotUser, newState string) (*BotUser, error) {
-	srcKey := "states_" + bUser.BotID + ":" + bUser.State
-	dstKey := "states_" + bUser.BotID + ":" + newState
+	srcKey := bUser.BotID + ":state_" + bUser.State
+	dstKey := bUser.BotID + ":state_" + newState
 	err := r.rdb.SMove(srcKey, dstKey, bUser.UserID)
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (r userRedisRepo) Insert(bUser *BotUser) error {
 		return err
 	}
 
-	setKey := "states_" + bUser.BotID + ":" + bUser.State
+	setKey := bUser.BotID + ":state_" + bUser.State
 	err = r.rdb.SAdd(setKey, bUser.UserID)
 	if err != nil {
 		return err

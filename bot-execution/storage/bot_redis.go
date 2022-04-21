@@ -23,13 +23,17 @@ func (r botRedisRepo) Find(botID string) (*DbBot, error) {
 	if err != nil {
 		return nil, err
 	}
+	v, err := r.rdb.HGet(botID, "_version")
+	if err != nil {
+		return nil, err
+	}
 
 	var bot DbBot
 	err = json.Unmarshal(res, &bot)
 	if err != nil {
 		return nil, err
 	}
-
+	bot.Version = string(v[:])
 	return &bot, nil
 }
 
@@ -47,6 +51,6 @@ func (r botRedisRepo) Delete(botID string) error {
 }
 
 func (r botRedisRepo) GetUserIDsByState(botID, state string) ([]string, error) {
-	setKey := "states_" + botID + ":" + state
+	setKey := botID + ":state_" + state
 	return r.rdb.SMembers(setKey)
 }

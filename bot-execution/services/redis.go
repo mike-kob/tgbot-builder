@@ -28,6 +28,7 @@ type IRedis interface {
 	ZAdd(key string, members ...*ZMember) error
 
 	Del(keys ...string) error
+	DBSize() (int64, error)
 }
 
 type Redis struct {
@@ -132,4 +133,9 @@ func (r Redis) ZCount(key, min, max string) (int64, error) {
 func (r Redis) Del(keys ...string) error {
 	res := r.Rdb.Del(r.Ctx, keys...)
 	return res.Err()
+}
+
+func (r Redis) DBSize() (int64, error) {
+	res := r.Rdb.DBSize(r.Ctx)
+	return res.Result()
 }

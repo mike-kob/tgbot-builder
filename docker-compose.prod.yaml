@@ -40,7 +40,7 @@ services:
   bot-execution-consumer:
     extends:
       service: bot-execution-base
-    command: ['scheduling']
+    command: ['consumer']
 
   bot-management:
     build:

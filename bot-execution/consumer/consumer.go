@@ -2,6 +2,7 @@ package main
 
 import (
 	"bot-execution/runtime"
+	"bot-execution/scheduling"
 	"bot-execution/services"
 	"bot-execution/storage"
 	"time"
@@ -11,14 +12,14 @@ import (
 )
 
 type taskQueueConsumer struct {
-	queue       TaskQueue
+	queue       scheduling.TaskQueue
 	UserBotRepo storage.UserBotRepository
 	BotRepo     storage.BotRepository
 	Rabbitmq    services.RabbitmqChannel
 }
 
 func NewTaskQueueConsumer() *taskQueueConsumer {
-	queue := NewRedisTaskQueue()
+	queue := scheduling.NewRedisTaskQueue()
 	userRepo := storage.NewUserRedisRepository()
 	botRepo := storage.NewBotRedisRepository()
 	channel := services.NewRabbitmqChannel()
@@ -64,7 +65,7 @@ func (c *taskQueueConsumer) Consume() {
 	}
 }
 
-func (c *taskQueueConsumer) consumeOneTask(task *Task) error {
+func (c *taskQueueConsumer) consumeOneTask(task *scheduling.Task) error {
 	ctx, err := newContextFromTask(task, &c.BotRepo, &c.UserBotRepo, &c.Rabbitmq)
 	if err != nil {
 		return err

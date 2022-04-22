@@ -2,6 +2,7 @@ package main
 
 import (
 	"bot-execution/runtime"
+	"bot-execution/scheduling"
 	"bot-execution/services"
 	"bot-execution/storage"
 	"errors"
@@ -11,7 +12,7 @@ import (
 
 //newContextFromUpdate gathers all needed info for Update processing into ExecutionContext object
 func newContextFromTask(
-	task *Task,
+	task *scheduling.Task,
 	botRepo *storage.BotRepository,
 	userRepo *storage.UserBotRepository,
 	rabbitmq *services.RabbitmqChannel,

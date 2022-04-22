@@ -1,4 +1,4 @@
-package main
+package scheduling
 
 import (
 	"bot-execution/services"

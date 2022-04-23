@@ -63,6 +63,9 @@ const ChatMessage = props => {
     case 'message':
       text = message.msg.text
       break
+    case 'admin_message':
+      text = message.msg.text
+      break
     case 'request':
       text = `${message.msg.method} ${message.msg.url}: ${message.msg.status}`
       break
@@ -76,7 +79,8 @@ const ChatMessage = props => {
   return (
     <Card className={clsx(classes.root, message.isBot ? classes.rightMessage : classes.leftMessage)}>
       <Typography className={classes.title} color="textSecondary" gutterBottom>
-        @{message.isBot ? `bot: ${message.type}` : message.msg.chat.username}
+        {message.type === 'admin_message' && '@admin:message'}
+        {message.type !== 'admin_message' && (message.isBot ? `@bot: ${message.type}` : '@' + message.msg.chat.username)}
       </Typography>
       <Typography variant="body1" style={{ whiteSpace: 'pre-line' }}>
         {text}

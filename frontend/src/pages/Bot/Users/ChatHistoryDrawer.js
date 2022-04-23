@@ -1,17 +1,19 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import {
   Typography,
   Box,
   Drawer,
   Button,
+  TextField,
+  IconButton,
 } from '@material-ui/core'
-import clsx from 'clsx'
+import SendIcon from '@material-ui/icons/Send';
 
-import { DiagramContext, actionFactory } from '../Context'
-import { DRAWER, INIT_NODE_ID } from '@/pages/Bot/constants'
+import { DiagramContext } from '../Context'
 import { getBotUserChat } from '@/actions'
 import Message from '@/pages/Bot/Users/Message'
+import { postMessage } from '@/actions/bots'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,8 +24,6 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
   },
   actionButtons: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
     marginLeft: 'auto',
   },
   outlinedButton: {
@@ -44,6 +44,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: ' column',
     alignItems: 'center',
+    borderRadius: theme.spacing(1),
+    overflow: 'scroll',
   },
   botImage: {
     maxWidth: theme.spacing(70),
@@ -68,7 +70,6 @@ const useStyles = makeStyles((theme) => ({
   },
   messages: {
     backgroundColor: '#8080802e',
-    borderRadius: theme.spacing(1),
     padding: theme.spacing(1),
     width: '100%',
   },
@@ -78,12 +79,35 @@ const ChatHistoryDrawer = props => {
   const classes = useStyles(props)
   const [state, dispatch] = useContext(DiagramContext)
   const [msgs, setMsgs] = useState([])
+  const [text, setText] = useState('')
   const selectedUser = state.get('selectedUser')
+  const botId = state.getIn(['bot', '_id'])
+  const chatId = selectedUser.get('id')
+  const drawerOpen = Boolean(state.get('historyDrawer'))
+  const botActive = state.getIn(['bot', 'status'])
+
+  const handleSaveMessage = useCallback(async () => {
+    await postMessage(botId, chatId, text, (msg) => {
+      setMsgs(oldMsgs => [...oldMsgs, msg])
+      setText('')
+    })
+  }, [text])
+
+  const refreshMessages = useCallback(async () => {
+    if (drawerOpen && botId && chatId) {
+      const data = await getBotUserChat(botId, chatId)
+      setMsgs(data)
+    }
+  }, [drawerOpen])
 
   useEffect(async () => {
-    const data = await getBotUserChat(state.getIn(['bot', '_id']), selectedUser.get('id'))
-    setMsgs(data)
-  }, [selectedUser.get('id')])
+    await refreshMessages()
+    const interval = setInterval(refreshMessages, 1000 * 5)
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [selectedUser.get('id'), drawerOpen])
 
   const handleCloseDrawer = useCallback(() => {
     dispatch({ type: 'UPDATE_HISTORY_DRAWER', data: false })
@@ -105,6 +129,24 @@ const ChatHistoryDrawer = props => {
           </Box>
         </div>
 
+        <Box my={1} display="flex">
+          <TextField
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            variant="outlined" size="small"
+            multiline minRows={2} maxRows={10}
+            fullWidth
+            placeholder="Send message"
+            disabled={!botActive}
+          />
+          <Box ml={1}>
+            <IconButton color="primary" variant="contained"
+                        onClick={handleSaveMessage}
+                        disabled={!botActive}>
+              <SendIcon/>
+            </IconButton>
+          </Box>
+        </Box>
         <div className={classes.actionButtons}>
           <Button
             variant="outlined"

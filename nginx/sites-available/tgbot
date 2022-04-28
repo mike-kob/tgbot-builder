@@ -35,9 +35,6 @@ server {
     return 418;
   }
 
-	location /bot/ {
-		proxy_pass http://localhost:5000/bot/;
-	}
 
 	location /update/ {
 		proxy_pass http://localhost:8088/update/;

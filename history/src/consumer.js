@@ -55,7 +55,3 @@ export default channel => async msg => {
     Sentry.captureException(err)
   }
 }
-
-const wrapper = () => {
-  
-}

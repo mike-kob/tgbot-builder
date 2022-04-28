@@ -11,12 +11,17 @@ import {
   ClickAwayListener,
   MenuList,
   MenuItem,
-  IconButton, CircularProgress, Box,
+  IconButton,
+  CircularProgress,
+  Box,
+  Button,
 } from '@material-ui/core'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 
 import { AppContext } from '@/utils/appContext'
-import { logout } from '../../actions'
+import { logout } from '@/actions'
+import clsx from 'clsx'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
   rightPanel: {
     display: 'flex',
     marginLeft: 'auto',
+    alignItems: 'center',
   },
   menu: {
     margin: theme.spacing(1),
@@ -37,6 +43,23 @@ const useStyles = makeStyles((theme) => ({
   },
   loader: {
     color: 'white',
+  },
+  containedButton: {
+    backgroundColor: 'white',
+    '&:hover': {
+      backgroundColor: 'white',
+    },
+  },
+  headerLink: {
+    fontSize: '18px',
+    color: 'white',
+    marginLeft: theme.spacing(2),
+  },
+  activeLink: {
+    fontWeight: 'bold',
+  },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
   },
 }))
 
@@ -56,21 +79,36 @@ const Header = (props) => {
   }
 
   return (
-    <AppBar position="static" elevation={1}>
+    <AppBar position="relative" elevation={1} className={classes.appBar}>
       <Toolbar className={classes.root}>
-        <Typography variant="h6" className={classes.logoText}>
-          TGBot builder
-        </Typography>
+        <Link href="/"><a>
+          <Typography variant="h6" className={classes.logoText}>
+            TGBot builder
+          </Typography>
+        </a></Link>
+        <Box m={1}/>
+        <Link href="/docs"><a>
+          <Typography variant="h6"
+                      className={clsx(classes.headerLink, router.pathname.startsWith('/docs') && classes.activeLink)}>
+            Docs
+          </Typography>
+        </a></Link>
+        <Link href="/pricing"><a>
+          <Typography variant="h6"
+                      className={clsx(classes.headerLink, router.pathname === '/pricing' && classes.activeLink)}>
+            Pricing
+          </Typography>
+        </a></Link>
         <div className={classes.rightPanel}>
           <Box p={1}>
             {loading && <CircularProgress className={classes.loader}/>}
           </Box>
-          {user.uid &&
+          {user.uid ?
             <>
-              <IconButton onClick={() => setOpen(s => !s)} disabled={props.menuDisabled}>
+              <IconButton onClick={() => setOpen(s => !s)}>
                 <Avatar
                   alt="My picture"
-                  src={'/avatar.svg'}
+                  src='/avatar.svg'
                   ref={anchorRef}
                 />
               </IconButton>
@@ -109,6 +147,13 @@ const Header = (props) => {
                 )}
               </Popper>
             </>
+            :
+            <Box>
+              <Button className={classes.containedButton}
+                      color="primary"
+                      onClick={() => router.push('/login')}
+              >Log in</Button>
+            </Box>
           }
         </div>
       </Toolbar>

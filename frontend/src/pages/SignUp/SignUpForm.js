@@ -4,15 +4,17 @@ import {
   Avatar,
   Button,
   TextField,
-  Link,
   Box,
   Grid,
   Typography,
 } from '@material-ui/core'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import { googleSignUp, defaultSignUp } from 'src/actions/auth'
-import { useRouter } from 'next/router'
+import useLoader from '@/hooks/useLoader'
+import { AppContext } from '@/utils/appContext'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -28,8 +30,10 @@ const useStyles = makeStyles((theme) => ({
   form: {
     width: '100%',
   },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
+  containedButton: {
+    borderRadius: '7px',
+    margin: theme.spacing(3, 'auto'),
+    color: 'white',
   },
   outlinedButton: {
     border: '2px solid',
@@ -40,13 +44,19 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const SignUpForm = (props) => {
+  const [, dispatch] = React.useContext(AppContext)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [password2, setPassword2] = useState('')
+  const [, setLoading] = useLoader()
   const router = useRouter()
 
   const classes = useStyles(props)
-  const onSuccess = () => router.push('/bots')
+  const onSuccess = (user) => {
+    setLoading(false)
+    dispatch({ user })
+    router.push('/bots')
+  }
 
   return (
     <div className={classes.paper}>
@@ -115,18 +125,16 @@ const SignUpForm = (props) => {
           disabled={password !== password2}
           variant="contained"
           color="primary"
-          className={classes.submit}
+          className={classes.containedButton}
           onClick={() => defaultSignUp(email, password, onSuccess)}
         >
           Sign Up
         </Button>
         <Grid container>
-          <Grid item xs>
-
-          </Grid>
+          <Grid item xs/>
           <Grid item>
-            <Link href="/login" variant="body2">
-              {'Already have an account? Sign In'}
+            <Link href="/login" >
+              <a><Typography variant="body2">Already have an account? Sign In</Typography></a>
             </Link>
           </Grid>
         </Grid>

@@ -4,15 +4,17 @@ import {
   Avatar,
   Button,
   TextField,
-  Link,
   Box,
   Grid,
   Typography,
 } from '@material-ui/core'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import { googleSignIn, defaultSignIn } from 'src/actions/auth'
+import useLoader from '@/hooks/useLoader'
+import { AppContext } from '@/utils/appContext'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -33,20 +35,38 @@ const useStyles = makeStyles((theme) => ({
   },
   outlinedButton: {
     border: '2px solid',
+    borderRadius: '7px',
+    margin: theme.spacing(1, 'auto'),
     '&:hover': {
       border: '2px solid',
     },
   },
+  containedButton: {
+    borderRadius: '7px',
+    margin: theme.spacing(3, 'auto'),
+    color: 'white',
+  },
 }))
 
 const SignInForm = (props) => {
+  const [, dispatch] = React.useContext(AppContext)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [, setLoading] = useLoader()
 
   const classes = useStyles(props)
   const router = useRouter()
 
-  const onSuccess = () => router.push('/bots')
+  const onSuccess = (user) => {
+    setLoading(false)
+    dispatch({ user })
+    router.push('/bots')
+  }
+  const onError = () => {
+    setLoading(false)
+    setError('Something went wrong. Have you signed up?')
+  }
 
   return (
     <div className={classes.paper}>
@@ -58,12 +78,16 @@ const SignInForm = (props) => {
         Sign in
         </Typography>
       <Box m={1} />
+      <Typography variant="caption" color="secondary">{error}</Typography>
       <Button
         variant={'outlined'}
         color="primary"
         className={classes.outlinedButton}
         fullWidth
-        onClick={() => googleSignIn(onSuccess)}
+        onClick={async () => {
+          setLoading(true)
+          await googleSignIn(onSuccess, onError)
+        }}
       >
         Sign in with Google
       </Button>
@@ -100,15 +124,16 @@ const SignInForm = (props) => {
           fullWidth
           variant="contained"
           color="primary"
-          className={classes.submit}
+          className={classes.containedButton}
           onClick={() => defaultSignIn(email, password, onSuccess)}
         >
           Sign In
         </Button>
         <Grid container>
+          <Grid item xs/>
           <Grid item>
-            <Link href="/signup" variant="body2">
-              {"Don't have an account? Sign Up"}
+            <Link href="/signup">
+              <a><Typography variant="body2">Don&apos;t have an account? Sign Up</Typography></a>
             </Link>
           </Grid>
         </Grid>

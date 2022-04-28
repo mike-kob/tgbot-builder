@@ -5,6 +5,7 @@ services:
     image: redis:6.2-alpine
     container_name: redis
     command: redis-server --appendonly yes --save 300 1
+    restart: always
     volumes:
       - redis-data:/data
     ports:
@@ -14,6 +15,7 @@ services:
     hostname: 'rabbitmq'
     container_name: rabbitmq
     image: rabbitmq:3.9.13-management
+    restart: always
     ports:
         - 5672:5672
         - 15672:15672

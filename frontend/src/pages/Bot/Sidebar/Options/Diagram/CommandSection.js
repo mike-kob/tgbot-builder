@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useContext } from 'react'
 import {
   makeStyles,
   Button,
@@ -33,13 +33,13 @@ const CommandSection = (props) => {
   const { current } = props
   const commands = current.getIn(['data', 'commands'])
 
-  const handleAdd = useCallback(() => {
+  const handleAdd = () => {
     dispatch({
       type: 'UPDATE_NODE',
       data: current.updateIn(
         ['data', 'commands'], els => els.push(commandFactory().set('id', String(commands.size)))),
     })
-  }, [commands])
+  }
 
   return (
     <div className={classes.root}>

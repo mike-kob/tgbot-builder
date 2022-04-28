@@ -1,11 +1,20 @@
 import connectAuth from '@/api/middleware/auth'
 import connectDb from '@/api/middleware/mongodb'
-import { Bot, BotUser } from '@/api/models'
+import { Bot, BotUser, Message } from '@/api/models'
+import axios from 'axios'
+
+const getTokenInfo = async (token) => {
+  try {
+    const resp = await axios.get(`https://api.telegram.org/bot${token}/getMe`)
+    return { ok: true, profile: resp.data.result }
+  } catch (err) {
+    return { ok: false, reason: 'Invalid token' }
+  }
+}
 
 const botDetailHandler = async (req, res) => {
   try {
     const bot = await Bot.findById(req.query.id)
-    bot.token = ''
     res.status(200).send(bot.toObject({ minimize: false }))
   } catch (err) {
     console.log(err)
@@ -13,10 +22,17 @@ const botDetailHandler = async (req, res) => {
   }
 }
 
-const createBotHadler = async (req, res) => {
+const createBotHandler = async (req, res) => {
   try {
+    const count = Bot.find({ owner: req.user.uid }).count()
+    if (count >= 10) {
+      res.status(400).send('Reached limit of bots')
+      return
+    }
     const bot = await Bot.create({
       ...req.body,
+      token: '',
+      tokenInfo: { ok: false, reason: 'Missing token' },
       owner: req.user.uid,
       created: Date.now(),
     })
@@ -27,7 +43,7 @@ const createBotHadler = async (req, res) => {
   }
 }
 
-const botProps = ['name', 'token', 'status', 'src', 'description']
+const botProps = ['name', 'status', 'src', 'description']
 
 const updateBotHandler = async (req, res, next) => {
   try {
@@ -37,6 +53,11 @@ const updateBotHandler = async (req, res, next) => {
         bot[prop] = req.body[prop]
       }
     })
+    if (typeof req.body.token !== 'undefined') {
+      const tokenInfo = await getTokenInfo(req.body.token)
+      bot.token = req.body.token
+      bot.tokenInfo = tokenInfo
+    }
 
     await bot.save()
     res.status(200).send(bot)
@@ -50,6 +71,7 @@ export const deleteBotHandler = async (req, res) => {
   try {
     await Bot.deleteOne({ _id: req.query.id, owner: req.user.uid })
     await BotUser.deleteMany({ botId: req.query.id, botOwner: req.user.uid })
+    await Message.deleteMany({ botId: req.query.id, botOwner: req.user.uid })
     res.status(204).send('Deleted')
   } catch (err) {
     console.log(err)
@@ -61,7 +83,7 @@ const handler = async (req, res) => {
   if (req.method === 'GET') {
     return botDetailHandler(req, res)
   } else if (req.method === 'POST') {
-    return createBotHadler(req, res)
+    return createBotHandler(req, res)
   } else if (req.method === 'PUT') {
     return updateBotHandler(req, res)
   } else if (req.method === 'DELETE') {

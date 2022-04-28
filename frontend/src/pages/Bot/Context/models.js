@@ -13,6 +13,7 @@ export const nodeFactory = () => fromJS({
     commands: [],
     initial: [],
     messages: [],
+    schedule: [],
   },
 })
 

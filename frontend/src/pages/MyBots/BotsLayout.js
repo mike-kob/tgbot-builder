@@ -9,7 +9,8 @@ import {
 
 import BotCard from './BotCard'
 import { getBotList } from '@/actions'
-import EditBotDialog from './EditBotDialog'
+import EditBotDialog from './NewBotDialog'
+import useLoader from '@/hooks/useLoader'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,10 +50,13 @@ const BotsLayout = (props) => {
   const [bots, setBots] = useState([])
   const [curBot, setCurBot] = useState({})
   const [openDialog, setOpenDialog] = useState(false)
+  const [, setLoading] = useLoader()
 
   useEffect(async () => {
+    setLoading(true)
     const res = await getBotList()
     setBots(res)
+    setLoading(false)
   }, [])
 
   const handleBotUpdate = async (bot) => {

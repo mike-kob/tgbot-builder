@@ -1,4 +1,4 @@
-// import Sentry from '@sentry/node'
+import Sentry from '@sentry/node'
 import { DateTime } from 'luxon'
 
 import {
@@ -11,51 +11,40 @@ import {
 import { saveBotsSchedule } from './schedule.js'
 import { Bot } from './models.js'
 
-export const postHandler = async (req, res) => {
-  const bot = await Bot.findById(req.params.botId).lean();
-  if (!bot) {
-    // Sentry.captureMessage("Not found")
-    console.log("Bot not found")
-    res.status(200).send()
-    return
-  }
+export const postHandler = async (bot) => {
   bot._id = String(bot._id)
 
   const botExec = convertFromSrcToExec(bot)
   try {
     await updateBotInRedis(bot, botExec)
-    if (bot.status) {
+    if (bot.status && bot.token) {
       await setWebhook(bot)
-    } else {
+    } else if (bot.token) {
       await unsetWebhook(bot)
     }
     res.status(200).send()
   } catch (err) {
+    Sentry.captureException(err)
     console.error(err)
     res.status(500).send()
   }
 }
 
-export const deleteHandler = async (req, res) => {
-  const bot = await Bot.findById(req.params.botId).lean();
-  if (bot) {
-    console.log('Bot still exists')
-    // Sentry.captureMessage("Not found")
-    res.status(200).send()
-    return
-  }
+export const deleteHandler = async (bot) => {
   try {
-    await unsetWebhook(bot)
+    if (bot.token) {
+      await unsetWebhook(bot)
+    }
     await deleteFromRedis(req.params.botId)
     res.status(200).send()
   } catch (err) {
+    Sentry.captureException(err)
     console.error(err)
     res.status(500).send()
   }
 }
 
-export const scheduleHandler = async (req, res) => {
-  res.status(200).send()
+export const scheduleHandler = async () => {
   const date = DateTime.utc().plus({ days: 1 })
   const start = date.startOf('day').toJSDate()
   const end = date.endOf('day').toJSDate()
@@ -72,6 +61,7 @@ export const scheduleHandler = async (req, res) => {
     try {
       await saveBotsSchedule(bots, start, end)
     } catch (err) {
+      Sentry.captureException(err)
       console.error(err)
       break
     }

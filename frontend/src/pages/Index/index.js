@@ -5,9 +5,12 @@ import {
   makeStyles,
   Typography,
 } from '@material-ui/core'
+import Image from 'next/image'
 
 import Header from '@/components/Header'
 import { useRouter } from 'next/router'
+import clsx from 'clsx'
+import { getUser } from '@/actions'
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -15,23 +18,21 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: ' column',
     alignItems: 'center',
   },
-  botImage: {
-    maxWidth: theme.spacing(70),
-    marginTop: theme.spacing(-5),
+  fullWidth: {
+    width: '100%',
   },
-  helloTitle: {
-    marginTop: theme.spacing(-10),
-    fontStyle: 'normal',
-    fontWeight: 500,
-    fontSize: '48px',
-    lineHeight: '72px',
+  white: {
+    backgroundColor: 'white',
   },
-  subtitle: {
-    fontStyle: 'normal',
-    fontWeight: 500,
-    fontSize: '16px',
-    lineHeight: '24px',
-    color: theme.palette.text.secondary,
+  mainSection: {
+    height: '90vh',
+  },
+  secondarySection: {
+    height: '500px',
+    padding: theme.spacing(0, 4),
+    [theme.breakpoints.up('lg')]: {
+      padding: theme.spacing(0, 12),
+    },
   },
   button: {
     minWidth: theme.spacing(25),
@@ -43,37 +44,121 @@ const Home = (props) => {
   const router = useRouter()
 
   const onGoToApp = async () => {
-    const resp = await fetch('/api/user', { credentials: 'include' })
-    if (resp.status === 200) {
-      const user = await resp.json()
-      router.push(user.uid ? '/bots' : '/login')
-    } else {
-      router.push('/login')
-    }
+    const user = await getUser()
+    await router.push(user.uid ? '/bots' : '/login')
   }
 
   return (
     <>
-      <Header menuDisabled />
+      <Header menuDisabled/>
       <div className={classes.content}>
-        <img className={classes.botImage} src="/hello-bot.svg" />
-        <Typography variant="h3" className={classes.helloTitle}>
-          Hello
-        </Typography>
-        <Typography variant="subtitle2" className={classes.subtitle}>
-          This is my pet project
-        </Typography>
-        <Box m={3}>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={onGoToApp}
-            disableElevation
-            className={classes.button}
-          >
-            Go to app
-          </Button>
-        </Box>
+        <section className={clsx(classes.mainSection, classes.white, classes.fullWidth)}>
+          <Box display="flex" alignItems="center">
+            <Box flex="1 1 0px">
+              <Box display="flex" flexDirection="column" alignItems="flex-start" mx={4} maxWidth={480}>
+              <Typography variant="h1" color="textPrimary">
+                Create Telegram bot without code
+              </Typography>
+                <Box m={1}/>
+              <Typography variant="body1" color="textSecondary">
+                Configure your bots, set up commands, actions and deploy easily - all in UI without writing any code.
+              </Typography>
+                <Box m={1}/>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={onGoToApp}
+                disableElevation
+                className={classes.button}
+              >
+                Create my bot
+              </Button>
+              </Box>
+            </Box>
+            <Box flex="1 1 0px" textAlign="right">
+            <Image alt="Welcome"
+                   src="/index/welcome-bot.svg"
+                   width={700}
+                   height={730}
+            />
+            </Box>
+          </Box>
+        </section>
+        <section className={classes.secondarySection}>
+          <Box m={4}/>
+          <Typography variant="h2" align="center">
+            How does it work?
+          </Typography>
+          <Box m={4}/>
+          <Box display="flex">
+            <Box m={5} width="33%">
+              <Image alt="Create"
+                     src="/index/create-bot.svg"
+                     width={140}
+                     height={140}/>
+              <Typography color="textSecondary" variant="body1">
+                1. Create bot with BotFather
+              </Typography>
+            </Box>
+            <Box m={5} width="33%">
+              <Image alt="Configure"
+                     src="/index/configure.svg"
+                     width={140}
+                     height={140}/>
+              <Typography color="textSecondary" variant="body1">
+                2. Configure logic
+              </Typography>
+            </Box>
+            <Box m={5} width="33%">
+              <Image alt="Deploy"
+                     src="/index/deploy.svg"
+                     width={140}
+                     height={140}/>
+              <Typography color="textSecondary" variant="body1">
+                3. Deploy with one click
+              </Typography>
+            </Box>
+          </Box>
+        </section>
+        <section className={clsx(classes.fullWidth, classes.white, classes.secondarySection)}>
+          <Box display="flex" alignItems="center" height="100%">
+            <Box width="45%" textAlign="center">
+              <Image alt="Messages"
+                     src="/index/message.svg"
+                     width={420}
+                     height={250}/>
+            </Box>
+            <Box width="55%" maxWidth={500}>
+              <Typography variant="h2" color="textPrimary" align="right">
+                Send messages to users
+              </Typography>
+              <Typography variant="body1" color="textSecondary" align="right">
+                Send personal and bulk messages to the bot users via interface.
+                Use template variables to customize information in messages.
+              </Typography>
+            </Box>
+          </Box>
+        </section>
+        <section className={clsx(classes.fullWidth, classes.secondarySection)}>
+          <Box display="flex" alignItems="center" height="100%" mx={7}>
+            <Box width="50%">
+              <Box maxWidth={500}>
+                <Typography variant="h2" color="textPrimary">
+                  Chat with users via bot
+                </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  You can browse history of bot and chat with user via our UI.
+                </Typography>
+              </Box>
+            </Box>
+            <Box width="50%" textAlign="center">
+              <Image alt="Chat"
+                     src="/index/chat.svg"
+                     width={420}
+                     height={440}/>
+            </Box>
+          </Box>
+        </section>
       </div>
     </>
   )

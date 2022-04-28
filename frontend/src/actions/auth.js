@@ -38,7 +38,7 @@ export const googleSignIn = async (onSuccess, onError) => {
 
     console.log('SIGNED IN', res)
 
-    await processToken(token, '/api/login', onSuccess, onError)
+    await processToken(token, '/api/login', () => onSuccess(res.user), onError)
   } catch (e) {
     console.log('ERROR', e)
     if (onError) onError()
@@ -60,7 +60,7 @@ export const googleSignUp = async (onSuccess, onError) => {
     }
     console.log('SIGNED UP', res)
 
-    await processToken(token, '/api/signup', onSuccess, onError)
+    await processToken(token, '/api/signup', () => onSuccess(res.user), onError)
   } catch (e) {
     console.log('ERROR', e)
     if (onError) onError()
@@ -80,7 +80,7 @@ export const defaultSignIn = async (email, password, onSuccess, onError) => {
 
     console.log('SIGNED IN', res)
 
-    await processToken(token, '/api/login', onSuccess, onError)
+    await processToken(token, '/api/login', () => onSuccess(res.user), onError)
   } catch (e) {
     console.log('ERROR', e)
     if (onError) onError()
@@ -100,7 +100,7 @@ export const defaultSignUp = async (email, password, onSuccess, onError) => {
 
     console.log('SIGNED UP', res)
 
-    await processToken(token, '/api/signup', onSuccess, onError)
+    await processToken(token, '/api/signup', () => onSuccess(res.user), onError)
   } catch (e) {
     console.log('ERROR', e)
     if (onError) onError()

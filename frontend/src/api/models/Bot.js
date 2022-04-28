@@ -7,6 +7,7 @@ const botSchema = new Schema({
   name: String,
   description: String,
   token: String,
+  tokenInfo: Object,
   status: Boolean,
   src: Object,
   created: { type: Date, default: Date.now },

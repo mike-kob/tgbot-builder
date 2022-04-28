@@ -16,7 +16,6 @@ import { Formik } from 'formik'
 
 import { deleteBot, updateBotInfo } from '@/actions'
 import { fromJS } from 'immutable'
-import { AppContext } from '@/utils/appContext'
 import useLoader from '@/hooks/useLoader'
 
 const useStyles = makeStyles((theme) => ({
@@ -126,6 +125,16 @@ const MainInfo = props => {
         )}
       </Formik>
       <Box margin={1}/>
+      {bot.tokenInfo && <>
+        <Typography variant="h6">Token validation</Typography>
+        {bot.tokenInfo.ok
+          ? <Typography variant="body2" style={{ whiteSpace: 'pre-wrap' }}>
+              {JSON.stringify(bot.tokenInfo.profile, null, 2)}
+            </Typography>
+          : <Typography variant="body2" color="secondary">{bot.tokenInfo.reason}</Typography>
+        }
+        <Box margin={1}/>
+      </>}
       <Typography variant="h6">Danger zone</Typography>
       <Box display="flex" flexDirection="column" width="50%">
         <FormGroup>

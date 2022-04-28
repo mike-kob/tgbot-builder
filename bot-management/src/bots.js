@@ -56,8 +56,12 @@ export const updateBotInRedis = async (bot, botExec) => {
   await saveBotSchedule(bot, start.toJSDate(), end.toJSDate())
 }
 
-export const deleteFromRedis = (botId) => 
-  redis.del(botId)
+export const deleteFromRedis = async (botId) => {
+  const keys = await redis.keys(botId + '*')
+  keys.forEach(async key => {
+    await redis.del(key)
+  })
+}
 
 export const setWebhook = async (bot) => {
   const tgBot = new Telegraf(bot.token)

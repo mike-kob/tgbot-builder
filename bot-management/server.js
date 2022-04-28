@@ -19,7 +19,7 @@ mongoose.connect(process.env.CONN_STR, { useNewUrlParser: true, useUnifiedTopolo
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'))
 console.log('Connected to Mongo')
 
-Bot.watch().on('change', (changeEvent) => {
+Bot.watch(null, { fullDocument: 'updateLookup' }).on('change', (changeEvent) => {
   bot_mongo_change.inc({ operationType: changeEvent.operationType })
   switch(changeEvent.operationType) {
     case "delete":

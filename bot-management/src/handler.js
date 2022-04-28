@@ -22,11 +22,9 @@ export const postHandler = async (bot) => {
     } else if (bot.token) {
       await unsetWebhook(bot)
     }
-    res.status(200).send()
   } catch (err) {
     Sentry.captureException(err)
     console.error(err)
-    res.status(500).send()
   }
 }
 
@@ -36,11 +34,9 @@ export const deleteHandler = async (bot) => {
       await unsetWebhook(bot)
     }
     await deleteFromRedis(req.params.botId)
-    res.status(200).send()
   } catch (err) {
     Sentry.captureException(err)
     console.error(err)
-    res.status(500).send()
   }
 }
 

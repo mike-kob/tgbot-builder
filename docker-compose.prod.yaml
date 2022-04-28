@@ -9,7 +9,7 @@ services:
     volumes:
       - redis-data:/data
     ports:
-      - 6379:6379
+      - "127.0.0.1:6379:6379"
 
   rabbitmq:
     hostname: 'rabbitmq'
@@ -17,8 +17,8 @@ services:
     image: rabbitmq:3.9.13-management
     restart: always
     ports:
-        - 5672:5672
-        - 15672:15672
+        - "127.0.0.1:5672:5672"
+        - "127.0.0.1:15672:15672"
     volumes:
         - rabbitmq-data:/var/lib/rabbitmq/mnesia/
   
@@ -37,7 +37,7 @@ services:
       service: bot-execution-base
     command: ['update_http']
     ports:
-      - 8088:80
+      - "127.0.0.1:8088:80"
 
   bot-execution-consumer:
     extends:
@@ -56,7 +56,7 @@ services:
       - SENTRY_DSN=${SENTRY_DSN_MANAGE}
       - CONN_STR=${MONGO_CONN_STR}
     ports:
-      - 4001:4001
+      - "127.0.0.1:4001:4001"
     volumes:
       - ${CERT_PATH}:/app/server.cert
 

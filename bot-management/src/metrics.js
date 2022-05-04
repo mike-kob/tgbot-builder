@@ -54,13 +54,13 @@ export const collect_redis_metrics = async () => {
 }
 
 export const collect_db_metrics = async () => {
-  const db = await mongoose.default.connection.db
+  const conn = mongoose.createConnection(process.env.CONN_STR, { useNewUrlParser: true, useUnifiedTopology: true })
 
-  const userCount = await db.collection('users').count()
-  const botCount = await db.collection('bots').count()
-  const botActiveCount = await db.collection('bots').find({status: true}).count()
-  const botUserCount = await db.collection('botusers').count()
-  const messageCount = await db.collection('messages').count()
+  const userCount = await conn.db.collection('users').estimatedDocumentCount()
+  const botCount = await conn.db.collection('bots').estimatedDocumentCount()
+  const botActiveCount = await conn.db.collection('bots').find({status: true}).count()
+  const botUserCount = await conn.db.collection('botusers').estimatedDocumentCount()
+  const messageCount = await conn.db.collection('messages').estimatedDocumentCount()
 
   bot_count.set({active: 'true'}, botActiveCount)
   bot_count.set({active: 'false'}, botCount - botActiveCount)

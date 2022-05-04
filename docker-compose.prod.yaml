@@ -48,6 +48,7 @@ services:
     build:
       context: ./bot-management
     command: ["npm", "start"]
+    restart: always
     environment:
       - REDIS_HOST=redis
       - NODE_ENV=production

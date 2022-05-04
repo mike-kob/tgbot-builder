@@ -12,6 +12,8 @@ import { saveBotsSchedule } from './schedule.js'
 import { Bot } from './models.js'
 
 export const postHandler = async (bot) => {
+  if (!bot)
+    return
   bot._id = String(bot._id)
 
   const botExec = convertFromSrcToExec(bot)
@@ -29,6 +31,8 @@ export const postHandler = async (bot) => {
 }
 
 export const deleteHandler = async (bot) => {
+  if (!bot)
+    return
   try {
     if (bot.token) {
       await unsetWebhook(bot)

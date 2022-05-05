@@ -68,4 +68,6 @@ export const collect_db_metrics = async () => {
   user_count.set(userCount)
   bot_user_count.set(botUserCount)
   message_count.set(messageCount)
+
+  await conn.close()
 }

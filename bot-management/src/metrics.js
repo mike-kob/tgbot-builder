@@ -1,3 +1,4 @@
+import Sentry from '@sentry/node'
 import client from 'prom-client'
 import Redis from 'ioredis'
 import mongoose from 'mongoose'
@@ -54,20 +55,23 @@ export const collect_redis_metrics = async () => {
 }
 
 export const collect_db_metrics = async () => {
-  const conn = mongoose.createConnection(process.env.CONN_STR, { useNewUrlParser: true, useUnifiedTopology: true })
+  try {
+    const conn = mongoose.connection
 
-  const userCount = await conn.db.collection('users').estimatedDocumentCount()
-  const botCount = await conn.db.collection('bots').estimatedDocumentCount()
-  const botActiveCount = await conn.db.collection('bots').find({status: true}).count()
-  const botUserCount = await conn.db.collection('botusers').estimatedDocumentCount()
-  const messageCount = await conn.db.collection('messages').estimatedDocumentCount()
+    const userCount = await conn.db.collection('users').estimatedDocumentCount()
+    const botCount = await conn.db.collection('bots').estimatedDocumentCount()
+    const botActiveCount = await conn.db.collection('bots').find({status: true}).count()
+    const botUserCount = await conn.db.collection('botusers').estimatedDocumentCount()
+    const messageCount = await conn.db.collection('messages').estimatedDocumentCount()
 
-  bot_count.set({active: 'true'}, botActiveCount)
-  bot_count.set({active: 'false'}, botCount - botActiveCount)
-  bot_count.set({active: 'all'}, botCount)
-  user_count.set(userCount)
-  bot_user_count.set(botUserCount)
-  message_count.set(messageCount)
-
-  await conn.close()
+    bot_count.set({active: 'true'}, botActiveCount)
+    bot_count.set({active: 'false'}, botCount - botActiveCount)
+    bot_count.set({active: 'all'}, botCount)
+    user_count.set(userCount)
+    bot_user_count.set(botUserCount)
+    message_count.set(messageCount)
+  } catch(err) {
+    console.error(err)
+    Sentry.captureException(err)
+  }
 }

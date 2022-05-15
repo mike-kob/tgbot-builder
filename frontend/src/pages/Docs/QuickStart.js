@@ -111,7 +111,7 @@ const QuickStartPage = () => {
         />
         <Typography variant="body2">
           We use template variable <code>&#123;&#123; UPD.message_text &#125;&#125;</code> to reply back what
-          user sent us. You can read more about template variables <Link href="/docs/">here</Link>.
+          user sent us. You can read more about template variables <Link href="/docs/reference/templating">here</Link>.
         </Typography>
         <Typography variant="body2">
           Everything’s ready, don&apos;t forget to click Save button.

@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { TextField, Typography } from '@material-ui/core'
+import { Link, TextField, Typography } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -44,7 +44,9 @@ const SaveUserDataAction = (props) => {
         value={action.getIn(['options', 'value'], '')}
         onChange={handleValueChange}
       />
-      <Typography variant="caption" color="textSecondary">Some helper text</Typography>
+      <Typography variant="caption" color="textSecondary">
+        You can use <Link href="/docs/reference/templating" target="_blank">Template variables</Link> here
+      </Typography>
     </div>
   )
 }

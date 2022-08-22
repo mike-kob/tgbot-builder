@@ -1,6 +1,6 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const Schema = mongoose.Schema
+const { Schema } = mongoose;
 
 const messageSchema = new Schema({
   botId: mongoose.SchemaTypes.ObjectId,
@@ -11,8 +11,8 @@ const messageSchema = new Schema({
   ts: Number,
   msg: Object,
   created: { type: Date, default: Date.now },
-})
+});
 
-messageSchema.index({ botId: 1, chatId: 1 })
+messageSchema.index({ botId: 1, chatId: 1 });
 
-export default (mongoose.models.Message || mongoose.model('Message', messageSchema))
+export default (mongoose.models.Message || mongoose.model('Message', messageSchema));

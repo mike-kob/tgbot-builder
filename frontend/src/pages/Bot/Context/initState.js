@@ -1,7 +1,7 @@
-import { fromJS } from 'immutable'
+import { fromJS } from 'immutable';
 
-import { INIT_NODE_ID, VIEW_NAME } from '../constants'
-import { commandFactory, messageFactory, scheduleFactory } from './models'
+import { INIT_NODE_ID, VIEW_NAME } from '../constants';
+import { commandFactory, messageFactory, scheduleFactory } from './models';
 
 export default fromJS({
   currentView: VIEW_NAME.MAIN,
@@ -37,4 +37,4 @@ export default fromJS({
   userSearch: '',
   users: [],
   selectedUser: {},
-})
+});

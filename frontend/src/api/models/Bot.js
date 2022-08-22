@@ -1,6 +1,6 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const Schema = mongoose.Schema
+const { Schema } = mongoose;
 
 const botSchema = new Schema({
   owner: String, // uid of owner user
@@ -11,6 +11,6 @@ const botSchema = new Schema({
   status: Boolean,
   src: Object,
   created: { type: Date, default: Date.now },
-})
+});
 
-export default (mongoose.models.Bot || mongoose.model('Bot', botSchema))
+export default (mongoose.models.Bot || mongoose.model('Bot', botSchema));

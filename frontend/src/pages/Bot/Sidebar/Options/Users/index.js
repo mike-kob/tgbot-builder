@@ -1,16 +1,11 @@
-import React, { useContext } from 'react'
+import React, { useContext } from 'react';
 import {
-  makeStyles,
-  Typography,
-  Box,
-  Table,
-  TableBody,
-  TableRow,
-  TableCell, Button,
-} from '@material-ui/core'
-import { Map } from 'immutable'
+  Typography, Box, Table, TableBody, TableRow, TableCell, Button,
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { Map } from 'immutable';
 
-import { DiagramContext } from '../../../Context'
+import { DiagramContext } from '../../../Context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,16 +31,15 @@ const useStyles = makeStyles((theme) => ({
       border: '2px solid',
     },
   },
-}))
+}));
 
-const UsersOptions = (props) => {
-  const classes = useStyles(props)
-  const [state, dispatch] = useContext(DiagramContext)
+function UsersOptions(props) {
+  const classes = useStyles(props);
+  const [state, dispatch] = useContext(DiagramContext);
 
-  const selected = state.get('selectedUser')
+  const selected = state.get('selectedUser');
 
-  const handleOpenHistory = () =>
-    dispatch({ type: 'UPDATE_HISTORY_DRAWER', data: true })
+  const handleOpenHistory = () => dispatch({ type: 'UPDATE_HISTORY_DRAWER', data: true });
 
   if (!selected.get('id')) {
     return (
@@ -54,7 +48,7 @@ const UsersOptions = (props) => {
           No selected user
         </Typography>
       </Box>
-    )
+    );
   }
 
   return (
@@ -85,7 +79,7 @@ const UsersOptions = (props) => {
             <TableCell align="left">{selected.get('state')}</TableCell>
           </TableRow>
         </TableBody>
-        <Box m={1}/>
+        <Box m={1} />
         <Typography variant="subtitle1">
           User data
         </Typography>
@@ -109,7 +103,7 @@ const UsersOptions = (props) => {
         </Button>
       </Box>
     </div>
-  )
+  );
 }
 
-export default UsersOptions
+export default UsersOptions;

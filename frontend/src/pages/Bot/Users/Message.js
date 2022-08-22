@@ -1,20 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react';
 import {
-  Box,
-  Button,
-  makeStyles,
-  Typography,
-  Paper,
-  Card,
-  CardContent,
+  Box, Button, Typography, Paper, Card, CardContent,
+} from '@mui/material';
 
-} from '@material-ui/core'
+import makeStyles from '@mui/styles/makeStyles';
 
-import Header from '@/components/Header'
-import { useRouter } from 'next/router'
-import { getBotUserChat } from '@/actions'
-import clsx from 'clsx'
-import { DiagramContext } from '@/pages/Bot/Context'
+import { useRouter } from 'next/router';
+import clsx from 'clsx';
+import Header from '@/components/Header';
+import { getBotUserChat } from '@/actions';
+import { DiagramContext } from '@/pages/Bot/Context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,39 +43,38 @@ const useStyles = makeStyles((theme) => ({
   date: {
     marginTop: theme.spacing(1),
   },
-}))
+}));
 
-const ChatMessage = props => {
-  const classes = useStyles(props)
-  const [state] = useContext(DiagramContext)
-  const { message } = props
+function ChatMessage(props) {
+  const classes = useStyles(props);
+  const [state] = useContext(DiagramContext);
+  const { message } = props;
 
-  const getStateLabel = stateId =>
-    state.getIn(['bot', 'src', stateId, 'data', 'label'])
+  const getStateLabel = (stateId) => state.getIn(['bot', 'src', stateId, 'data', 'label']);
 
-  let text = ''
+  let text = '';
   switch (message.type) {
     case 'message':
-      text = message.msg.text
-      break
+      text = message.msg.text;
+      break;
     case 'admin_message':
-      text = message.msg.text
-      break
+      text = message.msg.text;
+      break;
     case 'request':
-      text = `${message.msg.method} ${message.msg.url}: ${message.msg.status}`
-      break
+      text = `${message.msg.method} ${message.msg.url}: ${message.msg.status}`;
+      break;
     case 'change_state':
-      text = `"${getStateLabel(message.msg.oldState)}" ->\n"${getStateLabel(message.msg.newState)}"`
-      break
+      text = `"${getStateLabel(message.msg.oldState)}" ->\n"${getStateLabel(message.msg.newState)}"`;
+      break;
     case 'save_user_data':
-      text = `KEY: ${message.msg.key} \n VALUE: ${message.msg.value}`
-      break
+      text = `KEY: ${message.msg.key} \n VALUE: ${message.msg.value}`;
+      break;
   }
   return (
     <Card className={clsx(classes.root, message.isBot ? classes.rightMessage : classes.leftMessage)}>
       <Typography className={classes.title} color="textSecondary" gutterBottom>
         {message.type === 'admin_message' && '@admin:message'}
-        {message.type !== 'admin_message' && (message.isBot ? `@bot: ${message.type}` : '@' + message.msg.chat.username)}
+        {message.type !== 'admin_message' && (message.isBot ? `@bot: ${message.type}` : `@${message.msg.chat.username}`)}
       </Typography>
       <Typography variant="body1" style={{ whiteSpace: 'pre-line' }}>
         {text}
@@ -89,7 +83,7 @@ const ChatMessage = props => {
         {new Date(message.ts * 1000).toLocaleString()}
       </Typography>
     </Card>
-  )
+  );
 }
 
-export default ChatMessage
+export default ChatMessage;

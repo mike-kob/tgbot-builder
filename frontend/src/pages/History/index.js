@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import {
-  Box,
-  Button,
-  makeStyles,
-  Typography,
-  Paper,
-} from '@material-ui/core'
+  Box, Button, Typography, Paper,
+} from '@mui/material';
 
-import Header from '@/components/Header'
-import Message from '../Bot/Users/Message'
-import { useRouter } from 'next/router'
-import { getBotUserChat } from '@/actions'
+import makeStyles from '@mui/styles/makeStyles';
+
+import { useRouter } from 'next/router';
+import Header from '@/components/Header';
+import { getBotUserChat } from '@/actions';
+import Message from '../Bot/Users/Message';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -43,31 +41,31 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#8080802e',
     width: '70%',
   },
-}))
+}));
 
-const ChatHistory = (props) => {
-  const classes = useStyles(props)
-  const router = useRouter()
+function ChatHistory(props) {
+  const classes = useStyles(props);
+  const router = useRouter();
 
-  const [msgs, setMsgs] = useState([])
+  const [msgs, setMsgs] = useState([]);
 
   useEffect(async () => {
     if (router.query.botId && router.query.chatId) {
-      const data = await getBotUserChat(router.query.botId, router.query.chatId)
-      setMsgs(data)
+      const data = await getBotUserChat(router.query.botId, router.query.chatId);
+      setMsgs(data);
     }
-  }, [router.query.botId, router.query.chatId])
+  }, [router.query.botId, router.query.chatId]);
 
   return (
     <>
       <Header />
       <div className={classes.content}>
         <Box display="flex" flexDirection="column" className={classes.messages}>
-          {msgs.map(msg => <Message key={msg._id} message={msg}/>)}
+          {msgs.map((msg) => <Message key={msg._id} message={msg} />)}
         </Box>
       </div>
     </>
-  )
+  );
 }
 
-export default ChatHistory
+export default ChatHistory;

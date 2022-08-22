@@ -1,6 +1,6 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const Schema = mongoose.Schema
+const { Schema } = mongoose;
 
 const botUserSchema = new Schema({
   botId: mongoose.SchemaTypes.ObjectId,
@@ -12,6 +12,6 @@ const botUserSchema = new Schema({
   db: Object,
   state: String,
   created: { type: Date, default: Date.now },
-})
+});
 
-export default (mongoose.models.BotUser || mongoose.model('BotUser', botUserSchema))
+export default (mongoose.models.BotUser || mongoose.model('BotUser', botUserSchema));

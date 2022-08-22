@@ -1,19 +1,19 @@
-import React from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import { Link, TextField, Typography } from '@material-ui/core'
+import React from 'react';
+import makeStyles from '@mui/styles/makeStyles';
+import { Link, TextField, Typography } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
-}))
+}));
 
-const ChangeStateAction = (props) => {
-  const classes = useStyles()
+function ChangeStateAction(props) {
+  const classes = useStyles();
   const {
     action,
     changeAction,
-  } = props
+  } = props;
 
-  const handleTextChange = (e) => changeAction(action.setIn(['options', 'text'], e.target.value))
+  const handleTextChange = (e) => changeAction(action.setIn(['options', 'text'], e.target.value));
 
   return (
     <div className={classes.root}>
@@ -28,10 +28,14 @@ const ChangeStateAction = (props) => {
         onChange={handleTextChange}
       />
       <Typography variant="caption" color="textSecondary">
-        You can use <Link href="/docs/reference/templating" target="_blank">Template variables</Link> here
+        You can use
+        {' '}
+        <Link href="/docs/reference/templating" target="_blank">Template variables</Link>
+        {' '}
+        here
       </Typography>
     </div>
-  )
+  );
 }
 
-export default ChangeStateAction
+export default ChangeStateAction;

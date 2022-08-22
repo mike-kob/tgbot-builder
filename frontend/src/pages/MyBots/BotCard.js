@@ -1,15 +1,15 @@
-import React from 'react'
-import clsx from 'clsx'
-import { makeStyles } from '@material-ui/core/styles'
+import React from 'react';
+import clsx from 'clsx';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   Typography,
   Paper,
   IconButton, Box,
-} from '@material-ui/core'
-import { useRouter } from 'next/router'
+} from '@mui/material';
+import { useRouter } from 'next/router';
 
-import PlayArrowIcon from '@material-ui/icons/PlayArrow'
-import PauseIcon from '@material-ui/icons/Pause'
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PauseIcon from '@mui/icons-material/Pause';
 
 const useStyles = makeStyles((theme) => ({
   depositContext: {
@@ -38,33 +38,35 @@ const useStyles = makeStyles((theme) => ({
   paused: {
     color: 'gray',
   },
-}))
+}));
 
-const BotCard = (props) => {
-  const classes = useStyles()
-  const router = useRouter()
-  const { bot } = props
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
+function BotCard(props) {
+  const classes = useStyles();
+  const router = useRouter();
+  const { bot } = props;
+  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   return (
-    <Paper className={fixedHeightPaper} elevation="0">
+    <Paper className={fixedHeightPaper} elevation={0}>
       <Typography
         component="h2"
         variant="h6"
         color="primary"
         gutterBottom
         className={classes.titleLink}
-        onClick={() => router.push('/bot/' + bot._id) }
-      >{bot.name}</Typography>
+        onClick={() => router.push(`/bot/${bot._id}`)}
+      >
+        {bot.name}
+      </Typography>
       <Typography variant="caption" color="textSecondary">
         {bot.description}
       </Typography>
       <Box mt="auto" display="flex" alignItems="center" className={bot.status ? classes.active : classes.paused}>
-        {bot.status ? <PlayArrowIcon/> : <PauseIcon/>}
+        {bot.status ? <PlayArrowIcon /> : <PauseIcon />}
         <span>{bot.status ? 'Active' : 'Paused'}</span>
       </Box>
     </Paper>
-  )
+  );
 }
 
-export default BotCard
+export default BotCard;

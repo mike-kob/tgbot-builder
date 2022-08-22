@@ -1,4 +1,4 @@
-import admin from 'firebase-admin'
+import admin from 'firebase-admin';
 
 const config = () => ({
   type: 'service_account',
@@ -11,13 +11,13 @@ const config = () => ({
   token_uri: 'https://oauth2.googleapis.com/token',
   auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
   client_x509_cert_url: process.env.FIREBASE_CLIENT_URL,
-})
+});
 
 export default async () => {
   if (!admin.apps.length) {
     admin.initializeApp({
       credential: admin.credential.cert(config()),
-    })
+    });
   }
-  return admin
-}
+  return admin;
+};

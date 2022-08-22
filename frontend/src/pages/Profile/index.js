@@ -1,9 +1,9 @@
-import React from 'react'
+import React from 'react';
 import {
   Box,
-} from '@material-ui/core'
+} from '@mui/material';
 
-import Header from '@/components/Header'
+import Header from '@/components/Header';
 
 // const useStyles = makeStyles((theme) => ({
 //   content: {
@@ -12,8 +12,8 @@ import Header from '@/components/Header'
 //   },
 // }))
 
-const Home = (props) => {
-  const { user } = props
+function Home(props) {
+  const { user } = props;
 
   if (!user) {
     return (
@@ -24,14 +24,12 @@ const Home = (props) => {
         </Box>
 
       </>
-    )
+    );
   }
 
   return (
-    <>
-      <Header />
-    </>
-  )
+    <Header />
+  );
 }
 
-export default Home
+export default Home;

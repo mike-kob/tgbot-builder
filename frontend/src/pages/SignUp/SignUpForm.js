@@ -1,20 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
-  makeStyles,
-  Avatar,
-  Button,
-  TextField,
-  Box,
-  Grid,
-  Typography,
-} from '@material-ui/core'
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
+  Avatar, Button, TextField, Box, Grid, Typography,
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
-import { googleSignUp, defaultSignUp } from 'src/actions/auth'
-import useLoader from '@/hooks/useLoader'
-import { AppContext } from '@/utils/appContext'
+import { googleSignUp, defaultSignUp } from 'src/actions/auth';
+import useLoader from '@/hooks/useLoader';
+import { AppContext } from '@/utils/appContext';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -41,22 +36,22 @@ const useStyles = makeStyles((theme) => ({
       border: '2px solid',
     },
   },
-}))
+}));
 
-const SignUpForm = (props) => {
-  const [, dispatch] = React.useContext(AppContext)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [password2, setPassword2] = useState('')
-  const [, setLoading] = useLoader()
-  const router = useRouter()
+function SignUpForm(props) {
+  const [, dispatch] = React.useContext(AppContext);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [password2, setPassword2] = useState('');
+  const [, setLoading] = useLoader();
+  const router = useRouter();
 
-  const classes = useStyles(props)
+  const classes = useStyles(props);
   const onSuccess = (user) => {
-    setLoading(false)
-    dispatch({ user })
-    router.push('/bots')
-  }
+    setLoading(false);
+    dispatch({ user });
+    router.push('/bots');
+  };
 
   return (
     <div className={classes.paper}>
@@ -66,11 +61,11 @@ const SignUpForm = (props) => {
 
       <Typography component="h1" variant="h5">
         Sign up
-        </Typography>
+      </Typography>
       <Box m={1} />
       <Button
         className={classes.outlinedButton}
-        variant={'outlined'}
+        variant="outlined"
         fullWidth
         color="primary"
         onClick={() => googleSignUp(onSuccess)}
@@ -83,7 +78,7 @@ const SignUpForm = (props) => {
       <div className={classes.form}>
         <TextField
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           variant="outlined"
           margin="normal"
           required
@@ -96,7 +91,7 @@ const SignUpForm = (props) => {
         />
         <TextField
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           variant="outlined"
           margin="normal"
           required
@@ -108,7 +103,7 @@ const SignUpForm = (props) => {
         />
         <TextField
           value={password2}
-          onChange={e => setPassword2(e.target.value)}
+          onChange={(e) => setPassword2(e.target.value)}
           variant="outlined"
           margin="normal"
           required
@@ -131,16 +126,16 @@ const SignUpForm = (props) => {
           Sign Up
         </Button>
         <Grid container>
-          <Grid item xs/>
+          <Grid item xs />
           <Grid item>
-            <Link href="/login" >
+            <Link href="/login">
               <a><Typography variant="body2">Already have an account? Sign In</Typography></a>
             </Link>
           </Grid>
         </Grid>
       </div>
     </div>
-  )
+  );
 }
 
-export default SignUpForm
+export default SignUpForm;

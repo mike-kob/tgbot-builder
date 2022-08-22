@@ -1,6 +1,6 @@
-import React, { useContext } from 'react'
-import { makeStyles } from '@material-ui/core'
-import { Map } from 'immutable'
+import React, { useContext } from 'react';
+import makeStyles from '@mui/styles/makeStyles';
+import { Map } from 'immutable';
 import {
   Dialog,
   DialogActions,
@@ -8,19 +8,19 @@ import {
   DialogContent,
   DialogContentText,
   Button,
-} from '@material-ui/core'
+} from '@mui/material';
 
-import { DiagramContext } from '../../Context'
+import { DiagramContext } from '../../Context';
 
-const useStyles = makeStyles((theme) => ({}))
+const useStyles = makeStyles((theme) => ({}));
 
-const Popup = (props) => {
-  const classes = useStyles()
-  const [state, dispatch] = useContext(DiagramContext)
+function Popup(props) {
+  const classes = useStyles();
+  const [state, dispatch] = useContext(DiagramContext);
 
   const handleClose = () => {
-    dispatch({ type: 'UPDATE_POPUP', data: Map({ open: false }) })
-  }
+    dispatch({ type: 'UPDATE_POPUP', data: Map({ open: false }) });
+  };
 
   return (
     <Dialog
@@ -36,21 +36,29 @@ const Popup = (props) => {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => {
-          state.hasIn(['popup', 'onReject']) && state.getIn(['popup', 'onReject'])()
-          handleClose()
-        }} color="primary">
+        <Button
+          onClick={() => {
+            state.hasIn(['popup', 'onReject']) && state.getIn(['popup', 'onReject'])();
+            handleClose();
+          }}
+          color="primary"
+        >
           No
         </Button>
-        <Button onClick={() => {
-          state.hasIn(['popup', 'onApprove']) && state.getIn(['popup', 'onApprove'])()
-          handleClose()
-        }} color="primary" variant="contained" autoFocus>
+        <Button
+          onClick={() => {
+            state.hasIn(['popup', 'onApprove']) && state.getIn(['popup', 'onApprove'])();
+            handleClose();
+          }}
+          color="primary"
+          variant="contained"
+          autoFocus
+        >
           Yes
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 }
 
-export default Popup
+export default Popup;

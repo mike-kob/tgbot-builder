@@ -1,16 +1,13 @@
-import React, { useContext } from 'react'
+import React, { useContext } from 'react';
 import {
-  Box,
-  Chip,
-  IconButton,
-  makeStyles,
-  Paper,
-  Typography,
-} from '@material-ui/core'
+  Box, Chip, IconButton, Paper, Typography,
+} from '@mui/material';
 
-import { DiagramContext } from '../../../Context'
-import EditIcon from '@material-ui/icons/Edit'
-import { ACTION_ICON, ACTION_LABEL, DRAWER } from '@/pages/Bot/constants'
+import makeStyles from '@mui/styles/makeStyles';
+
+import EditIcon from '@mui/icons-material/Edit';
+import { ACTION_ICON, ACTION_LABEL, DRAWER } from '@/pages/Bot/constants';
+import { DiagramContext } from '../../../Context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,25 +38,25 @@ const useStyles = makeStyles((theme) => ({
   chip: {
     margin: theme.spacing(0.5),
   },
-}))
+}));
 
-const InitialSection = (props) => {
-  const classes = useStyles(props)
-  const [, dispatch] = useContext(DiagramContext)
+function InitialSection(props) {
+  const classes = useStyles(props);
+  const [, dispatch] = useContext(DiagramContext);
 
-  const { current } = props
-  const initialActions = current.getIn(['data', 'initial'])
+  const { current } = props;
+  const initialActions = current.getIn(['data', 'initial']);
 
   const onEdit = () => {
     dispatch({
       type: 'UPDATE_CUR_ACTIONS',
       data: initialActions,
-    })
+    });
     dispatch({
       type: 'UPDATE_DRAWER',
       data: DRAWER.INITIAL,
-    })
-  }
+    });
+  };
 
   return (
     <div className={classes.root}>
@@ -78,14 +75,14 @@ const InitialSection = (props) => {
             ))}
           </div>
           <div className={classes.actions}>
-            <IconButton onClick={onEdit}>
-              <EditIcon/>
+            <IconButton onClick={onEdit} size="large">
+              <EditIcon />
             </IconButton>
           </div>
         </Paper>
       </Box>
     </div>
-  )
+  );
 }
 
-export default InitialSection
+export default InitialSection;

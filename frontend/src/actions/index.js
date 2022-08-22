@@ -5,7 +5,7 @@ export {
   defaultSignUp,
   getUser,
   logout,
-} from './auth'
+} from './auth';
 
 export {
   getBotList,
@@ -17,4 +17,4 @@ export {
   deployBot,
   getBotUsers,
   getBotUserChat,
-} from './bots'
+} from './bots';

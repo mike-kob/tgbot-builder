@@ -1,13 +1,11 @@
-import React, { useContext } from 'react'
-import {
-  makeStyles,
-  Button,
-  Box,
-} from '@material-ui/core'
+import React, { useContext } from 'react';
+import { Button, Box } from '@mui/material';
 
-import { DiagramContext, commandFactory } from '../../../Context'
-import Command from './commands/Command'
-import { INIT_NODE_ID } from '@/pages/Bot/constants'
+import makeStyles from '@mui/styles/makeStyles';
+
+import { INIT_NODE_ID } from '@/pages/Bot/constants';
+import { DiagramContext, commandFactory } from '../../../Context';
+import Command from './commands/Command';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,22 +22,21 @@ const useStyles = makeStyles((theme) => ({
       border: '2px solid',
     },
   },
-}))
+}));
 
-const CommandSection = (props) => {
-  const classes = useStyles(props)
-  const [, dispatch] = useContext(DiagramContext)
+function CommandSection(props) {
+  const classes = useStyles(props);
+  const [, dispatch] = useContext(DiagramContext);
 
-  const { current } = props
-  const commands = current.getIn(['data', 'commands'])
+  const { current } = props;
+  const commands = current.getIn(['data', 'commands']);
 
   const handleAdd = () => {
     dispatch({
       type: 'UPDATE_NODE',
-      data: current.updateIn(
-        ['data', 'commands'], els => els.push(commandFactory().set('id', String(commands.size)))),
-    })
-  }
+      data: current.updateIn(['data', 'commands'], (els) => els.push(commandFactory().set('id', String(commands.size)))),
+    });
+  };
 
   return (
     <div className={classes.root}>
@@ -55,9 +52,10 @@ const CommandSection = (props) => {
         className={classes.outlinedButton}
         disabled={current.get('id') === INIT_NODE_ID}
       >
-        + Add command</Button>
+        + Add command
+      </Button>
     </div>
-  )
+  );
 }
 
-export default CommandSection
+export default CommandSection;

@@ -1,18 +1,18 @@
-import React from 'react'
-import Head from 'next/head'
-import Header from '@/components/Header'
-import BotsLayout from './BotsLayout'
+import React from 'react';
+import Head from 'next/head';
+import Header from '@/components/Header';
+import BotsLayout from './BotsLayout';
 
-const Bots = (props) => {
+function Bots(props) {
   return (
     <>
       <Head>
-        <title>My bots</title>
+        <title>My bots | TGBot builder</title>
       </Head>
       <Header />
       <BotsLayout />
     </>
-  )
+  );
 }
 
-export default Bots
+export default Bots;

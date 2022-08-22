@@ -1,22 +1,26 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react';
 import {
   Box,
   Button,
-  makeStyles,
   TextField,
   Typography,
   FormGroup,
   Switch,
   FormControlLabel,
-  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
-} from '@material-ui/core'
-import { DiagramContext } from '@/pages/Bot/Context'
-import { useRouter } from 'next/router'
-import { Formik } from 'formik'
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { useRouter } from 'next/router';
+import { Formik } from 'formik';
 
-import { deleteBot, updateBotInfo } from '@/actions'
-import { fromJS } from 'immutable'
-import useLoader from '@/hooks/useLoader'
+import { fromJS } from 'immutable';
+import { deleteBot, updateBotInfo } from '@/actions';
+import { DiagramContext } from '@/pages/Bot/Context';
+import useLoader from '@/hooks/useLoader';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,30 +39,29 @@ const useStyles = makeStyles((theme) => ({
   sidebar: {
     width: '30%',
   },
-}))
+}));
 
-const MainInfo = props => {
-  const classes = useStyles()
-  const [state, dispatch] = useContext(DiagramContext)
-  const [, setLoading] = useLoader()
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [enableSwitch, setEnableSwitch] = useState(true)
-  const router = useRouter()
-  const bot = state.get('bot').toJS()
+function MainInfo(props) {
+  const classes = useStyles();
+  const [state, dispatch] = useContext(DiagramContext);
+  const [, setLoading] = useLoader();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [enableSwitch, setEnableSwitch] = useState(true);
+  const router = useRouter();
+  const bot = state.get('bot').toJS();
   const handleStatusChange = (e) => {
-    setEnableSwitch(false)
-    setLoading(true)
+    setEnableSwitch(false);
+    setLoading(true);
     updateBotInfo(router.query.id, { status: e.target.checked }, (newBot) => {
       dispatch({
         type: 'SET_BOT',
         data: fromJS(newBot),
-      })
-      setEnableSwitch(true)
-      setLoading(false)
-    })
-  }
-  const handleDeleteBot = () =>
-    deleteBot(router.query.id, () => router.push('/bots'))
+      });
+      setEnableSwitch(true);
+      setLoading(false);
+    });
+  };
+  const handleDeleteBot = () => deleteBot(router.query.id, () => router.push('/bots'));
 
   return (
     <Box display="flex" flexDirection="column" mx={3} my={2} width="70%">
@@ -66,11 +69,11 @@ const MainInfo = props => {
         initialValues={bot}
         enableReinitialize
         onSubmit={(values) => {
-          setLoading(true)
+          setLoading(true);
           updateBotInfo(router.query.id, values, (newBot) => {
-            dispatch({ type: 'SET_BOT', data: fromJS(newBot) })
-            setLoading(false)
-          })
+            dispatch({ type: 'SET_BOT', data: fromJS(newBot) });
+            setLoading(false);
+          });
         }}
       >
         {({
@@ -124,22 +127,25 @@ const MainInfo = props => {
           </form>
         )}
       </Formik>
-      <Box margin={1}/>
-      {bot.tokenInfo && <>
+      <Box margin={1} />
+      {bot.tokenInfo && (
+      <>
         <Typography variant="h6">Token validation</Typography>
         {bot.tokenInfo.ok
-          ? <Typography variant="body2" style={{ whiteSpace: 'pre-wrap' }}>
+          ? (
+            <Typography variant="body2" style={{ whiteSpace: 'pre-wrap' }}>
               {JSON.stringify(bot.tokenInfo.profile, null, 2)}
             </Typography>
-          : <Typography variant="body2" color="secondary">{bot.tokenInfo.reason}</Typography>
-        }
-        <Box margin={1}/>
-      </>}
+          )
+          : <Typography variant="body2" color="secondary">{bot.tokenInfo.reason}</Typography>}
+        <Box margin={1} />
+      </>
+      )}
       <Typography variant="h6">Danger zone</Typography>
       <Box display="flex" flexDirection="column" width="50%">
         <FormGroup>
           <FormControlLabel
-            control={<Switch checked={bot.status} disabled={!enableSwitch} onChange={handleStatusChange}/>}
+            control={<Switch checked={bot.status} disabled={!enableSwitch} onChange={handleStatusChange} />}
             label="Activate"
           />
         </FormGroup>
@@ -174,7 +180,7 @@ const MainInfo = props => {
         </DialogActions>
       </Dialog>
     </Box>
-  )
+  );
 }
 
-export default MainInfo
+export default MainInfo;

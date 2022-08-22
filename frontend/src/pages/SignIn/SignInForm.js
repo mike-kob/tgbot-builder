@@ -1,20 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
-  makeStyles,
-  Avatar,
-  Button,
-  TextField,
-  Box,
-  Grid,
-  Typography,
-} from '@material-ui/core'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+  Avatar, Button, TextField, Box, Grid, Typography,
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
-import { googleSignIn, defaultSignIn } from 'src/actions/auth'
-import useLoader from '@/hooks/useLoader'
-import { AppContext } from '@/utils/appContext'
+import { googleSignIn, defaultSignIn } from 'src/actions/auth';
+import useLoader from '@/hooks/useLoader';
+import { AppContext } from '@/utils/appContext';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -46,27 +41,27 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 'auto'),
     color: 'white',
   },
-}))
+}));
 
-const SignInForm = (props) => {
-  const [, dispatch] = React.useContext(AppContext)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [, setLoading] = useLoader()
+function SignInForm(props) {
+  const [, dispatch] = React.useContext(AppContext);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [, setLoading] = useLoader();
 
-  const classes = useStyles(props)
-  const router = useRouter()
+  const classes = useStyles(props);
+  const router = useRouter();
 
   const onSuccess = (user) => {
-    setLoading(false)
-    dispatch({ user })
-    router.push('/bots')
-  }
+    setLoading(false);
+    dispatch({ user });
+    router.push('/bots');
+  };
   const onError = () => {
-    setLoading(false)
-    setError('Something went wrong. Have you signed up?')
-  }
+    setLoading(false);
+    setError('Something went wrong. Have you signed up?');
+  };
 
   return (
     <div className={classes.paper}>
@@ -76,17 +71,17 @@ const SignInForm = (props) => {
 
       <Typography component="h1" variant="h5">
         Sign in
-        </Typography>
+      </Typography>
       <Box m={1} />
       <Typography variant="caption" color="secondary">{error}</Typography>
       <Button
-        variant={'outlined'}
+        variant="outlined"
         color="primary"
         className={classes.outlinedButton}
         fullWidth
         onClick={async () => {
-          setLoading(true)
-          await googleSignIn(onSuccess, onError)
+          setLoading(true);
+          await googleSignIn(onSuccess, onError);
         }}
       >
         Sign in with Google
@@ -97,7 +92,7 @@ const SignInForm = (props) => {
       <form className={classes.form} noValidate>
         <TextField
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           variant="outlined"
           margin="normal"
           required
@@ -109,7 +104,7 @@ const SignInForm = (props) => {
         />
         <TextField
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           variant="outlined"
           margin="normal"
           required
@@ -130,7 +125,7 @@ const SignInForm = (props) => {
           Sign In
         </Button>
         <Grid container>
-          <Grid item xs/>
+          <Grid item xs />
           <Grid item>
             <Link href="/signup">
               <a><Typography variant="body2">Don&apos;t have an account? Sign Up</Typography></a>
@@ -139,7 +134,7 @@ const SignInForm = (props) => {
         </Grid>
       </form>
     </div>
-  )
+  );
 }
 
-export default SignInForm
+export default SignInForm;

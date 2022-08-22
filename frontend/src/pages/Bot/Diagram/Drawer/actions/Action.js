@@ -1,5 +1,5 @@
-import React, { useContext } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
+import React, { useContext } from 'react';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   Select,
   FormControl,
@@ -7,17 +7,17 @@ import {
   MenuItem,
   Paper,
   IconButton,
-} from '@material-ui/core'
-import DeleteIcon from '@material-ui/icons/Delete'
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-import { DiagramContext } from '../../../Context'
-import SendMessageAction from './SendMessageAction'
-import ChangeStateAction from './ChangeStateAction'
-import MakeAPIRequestAction from './MakeAPIRequestAction'
-import SaveUserDataAction from './SaveUserDataAction'
-import { ACTION } from '@/pages/Bot/constants'
+import { ACTION } from '@/pages/Bot/constants';
+import { DiagramContext } from '../../../Context';
+import SendMessageAction from './SendMessageAction';
+import ChangeStateAction from './ChangeStateAction';
+import MakeAPIRequestAction from './MakeAPIRequestAction';
+import SaveUserDataAction from './SaveUserDataAction';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,58 +37,58 @@ const useStyles = makeStyles((theme) => ({
   margin: {
     marginBottom: theme.spacing(1),
   },
-}))
+}));
 
-const Action = (props) => {
-  const classes = useStyles()
-  const [state, dispatch] = useContext(DiagramContext)
-  const { action, index } = props
-  const currentActions = state.get('currentActions')
+function Action(props) {
+  const classes = useStyles();
+  const [state, dispatch] = useContext(DiagramContext);
+  const { action, index } = props;
+  const currentActions = state.get('currentActions');
 
   const handleChangeAction = (newAction) => {
     dispatch({
       type: 'UPDATE_CUR_ACTIONS',
       data: currentActions.set(index, newAction),
-    })
-  }
+    });
+  };
   const handleSelect = (e) => {
     dispatch({
       type: 'UPDATE_CUR_ACTIONS',
       data: currentActions.setIn([index, 'type'], e.target.value),
-    })
-  }
+    });
+  };
   const handleRemove = () => {
     dispatch({
       type: 'UPDATE_CUR_ACTIONS',
       data: currentActions.delete(index),
-    })
-  }
+    });
+  };
   const handleSwap = (i, j) => {
-    const el1 = currentActions.get(i)
-    const el2 = currentActions.get(j)
+    const el1 = currentActions.get(i);
+    const el2 = currentActions.get(j);
     dispatch({
       type: 'UPDATE_CUR_ACTIONS',
       data: currentActions.set(i, el2).set(j, el1),
-    })
-  }
+    });
+  };
 
-  let actionComponent
+  let actionComponent;
   switch (action.get('type')) {
     case ACTION.SEND_MESSAGE:
-      actionComponent = <SendMessageAction action={action} changeAction={handleChangeAction} />
-      break
+      actionComponent = <SendMessageAction action={action} changeAction={handleChangeAction} />;
+      break;
     case ACTION.CHANGE_STATE:
-      actionComponent = <ChangeStateAction action={action} changeAction={handleChangeAction} />
-      break
+      actionComponent = <ChangeStateAction action={action} changeAction={handleChangeAction} />;
+      break;
     case ACTION.MAKE_REQUEST:
-      actionComponent = <MakeAPIRequestAction action={action} changeAction={handleChangeAction} />
-      break
+      actionComponent = <MakeAPIRequestAction action={action} changeAction={handleChangeAction} />;
+      break;
     case ACTION.SAVE_USER_DATA:
-      actionComponent = <SaveUserDataAction action={action} changeAction={handleChangeAction} />
-      break
+      actionComponent = <SaveUserDataAction action={action} changeAction={handleChangeAction} />;
+      break;
     default:
-      actionComponent = <></>
-      break
+      actionComponent = <></>;
+      break;
   }
 
   return (
@@ -96,6 +96,7 @@ const Action = (props) => {
       <FormControl variant="outlined" fullWidth className={classes.margin}>
         <InputLabel htmlFor="action-type-select">Action type</InputLabel>
         <Select
+          variant="standard"
           value={action.get('type')}
           id="action-type-select"
           onChange={handleSelect}
@@ -109,21 +110,26 @@ const Action = (props) => {
       </FormControl>
       {actionComponent}
       <div className={classes.buttonRow}>
-        <IconButton onClick={handleRemove}>
+        <IconButton onClick={handleRemove} size="large">
           <DeleteIcon />
         </IconButton>
-        <IconButton onClick={() => handleSwap(index, index - 1)} disabled={index === 0}>
+        <IconButton
+          onClick={() => handleSwap(index, index - 1)}
+          disabled={index === 0}
+          size="large"
+        >
           <ArrowUpwardIcon />
         </IconButton>
         <IconButton
           onClick={() => handleSwap(index, index + 1)}
           disabled={index === state.get('currentActions').size - 1}
+          size="large"
         >
           <ArrowDownwardIcon />
         </IconButton>
       </div>
     </Paper>
-  )
+  );
 }
 
-export default Action
+export default Action;

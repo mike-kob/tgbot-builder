@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState } from 'react';
 import {
   Box,
   Button,
@@ -8,19 +8,20 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-  makeStyles,
   Paper,
-  TextField, Typography,
-} from '@material-ui/core'
-import EditIcon from '@material-ui/icons/Edit'
-import DeleteIcon from '@material-ui/icons/Delete'
-import SettingsIcon from '@material-ui/icons/Settings'
-import cronstrue from 'cronstrue'
-import parser from 'cron-parser'
-import _ from 'lodash'
+  TextField,
+  Typography,
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SettingsIcon from '@mui/icons-material/Settings';
+import cronstrue from 'cronstrue';
+import parser from 'cron-parser';
+import _ from 'lodash';
 
-import { DiagramContext } from '../../../Context'
-import { ACTION_ICON, ACTION_LABEL, DRAWER } from '@/pages/Bot/constants'
+import { ACTION_ICON, ACTION_LABEL, DRAWER } from '@/pages/Bot/constants';
+import { DiagramContext } from '../../../Context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,27 +50,27 @@ const useStyles = makeStyles((theme) => ({
   explanation: {
     minHeight: theme.spacing(10),
   },
-}))
+}));
 
-const ScheduleCard = (props) => {
-  const classes = useStyles(props)
-  const [state, dispatch] = useContext(DiagramContext)
-  const [popupOpen, setPopupOpen] = useState(false)
+function ScheduleCard(props) {
+  const classes = useStyles(props);
+  const [state, dispatch] = useContext(DiagramContext);
+  const [popupOpen, setPopupOpen] = useState(false);
 
-  const { current, entry, index } = props
+  const { current, entry, index } = props;
 
   const onEdit = () => {
-    dispatch({ type: 'UPDATE_CUR_SCHEDULE_ENTRY', data: entry.set('index', index) })
-    dispatch({ type: 'UPDATE_CUR_ACTIONS', data: entry.get('actions') })
-    dispatch({ type: 'UPDATE_DRAWER', data: DRAWER.SCHEDULE })
-  }
+    dispatch({ type: 'UPDATE_CUR_SCHEDULE_ENTRY', data: entry.set('index', index) });
+    dispatch({ type: 'UPDATE_CUR_ACTIONS', data: entry.get('actions') });
+    dispatch({ type: 'UPDATE_DRAWER', data: DRAWER.SCHEDULE });
+  };
 
   const onDelete = () => {
     const onApprove = () => dispatch({
       type: 'UPDATE_NODE',
       data: current.deleteIn(['data', 'schedule', index]),
-    })
-    const onReject = () => { }
+    });
+    const onReject = () => { };
     dispatch({
       type: 'UPDATE_POPUP',
       data: state.get('popup').merge({
@@ -78,19 +79,19 @@ const ScheduleCard = (props) => {
         onApprove,
         onReject,
       }),
-    })
-  }
+    });
+  };
   const onCronEdit = (e) => {
     dispatch({
       type: 'UPDATE_NODE',
       data: current.setIn(['data', 'schedule', index, 'cron'], e.target.value),
-    })
-  }
+    });
+  };
 
-  let validExpr = ''
+  let validExpr = '';
   try {
-    const res = parser.parseString(entry.get('cron'))
-    validExpr = _.isEmpty(res.errors) ? cronstrue.toString(entry.get('cron')) : ''
+    const res = parser.parseString(entry.get('cron'));
+    validExpr = _.isEmpty(res.errors) ? cronstrue.toString(entry.get('cron')) : '';
   } catch (err) {}
 
   return (
@@ -103,9 +104,9 @@ const ScheduleCard = (props) => {
         size="small"
         InputProps={{
           style: { padding: '8px 4px', fontFamily: 'monospace' },
-          endAdornment: <IconButton onClick={() => setPopupOpen(true)}>
-            <SettingsIcon/>
-          </IconButton>,
+          endAdornment: <IconButton onClick={() => setPopupOpen(true)} size="large">
+            <SettingsIcon />
+                        </IconButton>,
         }}
         className={classes.regexp}
       />
@@ -121,15 +122,17 @@ const ScheduleCard = (props) => {
         ))}
       </div>
       <div className={classes.actions}>
-        <IconButton onClick={onEdit}>
+        <IconButton onClick={onEdit} size="large">
           <EditIcon />
         </IconButton>
-        <IconButton onClick={onDelete}>
+        <IconButton onClick={onDelete} size="large">
           <DeleteIcon />
         </IconButton>
       </div>
-      <Dialog open={popupOpen} onClose={() => setPopupOpen(false)}
-              aria-labelledby="form-dialog-title"
+      <Dialog
+        open={popupOpen}
+        onClose={() => setPopupOpen(false)}
+        aria-labelledby="form-dialog-title"
 
       >
         <DialogTitle id="form-dialog-title">Edit schedule</DialogTitle>
@@ -155,7 +158,7 @@ const ScheduleCard = (props) => {
         </DialogActions>
       </Dialog>
     </Paper>
-  )
+  );
 }
 
-export default ScheduleCard
+export default ScheduleCard;

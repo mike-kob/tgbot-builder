@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   TextField,
@@ -7,40 +7,41 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  makeStyles,
-} from '@material-ui/core'
+} from '@mui/material';
 
-import { addBot } from '@/actions'
-import { useRouter } from 'next/router'
-import initState from '@/pages/Bot/Context/initState'
+import makeStyles from '@mui/styles/makeStyles';
+
+import { useRouter } from 'next/router';
+import { addBot } from '@/actions';
+import initState from '@/pages/Bot/Context/initState';
 
 const useStyles = makeStyles((theme) => ({
-}))
+}));
 
-const NewBotDialog = (props) => {
-  const classes = useStyles()
-  const router = useRouter()
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const { open, setOpen } = props
+function NewBotDialog(props) {
+  const classes = useStyles();
+  const router = useRouter();
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const { open, setOpen } = props;
 
   const handleClose = () => {
-    setOpen(false)
-    setName('')
-    setDescription('')
-  }
+    setOpen(false);
+    setName('');
+    setDescription('');
+  };
 
   const handleSave = async () => {
     const data = {
       ...initState.get('bot').toJS(),
       name,
       description,
-    }
+    };
     await addBot(data, (newBot) => {
-      router.push('/bot/' + newBot._id)
-      props.onAdd(newBot)
-    })
-  }
+      router.push(`/bot/${newBot._id}`);
+      props.onAdd(newBot);
+    });
+  };
 
   return (
     <div>
@@ -84,7 +85,7 @@ const NewBotDialog = (props) => {
         </DialogActions>
       </Dialog>
     </div>
-  )
+  );
 }
 
-export default NewBotDialog
+export default NewBotDialog;

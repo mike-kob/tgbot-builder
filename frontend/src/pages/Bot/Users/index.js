@@ -1,18 +1,14 @@
-import React, { useContext, useEffect } from 'react'
-import {
-  Box,
-  makeStyles,
-  Typography,
-  Button,
-} from '@material-ui/core'
-import { DataGrid } from '@material-ui/data-grid'
-import { DiagramContext } from '@/pages/Bot/Context'
-import { useRouter } from 'next/router'
+import React, { useContext, useEffect } from 'react';
+import { Box, Typography, Button } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import { DataGrid } from '@mui/x-data-grid';
+import { useRouter } from 'next/router';
+import { fromJS } from 'immutable';
+import { DiagramContext } from '@/pages/Bot/Context';
 
-import { getBotUsers } from '@/actions'
-import { fromJS } from 'immutable'
-import useLoader from '@/hooks/useLoader'
-import ChatHistoryDrawer from '@/pages/Bot/Users/ChatHistoryDrawer'
+import { getBotUsers } from '@/actions';
+import useLoader from '@/hooks/useLoader';
+import ChatHistoryDrawer from '@/pages/Bot/Users/ChatHistoryDrawer';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
   marginLeft: {
     marginLeft: 'auto',
   },
-}))
+}));
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -58,33 +54,32 @@ const columns = [
     headerName: 'State',
     width: 150,
   },
-]
+];
 
-const Users = props => {
-  const classes = useStyles()
-  const router = useRouter()
-  const [state, dispatch] = useContext(DiagramContext)
-  const [, setLoading] = useLoader()
+function Users(props) {
+  const classes = useStyles();
+  const router = useRouter();
+  const [state, dispatch] = useContext(DiagramContext);
+  const [, setLoading] = useLoader();
 
-  const handleSelect = (row) =>
-    dispatch({ type: 'SET_SELECTED_USER', data: fromJS(row.row) })
+  const handleSelect = (row) => dispatch({ type: 'SET_SELECTED_USER', data: fromJS(row.row) });
 
   const handleRefresh = async () => {
-    setLoading(true)
-    const users = await getBotUsers(router.query.id)
-    dispatch({ type: 'SET_USERS', data: fromJS(users) })
-    setLoading(false)
-  }
+    setLoading(true);
+    const users = await getBotUsers(router.query.id);
+    dispatch({ type: 'SET_USERS', data: fromJS(users) });
+    setLoading(false);
+  };
 
   useEffect(async () => {
     if (router.query.id) {
-      await handleRefresh()
+      await handleRefresh();
     }
-  }, [router.query.id])
+  }, [router.query.id]);
 
   const rows = state.get('users')
-    .map(user => user.update('state', s => state.getIn(['bot', 'src', s, 'data', 'label'])))
-    .toJS()
+    .map((user) => user.update('state', (s) => state.getIn(['bot', 'src', s, 'data', 'label'])))
+    .toJS();
 
   return (
     <Box display="flex" flexDirection="column" mx={3} my={2} width="70%">
@@ -101,9 +96,9 @@ const Users = props => {
           pageSize={10}
         />
       </Box>
-      <ChatHistoryDrawer/>
+      <ChatHistoryDrawer />
     </Box>
-  )
+  );
 }
 
-export default Users
+export default Users;

@@ -1,9 +1,9 @@
-import connectAuth from '@/api/middleware/auth'
+import connectAuth from '@/api/middleware/auth';
 
 const handler = async (req, res) => {
   if (req.method !== 'GET') {
-    res.status(405).send('Method not allowed')
-    return
+    res.status(405).send('Method not allowed');
+    return;
   }
   if (req.user) {
     res.json({
@@ -11,10 +11,10 @@ const handler = async (req, res) => {
       picture: req.user.picture,
       name: req.user.name,
       email: req.user.email,
-    })
+    });
   } else {
-    res.json({})
+    res.json({});
   }
-}
+};
 
-export default connectAuth(handler)
+export default connectAuth(handler);

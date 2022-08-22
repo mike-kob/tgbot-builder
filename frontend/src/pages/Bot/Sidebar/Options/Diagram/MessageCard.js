@@ -1,13 +1,17 @@
-import React, { useContext } from 'react'
-import { Chip, IconButton, InputAdornment, makeStyles, Paper, TextField } from '@material-ui/core'
-import EditIcon from '@material-ui/icons/Edit'
-import DeleteIcon from '@material-ui/icons/Delete'
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
+import React, { useContext } from 'react';
+import {
+  Chip, IconButton, InputAdornment, Paper, TextField,
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
-
-import { DiagramContext } from '../../../Context'
-import { ACTION_ICON, ACTION_LABEL, DRAWER, INIT_NODE_ID } from '@/pages/Bot/constants'
+import {
+  ACTION_ICON, ACTION_LABEL, DRAWER, INIT_NODE_ID,
+} from '@/pages/Bot/constants';
+import { DiagramContext } from '../../../Context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,35 +34,35 @@ const useStyles = makeStyles((theme) => ({
   noMargin: {
     margin: '0px',
   },
-}))
+}));
 
-const MessageCard = (props) => {
-  const classes = useStyles(props)
-  const [state, dispatch] = useContext(DiagramContext)
+function MessageCard(props) {
+  const classes = useStyles(props);
+  const [state, dispatch] = useContext(DiagramContext);
 
-  const { current, message, index } = props
+  const { current, message, index } = props;
 
   const onEdit = () => {
-    dispatch({ type: 'UPDATE_CUR_MESSAGE', data: message.set('index', index) })
-    dispatch({ type: 'UPDATE_CUR_ACTIONS', data: message.get('actions') })
-    dispatch({ type: 'UPDATE_DRAWER', data: DRAWER.MESSAGE })
-  }
+    dispatch({ type: 'UPDATE_CUR_MESSAGE', data: message.set('index', index) });
+    dispatch({ type: 'UPDATE_CUR_ACTIONS', data: message.get('actions') });
+    dispatch({ type: 'UPDATE_DRAWER', data: DRAWER.MESSAGE });
+  };
 
   const handleSwap = (i, j) => {
-    const el1 = current.getIn(['data', 'messages', i])
-    const el2 = current.getIn(['data', 'messages', j])
+    const el1 = current.getIn(['data', 'messages', i]);
+    const el2 = current.getIn(['data', 'messages', j]);
 
     dispatch({
       type: 'UPDATE_NODE',
       data: current.setIn(['data', 'messages', i], el2).setIn(['data', 'messages', j], el1),
-    })
-  }
+    });
+  };
   const onDelete = () => {
     const onApprove = () => dispatch({
       type: 'UPDATE_NODE',
       data: current.deleteIn(['data', 'messages', index]),
-    })
-    const onReject = () => { }
+    });
+    const onReject = () => { };
     dispatch({
       type: 'UPDATE_POPUP',
       data: state.get('popup').merge({
@@ -67,14 +71,14 @@ const MessageCard = (props) => {
         onApprove,
         onReject,
       }),
-    })
-  }
+    });
+  };
   const onRegexpEdit = (e) => {
     dispatch({
       type: 'UPDATE_NODE',
       data: current.setIn(['data', 'messages', index, 'regexp'], e.target.value),
-    })
-  }
+    });
+  };
 
   return (
     <Paper className={classes.root}>
@@ -103,21 +107,29 @@ const MessageCard = (props) => {
         ))}
       </div>
       <div className={classes.actions}>
-        <IconButton onClick={() => handleSwap(index, index - 1)} disabled={index === 0}>
+        <IconButton
+          onClick={() => handleSwap(index, index - 1)}
+          disabled={index === 0}
+          size="large"
+        >
           <ArrowUpwardIcon fontSize="small" />
         </IconButton>
-        <IconButton onClick={() => handleSwap(index, index + 1)} disabled={index === current.getIn(['data', 'messages']).size - 1}>
+        <IconButton
+          onClick={() => handleSwap(index, index + 1)}
+          disabled={index === current.getIn(['data', 'messages']).size - 1}
+          size="large"
+        >
           <ArrowDownwardIcon fontSize="small" />
         </IconButton>
-        <IconButton onClick={onEdit}>
+        <IconButton onClick={onEdit} size="large">
           <EditIcon />
         </IconButton>
-        <IconButton onClick={onDelete}>
+        <IconButton onClick={onDelete} size="large">
           <DeleteIcon />
         </IconButton>
       </div>
     </Paper>
-  )
+  );
 }
 
-export default MessageCard
+export default MessageCard;

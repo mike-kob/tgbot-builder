@@ -1,12 +1,12 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState } from 'react';
 import {
-  makeStyles,
-  Typography,
-  TextField, Button, Dialog, DialogTitle, DialogActions,
-} from '@material-ui/core'
+  Typography, TextField, Button, Dialog, DialogTitle, DialogActions,
+} from '@mui/material';
 
-import { DiagramContext } from '../../../Context'
-import { ACTION, INIT_NODE_ID } from '@/pages/Bot/constants'
+import makeStyles from '@mui/styles/makeStyles';
+
+import { ACTION, INIT_NODE_ID } from '@/pages/Bot/constants';
+import { DiagramContext } from '../../../Context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,30 +18,30 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     padding: theme.spacing(1, 0),
   },
-}))
+}));
 
-const NameSection = (props) => {
-  const classes = useStyles(props)
-  const { current } = props
-  const [state, dispatch] = useContext(DiagramContext)
-  const [dialogOpen, setDialogOpen] = useState(false)
+function NameSection(props) {
+  const classes = useStyles(props);
+  const { current } = props;
+  const [state, dispatch] = useContext(DiagramContext);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleChange = (e) => {
-    dispatch({ type: 'UPDATE_NODE', data: current.setIn(['data', 'label'], e.target.value) })
-  }
+    dispatch({ type: 'UPDATE_NODE', data: current.setIn(['data', 'label'], e.target.value) });
+  };
 
   const handleRemove = () => {
-    const deleteId = current.get('id')
-    const actionUpdate = actions => actions
-      .filter(a => a.get('type') === ACTION.CHANGE_STATE && a.getIn(['options', 'state']) !== deleteId)
+    const deleteId = current.get('id');
+    const actionUpdate = (actions) => actions
+      .filter((a) => a.get('type') === ACTION.CHANGE_STATE && a.getIn(['options', 'state']) !== deleteId);
     const newBot = state.get('bot')
       .deleteIn(['src', deleteId])
-      .update('src', src => src.map(node => node
+      .update('src', (src) => src.map((node) => node
         .updateIn(['data', 'initial'], actionUpdate)
-        .updateIn(['data', 'messages'], els => els.map(msg => msg.update('actions', actionUpdate)))
-        .updateIn(['data', 'commands'], els => els.map(cmd => cmd.update('actions', actionUpdate)))))
-    dispatch({ type: 'SET_BOT', data: newBot })
-  }
+        .updateIn(['data', 'messages'], (els) => els.map((msg) => msg.update('actions', actionUpdate)))
+        .updateIn(['data', 'commands'], (els) => els.map((cmd) => cmd.update('actions', actionUpdate)))));
+    dispatch({ type: 'SET_BOT', data: newBot });
+  };
 
   return (
     <div className={classes.root}>
@@ -79,7 +79,7 @@ const NameSection = (props) => {
         </DialogActions>
       </Dialog>
     </div>
-  )
+  );
 }
 
-export default NameSection
+export default NameSection;

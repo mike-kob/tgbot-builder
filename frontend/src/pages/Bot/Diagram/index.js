@@ -1,11 +1,11 @@
-import React, { useContext } from 'react'
-import { makeStyles } from '@material-ui/core'
+import React, { useContext } from 'react';
+import makeStyles from '@mui/styles/makeStyles';
 
-import ActionDrawer from './Drawer/ActionDrawer'
-import Chart from './Chart'
-import ToolPanel from './ToolPanel'
-import Popup from './Popup'
-import { DiagramContext } from '../Context'
+import ActionDrawer from './Drawer/ActionDrawer';
+import Chart from './Chart';
+import ToolPanel from './ToolPanel';
+import Popup from './Popup';
+import { DiagramContext } from '../Context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,22 +24,22 @@ const useStyles = makeStyles((theme) => ({
   sidebar: {
     width: '30%',
   },
-}))
+}));
 
-const Diagram = (props) => {
-  const classes = useStyles()
-  const [state] = useContext(DiagramContext)
+function Diagram(props) {
+  const classes = useStyles();
+  const [state] = useContext(DiagramContext);
 
   return (
     <div className={classes.root}>
       <div className={classes.diagram}>
         <Chart elements={Object.values(state.getIn(['bot', 'src']).toJS())} />
       </div>
-      <ToolPanel/>
-      <ActionDrawer/>
-      <Popup/>
+      <ToolPanel />
+      <ActionDrawer />
+      <Popup />
     </div>
-  )
+  );
 }
 
-export default Diagram
+export default Diagram;

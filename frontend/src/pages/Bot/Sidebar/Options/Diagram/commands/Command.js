@@ -1,10 +1,15 @@
-import React, { useContext } from 'react'
-import { Chip, IconButton, InputAdornment, makeStyles, Paper, TextField } from '@material-ui/core'
-import EditIcon from '@material-ui/icons/Edit'
-import DeleteIcon from '@material-ui/icons/Delete'
+import React, { useContext } from 'react';
+import {
+  Chip, IconButton, InputAdornment, Paper, TextField,
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-import { DiagramContext } from '../../../../Context'
-import { ACTION_ICON, ACTION_LABEL, DRAWER, INIT_NODE_ID } from '@/pages/Bot/constants'
+import {
+  ACTION_ICON, ACTION_LABEL, DRAWER, INIT_NODE_ID,
+} from '@/pages/Bot/constants';
+import { DiagramContext } from '../../../../Context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,28 +32,28 @@ const useStyles = makeStyles((theme) => ({
   noMargin: {
     margin: '0px',
   },
-}))
+}));
 
-const Command = (props) => {
-  const classes = useStyles(props)
-  const [state, dispatch] = useContext(DiagramContext)
+function Command(props) {
+  const classes = useStyles(props);
+  const [state, dispatch] = useContext(DiagramContext);
 
-  const { command } = props
-  const selectedId = state.getIn(['selected', 'id'])
-  const initialSelected = selectedId === INIT_NODE_ID
-  const current = state.getIn(['bot', 'src', selectedId])
+  const { command } = props;
+  const selectedId = state.getIn(['selected', 'id']);
+  const initialSelected = selectedId === INIT_NODE_ID;
+  const current = state.getIn(['bot', 'src', selectedId]);
 
   const onEdit = () => {
-    dispatch({ type: 'UPDATE_CUR_COMMAND', data: command })
-    dispatch({ type: 'UPDATE_CUR_ACTIONS', data: command.get('actions') })
-    dispatch({ type: 'UPDATE_DRAWER', data: DRAWER.COMMAND })
-  }
+    dispatch({ type: 'UPDATE_CUR_COMMAND', data: command });
+    dispatch({ type: 'UPDATE_CUR_ACTIONS', data: command.get('actions') });
+    dispatch({ type: 'UPDATE_DRAWER', data: DRAWER.COMMAND });
+  };
   const onDelete = () => {
     const onApprove = () => dispatch({
       type: 'UPDATE_NODE',
       data: current.deleteIn(['data', 'commands', command.get('id')]),
-    })
-    const onReject = () => { }
+    });
+    const onReject = () => { };
     dispatch({
       type: 'UPDATE_POPUP',
       data: state.get('popup').merge({
@@ -57,14 +62,14 @@ const Command = (props) => {
         onApprove,
         onReject,
       }),
-    })
-  }
+    });
+  };
   const onNameEdit = (e) => {
     dispatch({
       type: 'UPDATE_NODE',
       data: current.setIn(['data', 'commands', command.get('id'), 'name'], e.target.value),
-    })
-  }
+    });
+  };
 
   return (
     <Paper className={classes.root}>
@@ -92,15 +97,15 @@ const Command = (props) => {
         ))}
       </div>
       <div className={classes.actions}>
-        <IconButton onClick={onEdit}>
+        <IconButton onClick={onEdit} size="large">
           <EditIcon />
         </IconButton>
-        <IconButton onClick={onDelete} disabled={initialSelected}>
+        <IconButton onClick={onDelete} disabled={initialSelected} size="large">
           <DeleteIcon />
         </IconButton>
       </div>
     </Paper>
-  )
+  );
 }
 
-export default Command
+export default Command;

@@ -1,20 +1,17 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react';
 import {
-  makeStyles,
-  Divider,
-  Typography,
-  Box,
-  Tabs,
-  Tab,
-} from '@material-ui/core'
+  Divider, Typography, Box, Tabs, Tab,
+} from '@mui/material';
 
-import { DiagramContext } from '../../../Context'
-import CommandSection from './CommandSection'
-import NameSection from './NameSection'
-import { INIT_NODE_ID } from '@/pages/Bot/constants'
-import InitialSection from '@/pages/Bot/Sidebar/Options/Diagram/InitialSection'
-import MessageSection from '@/pages/Bot/Sidebar/Options/Diagram/MessageSection'
-import ScheduleSection from '@/pages/Bot/Sidebar/Options/Diagram/ScheduleSection'
+import makeStyles from '@mui/styles/makeStyles';
+
+import { INIT_NODE_ID } from '@/pages/Bot/constants';
+import InitialSection from '@/pages/Bot/Sidebar/Options/Diagram/InitialSection';
+import MessageSection from '@/pages/Bot/Sidebar/Options/Diagram/MessageSection';
+import ScheduleSection from '@/pages/Bot/Sidebar/Options/Diagram/ScheduleSection';
+import NameSection from './NameSection';
+import CommandSection from './CommandSection';
+import { DiagramContext } from '../../../Context';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,22 +23,22 @@ const useStyles = makeStyles((theme) => ({
     width: '33%',
     minWidth: 'unset',
   },
-}))
+}));
 
-const Sidebar = (props) => {
-  const classes = useStyles(props)
-  const [state] = useContext(DiagramContext)
-  const [tab, setTab] = useState(1)
+function Sidebar(props) {
+  const classes = useStyles(props);
+  const [state] = useContext(DiagramContext);
+  const [tab, setTab] = useState(1);
 
-  const selectedId = state.getIn(['selected', 'id'])
-  const initialSelected = selectedId === INIT_NODE_ID
-  const current = state.getIn(['bot', 'src', selectedId])
+  const selectedId = state.getIn(['selected', 'id']);
+  const initialSelected = selectedId === INIT_NODE_ID;
+  const current = state.getIn(['bot', 'src', selectedId]);
 
   useEffect(() => {
     if (initialSelected) {
-      setTab(1)
+      setTab(1);
     }
-  }, [selectedId])
+  }, [selectedId]);
 
   if (!current) {
     return (
@@ -50,7 +47,7 @@ const Sidebar = (props) => {
           No selected state
         </Typography>
       </Box>
-    )
+    );
   }
 
   return (
@@ -67,17 +64,17 @@ const Sidebar = (props) => {
         onChange={(event, newValue) => setTab(newValue)}
         aria-label="disabled tabs example"
       >
-        <Tab label="Initial" className={classes.tab} disabled={initialSelected}/>
-        <Tab label="Commands" className={classes.tab}/>
-        <Tab label="Messages" className={classes.tab} disabled={initialSelected}/>
-        <Tab label="Schedule" className={classes.tab} disabled={initialSelected}/>
+        <Tab label="Initial" className={classes.tab} disabled={initialSelected} />
+        <Tab label="Commands" className={classes.tab} />
+        <Tab label="Messages" className={classes.tab} disabled={initialSelected} />
+        <Tab label="Schedule" className={classes.tab} disabled={initialSelected} />
       </Tabs>
       {tab === 0 && <InitialSection current={current} />}
       {tab === 1 && <CommandSection current={current} />}
       {tab === 2 && <MessageSection current={current} />}
       {tab === 3 && <ScheduleSection current={current} />}
     </div>
-  )
+  );
 }
 
-export default Sidebar
+export default Sidebar;

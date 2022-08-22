@@ -1,12 +1,12 @@
-import { useCallback, useContext } from 'react'
-import { AppContext } from '@/utils/appContext'
+import { useCallback, useContext } from 'react';
+import { AppContext } from '@/utils/appContext';
 
 const useLoader = () => {
-  const [state, dispatch] = useContext(AppContext)
+  const [state, dispatch] = useContext(AppContext);
 
-  const handleUpdateLoader = useCallback((val) => dispatch({ loading: val }), [])
+  const handleUpdateLoader = useCallback((val) => dispatch({ loading: val }), []);
 
-  return [state.loading, handleUpdateLoader]
-}
+  return [state.loading, handleUpdateLoader];
+};
 
-export default useLoader
+export default useLoader;

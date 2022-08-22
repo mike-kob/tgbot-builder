@@ -1,12 +1,12 @@
-import React from 'react'
-import { makeStyles } from '@material-ui/core/styles'
+import React from 'react';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   Select,
   FormControl,
   InputLabel,
   MenuItem, TextField,
-} from '@material-ui/core'
-import clsx from 'clsx'
+} from '@mui/material';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   select: {
     minWidth: '50%',
   },
-}))
+}));
 
 const ALLOWED_METHODS = [
   'GET',
@@ -23,18 +23,19 @@ const ALLOWED_METHODS = [
   'PUT',
   'UPDATE',
   'DELETE',
-]
+];
 
-const ChangeStateAction = (props) => {
-  const classes = useStyles()
-  const { action, changeAction } = props
-  const changeActionProp = (prop) => (e) => changeAction(action.setIn(['options', prop], e.target.value))
+function ChangeStateAction(props) {
+  const classes = useStyles();
+  const { action, changeAction } = props;
+  const changeActionProp = (prop) => (e) => changeAction(action.setIn(['options', prop], e.target.value));
 
   return (
     <div className={classes.root}>
       <FormControl variant="outlined" className={clsx(classes.margin, classes.select)}>
         <InputLabel htmlFor="outlined-age-native-simple-2">HTTP Method</InputLabel>
         <Select
+          variant="standard"
           value={action.getIn(['options', 'method'], '')}
           onChange={changeActionProp('method')}
           label="HTTP Method"
@@ -43,7 +44,7 @@ const ChangeStateAction = (props) => {
           }}
         >
           <MenuItem value="">-</MenuItem>
-          {ALLOWED_METHODS.map(el => (
+          {ALLOWED_METHODS.map((el) => (
             <MenuItem key={el} value={el}>{el}</MenuItem>
           ))}
         </Select>
@@ -77,7 +78,7 @@ const ChangeStateAction = (props) => {
         className={classes.margin}
       />
     </div>
-  )
+  );
 }
 
-export default ChangeStateAction
+export default ChangeStateAction;

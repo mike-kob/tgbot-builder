@@ -1,13 +1,9 @@
-import React from 'react'
-import Header from '@/components/Header'
-import {
-  makeStyles,
-  Typography,
-  Box,
-  Link,
-} from '@material-ui/core'
-import Navigation from '@/pages/Docs/Navigation'
-import Image from 'next/image'
+import React from 'react';
+import { Typography, Box, Link } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import Image from 'next/image';
+import Navigation from '@/pages/Docs/Navigation';
+import Header from '@/components/Header';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,34 +30,36 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(0, 0.5),
     },
   },
-}))
+}));
 
-const UserChatPage = () => {
-  const classes = useStyles()
+function UserChatPage() {
+  const classes = useStyles();
 
-  return <>
-    <Header/>
-    <main className={classes.root}>
-      <Navigation/>
-      <Box pl={7} pt={4} maxWidth={700} className={classes.content}>
-        <Typography variant="h2">User chat</Typography>
-        <Typography variant="body2">
-          In Users panel you can see users that have interacted with your bot.
-          You see their information such as username,
-          first/last name and user data that was saved with Save user data action and current state.
-        </Typography>
-        <Typography variant="body2">
-          When you select user and click on View chat button,
-          you see chat history with this user (up to 500 latest messages).
-        </Typography>
-        <Typography variant="body2">
-          You can write message to user, though beware that any user input in reply will
-          still trigger configured actions.
-        </Typography>
-        <Box m={10}/>
-      </Box>
-    </main>
-  </>
+  return (
+    <>
+      <Header />
+      <main className={classes.root}>
+        <Navigation />
+        <Box pl={7} pt={4} maxWidth={700} className={classes.content}>
+          <Typography variant="h2">User chat</Typography>
+          <Typography variant="body2">
+            In Users panel you can see users that have interacted with your bot.
+            You see their information such as username,
+            first/last name and user data that was saved with Save user data action and current state.
+          </Typography>
+          <Typography variant="body2">
+            When you select user and click on View chat button,
+            you see chat history with this user (up to 500 latest messages).
+          </Typography>
+          <Typography variant="body2">
+            You can write message to user, though beware that any user input in reply will
+            still trigger configured actions.
+          </Typography>
+          <Box m={10} />
+        </Box>
+      </main>
+    </>
+  );
 }
 
-export default UserChatPage
+export default UserChatPage;

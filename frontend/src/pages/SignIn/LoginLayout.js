@@ -1,13 +1,11 @@
-import React from 'react'
+import React from 'react';
 import {
-  makeStyles,
-  Paper,
-  Grid,
-  Typography,
-  Box,
-} from '@material-ui/core'
+  Paper, Grid, Typography, Box,
+} from '@mui/material';
 
-import SignInForm from './SignInForm'
+import makeStyles from '@mui/styles/makeStyles';
+
+import SignInForm from './SignInForm';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,16 +46,16 @@ const useStyles = makeStyles((theme) => ({
   botImage: {
     maxWidth: theme.spacing(45),
   },
-}))
+}));
 
-const LoginLayout = (props) => {
-  const classes = useStyles(props)
+function LoginLayout(props) {
+  const classes = useStyles(props);
 
   return (
     <Grid container component="main" className={classes.root}>
       <Grid item xs={false} sm={4} md={7} className={classes.image}>
         <div className={classes.imageBox}>
-          <Typography variant="h3" className={classes.getStarted}>{"Let's get started"}</Typography>
+          <Typography variant="h3" className={classes.getStarted}>Let's get started</Typography>
           <Box m={5}>
             <img className={classes.botImage} src="/get-started-bot.svg" />
           </Box>
@@ -67,7 +65,7 @@ const LoginLayout = (props) => {
         <SignInForm />
       </Grid>
     </Grid>
-  )
+  );
 }
 
-export default LoginLayout
+export default LoginLayout;

@@ -1,12 +1,10 @@
-import React, { useCallback, useContext } from 'react'
-import {
-  makeStyles,
-  Button,
-  Box, Typography,
-} from '@material-ui/core'
+import React, { useCallback, useContext } from 'react';
+import { Button, Box, Typography } from '@mui/material';
 
-import { DiagramContext, messageFactory } from '../../../Context'
-import MessageCard from './MessageCard'
+import makeStyles from '@mui/styles/makeStyles';
+
+import { DiagramContext, messageFactory } from '../../../Context';
+import MessageCard from './MessageCard';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,22 +21,21 @@ const useStyles = makeStyles((theme) => ({
       border: '2px solid',
     },
   },
-}))
+}));
 
-const MessageSection = (props) => {
-  const classes = useStyles(props)
-  const [, dispatch] = useContext(DiagramContext)
+function MessageSection(props) {
+  const classes = useStyles(props);
+  const [, dispatch] = useContext(DiagramContext);
 
-  const { current } = props
-  const messages = current.getIn(['data', 'messages'])
+  const { current } = props;
+  const messages = current.getIn(['data', 'messages']);
 
   const handleAdd = useCallback(() => {
     dispatch({
       type: 'UPDATE_NODE',
-      data: current.updateIn(
-        ['data', 'messages'], els => els.push(messageFactory())),
-    })
-  }, [messages])
+      data: current.updateIn(['data', 'messages'], (els) => els.push(messageFactory())),
+    });
+  }, [messages]);
 
   return (
     <div className={classes.root}>
@@ -58,9 +55,10 @@ const MessageSection = (props) => {
         onClick={handleAdd}
         className={classes.outlinedButton}
       >
-        + Add pattern</Button>
+        + Add pattern
+      </Button>
     </div>
-  )
+  );
 }
 
-export default MessageSection
+export default MessageSection;

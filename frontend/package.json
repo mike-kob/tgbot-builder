@@ -8,10 +8,13 @@
     "start": "next start"
   },
   "dependencies": {
-    "@material-ui/core": "^4.12.3",
-    "@material-ui/data-grid": "^4.0.0-alpha.37",
-    "@material-ui/icons": "^4.11.2",
-    "@material-ui/lab": "^4.0.0-alpha.60",
+    "@emotion/react": "^11.10.0",
+    "@emotion/styled": "^11.10.0",
+    "@mui/icons-material": "^5.8.4",
+    "@mui/lab": "^5.0.0-alpha.95",
+    "@mui/material": "^5.10.1",
+    "@mui/styles": "^5.9.3",
+    "@mui/x-data-grid": "^5.15.3",
     "@sbzen/re-cron": "^1.0.6",
     "axios": "^0.26.1",
     "clsx": "^1.1.1",
@@ -30,11 +33,14 @@
     "react-flow-renderer": "^9.7.0"
   },
   "devDependencies": {
-    "eslint": "^7.16.0",
-    "eslint-config-standard": "^16.0.2",
-    "eslint-plugin-import": "^2.22.1",
+    "eslint": "^7.32.0 || ^8.2.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-import-resolver-jsconfig": "^1.1.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-react": "^7.21.5"
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0"
   }
 }

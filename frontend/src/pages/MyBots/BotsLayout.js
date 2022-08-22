@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
+import React, { useEffect, useState } from 'react';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   Container,
   Button,
   Typography,
   Grid,
-} from '@material-ui/core'
+} from '@mui/material';
 
-import BotCard from './BotCard'
-import { getBotList } from '@/actions'
-import EditBotDialog from './NewBotDialog'
-import useLoader from '@/hooks/useLoader'
+import { getBotList } from '@/actions';
+import useLoader from '@/hooks/useLoader';
+import BotCard from './BotCard';
+import EditBotDialog from './NewBotDialog';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,31 +43,31 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(50),
     margin: 'auto',
   },
-}))
+}));
 
-const BotsLayout = (props) => {
-  const classes = useStyles()
-  const [bots, setBots] = useState([])
-  const [curBot, setCurBot] = useState({})
-  const [openDialog, setOpenDialog] = useState(false)
-  const [, setLoading] = useLoader()
+function BotsLayout(props) {
+  const classes = useStyles();
+  const [bots, setBots] = useState([]);
+  const [curBot, setCurBot] = useState({});
+  const [openDialog, setOpenDialog] = useState(false);
+  const [, setLoading] = useLoader();
 
   useEffect(async () => {
-    setLoading(true)
-    const res = await getBotList()
-    setBots(res)
-    setLoading(false)
-  }, [])
+    setLoading(true);
+    const res = await getBotList();
+    setBots(res);
+    setLoading(false);
+  }, []);
 
   const handleBotUpdate = async (bot) => {
-    setBots(bots.map(b => b._id === bot._id ? bot : b))
-  }
+    setBots(bots.map((b) => (b._id === bot._id ? bot : b)));
+  };
   const handleBotAdd = async (bot) => {
-    setBots([...bots, bot])
-  }
+    setBots([...bots, bot]);
+  };
   const handleDelete = async (bot) => {
-    setBots(bots.filter(b => b._id !== bot._id))
-  }
+    setBots(bots.filter((b) => b._id !== bot._id));
+  };
 
   return (
     <div className={classes.root}>
@@ -81,22 +81,27 @@ const BotsLayout = (props) => {
           </Typography>
           <Button
             onClick={() => {
-              setCurBot({})
-              setOpenDialog(true)
+              setCurBot({});
+              setOpenDialog(true);
             }}
             className={classes.ctaButton}
             variant="contained"
             color="secondary"
-          >Create bot</Button>
+          >
+            Create bot
+          </Button>
         </div>
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
             {bots.map((bot, i) => (
               <Grid key={i} item xs={12} sm={6} md={4} lg={3}>
-                <BotCard bot={bot} onEdit={() => {
-                  setCurBot(bot)
-                  setOpenDialog(true)
-                }} />
+                <BotCard
+                  bot={bot}
+                  onEdit={() => {
+                    setCurBot(bot);
+                    setOpenDialog(true);
+                  }}
+                />
               </Grid>
             ))}
           </Grid>
@@ -111,7 +116,7 @@ const BotsLayout = (props) => {
         />
       </main>
     </div>
-  )
+  );
 }
 
-export default BotsLayout
+export default BotsLayout;

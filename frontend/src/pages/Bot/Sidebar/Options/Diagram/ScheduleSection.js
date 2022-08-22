@@ -1,13 +1,11 @@
-import React, { useCallback, useContext } from 'react'
-import {
-  makeStyles,
-  Button,
-  Box,
-} from '@material-ui/core'
+import React, { useCallback, useContext } from 'react';
+import { Button, Box } from '@mui/material';
 
-import { DiagramContext } from '../../../Context'
-import ScheduleCard from './ScheduleCard'
-import { scheduleFactory } from '@/pages/Bot/Context/models'
+import makeStyles from '@mui/styles/makeStyles';
+
+import { scheduleFactory } from '@/pages/Bot/Context/models';
+import { DiagramContext } from '../../../Context';
+import ScheduleCard from './ScheduleCard';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,22 +22,21 @@ const useStyles = makeStyles((theme) => ({
       border: '2px solid',
     },
   },
-}))
+}));
 
-const ScheduleSection = (props) => {
-  const classes = useStyles(props)
-  const [, dispatch] = useContext(DiagramContext)
+function ScheduleSection(props) {
+  const classes = useStyles(props);
+  const [, dispatch] = useContext(DiagramContext);
 
-  const { current } = props
-  const scheduleEntries = current.getIn(['data', 'schedule'])
+  const { current } = props;
+  const scheduleEntries = current.getIn(['data', 'schedule']);
 
   const handleAdd = useCallback(() => {
     dispatch({
       type: 'UPDATE_NODE',
-      data: current.updateIn(
-        ['data', 'schedule'], els => els.push(scheduleFactory())),
-    })
-  }, [scheduleEntries])
+      data: current.updateIn(['data', 'schedule'], (els) => els.push(scheduleFactory())),
+    });
+  }, [scheduleEntries]);
 
   return (
     <div className={classes.root}>
@@ -54,9 +51,10 @@ const ScheduleSection = (props) => {
         onClick={handleAdd}
         className={classes.outlinedButton}
       >
-        + Add schedule</Button>
+        + Add schedule
+      </Button>
     </div>
-  )
+  );
 }
 
-export default ScheduleSection
+export default ScheduleSection;

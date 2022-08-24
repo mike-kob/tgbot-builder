@@ -17,9 +17,9 @@ import {
 } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
-
 import clsx from 'clsx';
+
+import Link from '@/components/Link';
 import { AppContext } from '@/utils/appContext';
 import { logout } from '@/actions';
 
@@ -82,32 +82,26 @@ function Header(props) {
     <AppBar position="relative" elevation={1} className={classes.appBar}>
       <Toolbar className={classes.root}>
         <Link href="/">
-          <a>
-            <Typography variant="h6" className={classes.logoText}>
-              TGBot builder
-            </Typography>
-          </a>
+          <Typography variant="h6" className={classes.logoText}>
+            TGBot builder
+          </Typography>
         </Link>
         <Box m={1} />
         <Link href="/docs">
-          <a>
-            <Typography
-              variant="h6"
-              className={clsx(classes.headerLink, router.pathname.startsWith('/docs') && classes.activeLink)}
-            >
-              Docs
-            </Typography>
-          </a>
+          <Typography
+            variant="h6"
+            className={clsx(classes.headerLink, router.pathname.startsWith('/docs') && classes.activeLink)}
+          >
+            Docs
+          </Typography>
         </Link>
         <Link href="/pricing">
-          <a>
-            <Typography
-              variant="h6"
-              className={clsx(classes.headerLink, router.pathname === '/pricing' && classes.activeLink)}
-            >
-              Pricing
-            </Typography>
-          </a>
+          <Typography
+            variant="h6"
+            className={clsx(classes.headerLink, router.pathname === '/pricing' && classes.activeLink)}
+          >
+            Pricing
+          </Typography>
         </Link>
         <div className={classes.rightPanel}>
           <Box p={1}>

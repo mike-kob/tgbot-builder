@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Box, Button, Paper, Typography,
 } from '@mui/material';
+import Head from 'next/head';
 import makeStyles from '@mui/styles/makeStyles';
 import { useRouter } from 'next/router';
 import { getUser } from '@/actions';
@@ -33,6 +34,9 @@ function PricingPage() {
 
   return (
     <>
+      <Head>
+        <title>Pricing | TGBot builder</title>
+      </Head>
       <Header />
       <Box>
         <Box m={5} />

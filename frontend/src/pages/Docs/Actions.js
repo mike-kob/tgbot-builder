@@ -2,6 +2,7 @@ import React from 'react';
 import { Typography, Box, Link } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import Image from 'next/image';
+import Head from 'next/head';
 import Navigation from '@/pages/Docs/Navigation';
 import Header from '@/components/Header';
 
@@ -37,6 +38,9 @@ function ActionsPage() {
 
   return (
     <>
+      <Head>
+        <title>Actions | Docs | TGBot builder</title>
+      </Head>
       <Header />
       <main className={classes.root}>
         <Navigation />

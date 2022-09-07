@@ -5,6 +5,8 @@ import {
   Box,
   Drawer,
   Button,
+  AppBar,
+  Toolbar,
 } from '@mui/material';
 import clsx from 'clsx';
 
@@ -95,6 +97,7 @@ function ActionDrawer(props) {
       open={Boolean(state.get('drawer'))}
       onClose={() => dispatch({ type: 'UPDATE_DRAWER', data: false })}
     >
+      <Toolbar />
       <div className={classes.root}>
         <Typography variant="h6" align="center">
           {state.get('drawer') === DRAWER.INITIAL && 'Initial actions'}
@@ -102,9 +105,8 @@ function ActionDrawer(props) {
           {state.get('drawer') === DRAWER.MESSAGE && 'Message pattern actions'}
           {state.get('drawer') === DRAWER.SCHEDULE && 'Schedule actions'}
         </Typography>
-        <Box m={1} />
         {actions.map((a, i) => (
-          <Box m={2} key={i}>
+          <Box m={1} key={i}>
             <Action action={a} index={i} />
           </Box>
         ))}

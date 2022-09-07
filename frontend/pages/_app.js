@@ -33,8 +33,10 @@ function MyApp (props) {
   return (
     <React.Fragment>
       <Head>
-        <title>My page</title>
+        <title>TG Bot builder</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+        <link rel="icon" href="favicon.svg"/>
+        <link rel="mask-icon" href="mask-icon.svg" color="#000000"/>
       </Head>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>

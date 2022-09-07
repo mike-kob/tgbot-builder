@@ -96,7 +96,8 @@ function Action(props) {
       <FormControl variant="outlined" fullWidth className={classes.margin}>
         <InputLabel htmlFor="action-type-select">Action type</InputLabel>
         <Select
-          variant="standard"
+          variant="outlined"
+          size="small"
           value={action.get('type')}
           id="action-type-select"
           onChange={handleSelect}
@@ -110,20 +111,20 @@ function Action(props) {
       </FormControl>
       {actionComponent}
       <div className={classes.buttonRow}>
-        <IconButton onClick={handleRemove} size="large">
+        <IconButton onClick={handleRemove} size="small">
           <DeleteIcon />
         </IconButton>
         <IconButton
           onClick={() => handleSwap(index, index - 1)}
           disabled={index === 0}
-          size="large"
+          size="small"
         >
           <ArrowUpwardIcon />
         </IconButton>
         <IconButton
           onClick={() => handleSwap(index, index + 1)}
           disabled={index === state.get('currentActions').size - 1}
-          size="large"
+          size="small"
         >
           <ArrowDownwardIcon />
         </IconButton>

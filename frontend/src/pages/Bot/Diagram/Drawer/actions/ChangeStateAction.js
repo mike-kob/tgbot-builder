@@ -26,14 +26,11 @@ function ChangeStateAction(props) {
       <FormControl variant="outlined" fullWidth className={classes.margin}>
         <InputLabel htmlFor="outlined-age-native-simple-2">State</InputLabel>
         <Select
-          variant="standard"
+          variant="outlined"
           value={action.getIn(['options', 'state'], '')}
           onChange={selectState}
           label="State"
-          inputProps={{
-            name: 'State',
-            id: 'outlined-age-native-simple-2',
-          }}
+          inputProps={{ name: 'State' }}
         >
           <MenuItem value="">
             <em>-</em>

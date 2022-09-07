@@ -8,7 +8,7 @@ function SignUp(props) {
   return (
     <>
       <Head>
-        <title>Sing Up - TG Bot builder</title>
+        <title>Sing Up | TG Bot builder</title>
       </Head>
       <Header menuDisabled />
       <SignUpLayout />

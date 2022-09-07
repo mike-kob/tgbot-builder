@@ -44,7 +44,7 @@ function BotPage() {
   return (
     <>
       <Head>
-        <title>App - TG Bot builder</title>
+        <title>App | TG Bot builder</title>
       </Head>
       <Header />
       <DiagramProvider>

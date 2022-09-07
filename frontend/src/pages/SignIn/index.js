@@ -8,7 +8,7 @@ function Login(props) {
   return (
     <>
       <Head>
-        <title>Login - TG Bot builder</title>
+        <title>Login | TG Bot builder</title>
       </Head>
       <Header menuDisabled />
       <LoginLayout />

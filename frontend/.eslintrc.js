@@ -20,6 +20,8 @@ module.exports = {
     'react/prop-types': 'off',
     'react/jsx-filename-extension': 'off',
     'react/function-component-definition': 'off',
+    'import/no-unresolved': 'off',
+    'import/extensions': 'off',
   },
   settings: {
     'import/resolver': {

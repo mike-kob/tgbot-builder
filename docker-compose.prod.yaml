@@ -27,7 +27,7 @@ services:
       context: ./bot-execution
     environment:
       - RUN_ENV=PROD
-      - PORT=80
+      - PORT=8088
       - RABBITMQ_HOST=rabbitmq
       - REDIS_HOST=redis
       - SENTRY_DSN=${SENTRY_DSN_EXEC}
@@ -36,8 +36,6 @@ services:
     extends:
       service: bot-execution-base
     command: ['update_http']
-    ports:
-      - "127.0.0.1:8088:80"
 
   bot-execution-consumer:
     extends:
@@ -55,8 +53,6 @@ services:
       - WEBHOOK_HOST=https://${RUNTIME_HOST}
       - SENTRY_DSN=${SENTRY_DSN_MANAGE}
       - CONN_STR=${MONGO_CONN_STR}
-    ports:
-      - "127.0.0.1:4001:4001"
     volumes:
       - ${CERT_PATH}:/app/server.cert
 
@@ -80,7 +76,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "3333:3333"
     environment:
       - ACME_AGREE=true
       - HOST=${RUNTIME_HOST}

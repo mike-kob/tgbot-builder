@@ -1,7 +1,7 @@
-{$HOST}:3333 {
+{$HOST} {
   log {
     output file /data/bot-execution.log
   }
 
-  reverse_proxy /update/* bot-execution
+  reverse_proxy /update/* bot-execution-http:8088
 }

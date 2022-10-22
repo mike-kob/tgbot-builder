@@ -52,7 +52,7 @@ services:
     environment:
       - REDIS_HOST=redis
       - NODE_ENV=production
-      - WEBHOOK_HOST=https://${HOST_IP}
+      - WEBHOOK_HOST=https://${RUNTIME_HOST}
       - SENTRY_DSN=${SENTRY_DSN_MANAGE}
       - CONN_STR=${MONGO_CONN_STR}
     ports:
@@ -81,7 +81,7 @@ services:
       - "3333:3333"
     environment:
       - ACME_AGREE=true
-      - HOST=${HOST}
+      - HOST=${RUNTIME_HOST}
 
 volumes:
   redis-data:

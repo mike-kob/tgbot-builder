@@ -1,15 +1,7 @@
-{$HOST_IP}:3000 {
+{$HOST}:3000 {
   log {
     output file /data/bot-execution.log
   }
 
   reverse_proxy /update/* bot-execution
-}
-
-http://{$HOST_IP}:3001 {
-  log {
-    output file /data/bot-management.log
-  }
-
-  reverse_proxy /bot/* bot-management
 }

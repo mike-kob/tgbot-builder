@@ -70,6 +70,20 @@ services:
       - SENTRY_DSN=${SENTRY_DSN_HISTORY}
       - CONN_STR=${MONGO_CONN_STR}
 
+  caddy:
+    image: caddy:2.6.2
+    container_name: caddy
+    restart: always
+    volumes:
+      - caddy-stuff:/data
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    ports:
+      - "3333:3333"
+    environment:
+      - ACME_AGREE=true
+      - HOST=${HOST}
+
 volumes:
   redis-data:
   rabbitmq-data:
+  caddy-stuff:

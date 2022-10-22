@@ -1,7 +1,6 @@
 import Redis from 'ioredis'
 import { Telegraf } from 'telegraf'
 import { Validator } from 'jsonschema'
-import fs from 'fs'
 import _ from 'lodash'
 import { DateTime } from 'luxon'
 
@@ -66,9 +65,7 @@ export const deleteFromRedis = async (botId) => {
 export const setWebhook = async (bot) => {
   const tgBot = new Telegraf(bot.token)
   const url = `${process.env.WEBHOOK_HOST}/update/${bot._id}`
-  await tgBot.telegram.setWebhook(url, {
-    certificate: { source: fs.readFileSync('server.cert') }
-  })
+  await tgBot.telegram.setWebhook(url)
 }
 
 export const unsetWebhook = async (bot) => {

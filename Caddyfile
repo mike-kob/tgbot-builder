@@ -1,4 +1,4 @@
-{$HOST}:3000 {
+{$HOST}:3333 {
   log {
     output file /data/bot-execution.log
   }

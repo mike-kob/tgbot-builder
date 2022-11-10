@@ -115,7 +115,6 @@ function SignInForm(props) {
           autoComplete="current-password"
         />
         <Button
-          type="submit"
           fullWidth
           variant="contained"
           color="primary"

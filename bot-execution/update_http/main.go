@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"gopkg.in/h2non/gock.v1"
 	"log"
 	"net/http"
 	"os"
@@ -44,7 +45,15 @@ func NewRouter() http.Handler {
 	return router
 }
 
-func main() {
+func main1() {
+	// Setting up testing env
+	if os.Getenv("RUN_ENV") == "TEST" {
+		defer gock.Off()
+
+		gock.New("https://api.telegram.org/").
+			Reply(200).
+			JSON(map[string]bool{"ok": true})
+	}
 	// Setting up Sentry logging
 	err := sentry.Init(sentry.ClientOptions{
 		Dsn:         os.Getenv("SENTRY_DSN"),

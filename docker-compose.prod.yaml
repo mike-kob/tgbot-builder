@@ -53,8 +53,6 @@ services:
       - WEBHOOK_HOST=https://${RUNTIME_HOST}
       - SENTRY_DSN=${SENTRY_DSN_MANAGE}
       - CONN_STR=${MONGO_CONN_STR}
-    volumes:
-      - ${CERT_PATH}:/app/server.cert
 
   history:
     build:

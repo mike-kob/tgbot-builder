@@ -48,24 +48,27 @@ func ExecuteOnTask(ctx *ExecutionContext, scheduleID string) error {
 func runCommand(ctx *ExecutionContext) error {
 	cmdStr := ctx.Upd.Message.Text
 
-	for cmd, triggers := range ctx.State.CmdTriggers {
-		if cmdStr == cmd {
-			for _, trigger := range triggers {
-				err := runAction(&trigger, ctx)
-				if err != nil {
-					return err
-				}
+	state := ctx.User.State
+	cmds := ctx.Bot.States[state].CmdTriggers
+
+	actions, found := cmds[cmdStr]
+	if found {
+		for _, action := range actions {
+			err := runAction(&action, ctx)
+			if err != nil {
+				return err
 			}
 		}
 	}
-
 	return nil
 }
 
 func runMessage(ctx *ExecutionContext) error {
 	msg := ctx.Upd.Message.Text
+	state := ctx.User.State
+	keys := ctx.Bot.States[state].MsgTriggers
 
-	for pattern, triggers := range ctx.State.MsgTriggers {
+	for pattern, triggers := range keys {
 		match, _ := regexp.MatchString(pattern, msg)
 		if match {
 			for _, trigger := range triggers {
@@ -77,7 +80,6 @@ func runMessage(ctx *ExecutionContext) error {
 			break
 		}
 	}
-
 	return nil
 }
 

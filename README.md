@@ -8,7 +8,7 @@ Here in the app we operate on user states. Any user at any point in time
 is in some state. We can define a set of commands that are accessible to 
 user in particular state. These commands have actions (e.g., "send message", "change state", etc).
 
-For more information, please check [user manual](https://tgbot-builder.vercel.app/docs)
+For more information, please check [user manual](https://tgbot-builder.vercel.app/docs).
 
 ## Project structure
 

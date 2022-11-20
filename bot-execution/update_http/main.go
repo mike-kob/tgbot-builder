@@ -45,7 +45,7 @@ func NewRouter() http.Handler {
 	return router
 }
 
-func main1() {
+func main() {
 	// Setting up testing env
 	if os.Getenv("RUN_ENV") == "TEST" {
 		defer gock.Off()

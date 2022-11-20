@@ -18,6 +18,52 @@ services:
     volumes:
         - rabbitmq-data:/var/lib/rabbitmq/mnesia/
 
+  bot-execution:
+    build:
+      context: ./bot-execution
+    environment:
+      - RUN_ENV=DEV
+      - PORT=8088
+      - RABBITMQ_HOST=rabbitmq
+      - REDIS_HOST=redis
+    ports:
+      - 8000:8088
+    command: ['update_http']
+
+  bot-management:
+    build:
+      context: ./bot-management
+    command: ["npm", "start"]
+    restart: always
+    environment:
+      - REDIS_HOST=redis
+      - NODE_ENV=production
+      - WEBHOOK_HOST=https://${TUNNEL_URL}
+      - CONN_STR=${MONGODB_URL}
+
+  history:
+    build:
+      context: ./history
+    command: ["npm", "start"]
+    environment:
+      - NODE_ENV=production
+      - RABBITMQ_HOST=rabbitmq
+      - CONN_STR=${MONGODB_URL}
+
+  caddy:
+    image: caddy:2.6.2
+    container_name: caddy
+    restart: always
+    volumes:
+      - caddy-data:/data
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - HOST=localhost:8000
+
 volumes:
   redis-data:
   rabbitmq-data:
+  caddy-data:
